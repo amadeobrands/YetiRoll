@@ -1,10 +1,9 @@
-import {ethers, network} from "@nomiclabs/buidler";
 import chai from "chai";
+
 import {deployContract, MockProvider} from "ethereum-waffle";
 
 import StreamEmployeeArtifact from "../artifacts/StreamEmployee.json";
 import {StreamEmployee} from "../typechain/StreamEmployee"
-import exp from "constants";
 import {BigNumber} from "ethers";
 
 const {expect} = chai;
@@ -95,7 +94,7 @@ describe("Stream Employee", () => {
 
         let expectedBalance = BigNumber.from("0xd02ab486cedbef98");
 
-        expect(balance).to.eq(expectedBalance)
+        expect(balance).to.be.at.least(expectedBalance)
     });
 });
 

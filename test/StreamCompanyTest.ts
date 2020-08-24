@@ -1,4 +1,3 @@
-import {ethers} from "@nomiclabs/buidler";
 import chai from "chai";
 import {deployContract, MockProvider} from "ethereum-waffle";
 
@@ -7,7 +6,7 @@ import {StreamCompany} from "../typechain/StreamCompany"
 
 const {expect} = chai;
 const provider = new MockProvider();
-const [wallet, alice, bob] = provider.getWallets();
+const [wallet, alice] = provider.getWallets();
 
 describe("Stream Employee", () => {
     const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -22,14 +21,11 @@ describe("Stream Employee", () => {
     });
 
     it("It should start the company with a pool balance of 0 and allow top ups", async () => {
-        let balance = await streamCompany.poolBalance();
-        expect(balance).to.eq(0);
-
         await streamCompany.topUp({
             value: 1000
         });
 
-        balance = await streamCompany.poolBalance();
+        let balance = await provider.getBalance(streamCompany.address)
         expect(balance).to.eq(1000);
     })
 

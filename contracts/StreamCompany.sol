@@ -12,10 +12,11 @@ contract StreamCompany {
 
     uint public poolBalance;
 
-    function topUp() public payable {
-        require(msg.value > 0, "Must send funds to top up");
+    receive() external payable {
+        topUp();
+    }
 
-        poolBalance = poolBalance.add(msg.value);
+    function topUp() public payable {
     }
 
     // todo only owner

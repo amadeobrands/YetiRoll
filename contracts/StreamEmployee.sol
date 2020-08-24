@@ -51,6 +51,7 @@ contract StreamEmployee {
         if(timeWorkedInSeconds() > 0) {
             return timeWorkedInSeconds().mul(payPerSecond());
         }
+
         return 0;
     }
 
