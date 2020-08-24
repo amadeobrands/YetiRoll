@@ -16,4 +16,14 @@ contract StreamCompany {
 
         poolBalance = poolBalance.add(msg.value);
     }
+
+    // todo only owner
+    function createEmployee(address _address, uint _amount) public {
+        StreamEmployee employee = new StreamEmployee(
+            _amount,
+            _address
+        );
+
+        employees[_address] = employee;
+    }
 }

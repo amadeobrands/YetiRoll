@@ -10,6 +10,8 @@ const provider = new MockProvider();
 const [wallet, alice, bob] = provider.getWallets();
 
 describe("Stream Employee", () => {
+    const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
+
     let streamCompany: StreamCompany;
 
     beforeEach(async () => {
@@ -31,4 +33,17 @@ describe("Stream Employee", () => {
         expect(balance).to.eq(1000);
     })
 
+    it("It should allow the creation of new employees", async () => {
+        await streamCompany.employees(alice.address).then(
+            address => expect(address).to.eq(NULL_ADDRESS)
+        );
+
+        let hourlyRate = 100;
+
+        await streamCompany.createEmployee(alice.address, hourlyRate);
+
+        await streamCompany.employees(alice.address).then(
+            address => expect(address).to.not.eq(NULL_ADDRESS)
+        );
+    })
 });
