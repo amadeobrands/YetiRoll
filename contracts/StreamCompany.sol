@@ -9,6 +9,7 @@ contract StreamCompany {
     using SafeMath for uint;
 
     mapping(address => StreamEmployee) public employees;
+
     uint public poolBalance;
 
     function topUp() public payable {

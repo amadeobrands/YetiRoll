@@ -7,8 +7,6 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 contract StreamEmployee {
     using SafeMath for uint;
 
-    event e(uint time);
-
     address public employeeAddress;
     uint public payPerHour;
     bool public isWorking;
@@ -41,13 +39,29 @@ contract StreamEmployee {
 
     function stopWorking() public workHasBegun {
         isWorking = false;
+
         calculatePay();
     }
 
+    function getNow() public view returns (uint) {
+        return now;
+    }
+
     function calculatePay() internal {
-        uint _now = block.timestamp;
-        uint _hoursWorked = _now.sub(workStarted);
-        emit e(_hoursWorked);
-        //        uint pay =
+        //
+    }
+
+    function payAccrued() public view returns (uint) {
+        return timeWorkedInSeconds().mul(payPerSecond());
+    }
+
+    function payPerSecond() public view returns (uint) {
+        uint hourly = payPerHour.mul(10 ** 18);
+        uint minutely = hourly.div(60);
+        return minutely.div(60);
+    }
+
+    function timeWorkedInSeconds() public view returns (uint) {
+        return block.timestamp.sub(workStarted);
     }
 }

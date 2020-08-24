@@ -1,13 +1,14 @@
-import {ethers} from "@nomiclabs/buidler";
+import {ethers, network} from "@nomiclabs/buidler";
 import chai from "chai";
-import {deployContract, MockProvider, solidity} from "ethereum-waffle";
+import {deployContract, MockProvider} from "ethereum-waffle";
 
 import StreamEmployeeArtifact from "../artifacts/StreamEmployee.json";
 import {StreamEmployee} from "../typechain/StreamEmployee"
+import exp from "constants";
 
 const {expect} = chai;
 const provider = new MockProvider();
-const [wallet, alice, bob] = provider.getWallets();
+const [wallet, alice] = provider.getWallets();
 
 describe("Stream Employee", () => {
     let streamEmployee: StreamEmployee;
@@ -56,12 +57,32 @@ describe("Stream Employee", () => {
         await expect(streamEmployee.stopWorking()).to.be.reverted;
     });
 
-    // Todo look at fixtures maybe it is easier to preload some data here
+    // Assumption that pay per hour is 10
+    it("Should calculate the amount earned per second", async () => {
+        let payPerSecond = await streamEmployee.payPerSecond().then(parseInt);
+
+        // To get accurate value payPerSecond / 10 ^-18
+        expect(payPerSecond).to.eq(2777777777777777);
+    })
+
     it("Should calculate the total number of hours worked when work ends", async () => {
         await streamEmployee.startWorking();
-        // time is 0 so not that useful
-        await expect(streamEmployee.stopWorking()).to.emit(streamEmployee, "e");
-        // await streamEmployee.hoursWxorked().then(console.log)
 
+        // Wait 10 minutes
+        await provider.send("evm_increaseTime", [3600])
+
+        // Process the block
+        await provider.send("evm_mine", [])
+
+        // await streamEmployee.stopWorking();
+
+        await streamEmployee
+            .timeWorkedInSeconds()
+            .then((timeWorked: bigint) => expect(timeWorked).to.eq(3600))
+
+        let payAccrued = await streamEmployee.payAccrued().then(parseInt)
+
+        // Basically 10
+        expect(payAccrued).to.eq(9999999999999998000);
     });
 });

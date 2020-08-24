@@ -1,6 +1,6 @@
 import {ethers} from "@nomiclabs/buidler";
 import chai from "chai";
-import {deployContract, MockProvider, solidity} from "ethereum-waffle";
+import {deployContract, MockProvider} from "ethereum-waffle";
 
 import StreamCompanyArtifact from "../artifacts/StreamCompany.json";
 import {StreamCompany} from "../typechain/StreamCompany"
