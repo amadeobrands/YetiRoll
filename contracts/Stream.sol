@@ -1,9 +1,7 @@
-pragma solidity ^0.4.0;
+// SPDX-License-Identifier: UNLICENSED
+
+pragma solidity ^0.6.0;
 
 contract Stream {
 
-
-    function Stream(){
-
-    }
 }

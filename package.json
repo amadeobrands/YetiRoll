@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run compile && npm run typechain",
     "compile": "npx buidler compile",
-    "typechain": "npx buidler compile && typechain --outDir typechain --target ethers 'build/*.json'",
+    "typechain": "./node_modules/.bin/typechain --target ethers-v5 --outDir typechain './artifacts/*.json'",
     "test": "npx buidler test"
   },
   "author": "",
