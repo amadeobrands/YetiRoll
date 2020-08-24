@@ -3,9 +3,15 @@
 pragma solidity ^0.6.0;
 
 contract StreamEmployee {
-    uint public test;
+    address public employeeAddress;
+    uint public payPerHour;
+    bool isWorking;
+    uint workStarted;
+    uint totalEarned;
+    uint balance;
 
-    function tester() public {
-
+    constructor(uint _payPerHour, address _employeeAddress) public {
+        payPerHour = _payPerHour;
+        employeeAddress = _employeeAddress;
     }
 }
