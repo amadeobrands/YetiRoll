@@ -6,5 +6,9 @@ typechain:
 compile:
 	npx buidler compile
 
+compile-clean:
+	npx buidler clean
+	npx buidler compile
+
 test:
 	npm run-script test
