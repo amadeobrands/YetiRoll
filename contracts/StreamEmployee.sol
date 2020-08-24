@@ -12,9 +12,6 @@ contract StreamEmployee {
     bool public isWorking;
     uint public workStarted;
 
-    uint public hoursWorked;
-
-    uint totalEarned;
     uint public balance;
 
     modifier workHasNotBegun() {
@@ -38,21 +35,23 @@ contract StreamEmployee {
     }
 
     function stopWorking() public workHasBegun {
+        if (payAccrued() > 0) {
+            calculatePay();
+        }
+
         isWorking = false;
-
-        calculatePay();
-    }
-
-    function getNow() public view returns (uint) {
-        return now;
+        workStarted = 0;
     }
 
     function calculatePay() internal {
-        //
+        balance = balance.add(payAccrued());
     }
 
     function payAccrued() public view returns (uint) {
-        return timeWorkedInSeconds().mul(payPerSecond());
+        if(timeWorkedInSeconds() > 0) {
+            return timeWorkedInSeconds().mul(payPerSecond());
+        }
+        return 0;
     }
 
     function payPerSecond() public view returns (uint) {

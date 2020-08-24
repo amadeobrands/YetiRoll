@@ -5,6 +5,7 @@ import {deployContract, MockProvider} from "ethereum-waffle";
 import StreamEmployeeArtifact from "../artifacts/StreamEmployee.json";
 import {StreamEmployee} from "../typechain/StreamEmployee"
 import exp from "constants";
+import {BigNumber} from "ethers";
 
 const {expect} = chai;
 const provider = new MockProvider();
@@ -65,16 +66,11 @@ describe("Stream Employee", () => {
         expect(payPerSecond).to.eq(2777777777777777);
     })
 
-    it("Should calculate the total number of hours worked when work ends", async () => {
+    it("Should calculate the total pay owed after working for an hour", async () => {
         await streamEmployee.startWorking();
 
         // Wait 10 minutes
-        await provider.send("evm_increaseTime", [3600])
-
-        // Process the block
-        await provider.send("evm_mine", [])
-
-        // await streamEmployee.stopWorking();
+        await wait(3600);
 
         await streamEmployee
             .timeWorkedInSeconds()
@@ -85,4 +81,28 @@ describe("Stream Employee", () => {
         // Basically 10
         expect(payAccrued).to.eq(9999999999999998000);
     });
+
+    it("Should calculate the amount owed for each working block", async () => {
+        await streamEmployee.startWorking();
+        await wait(3600);
+        await streamEmployee.stopWorking();
+
+        await streamEmployee.startWorking();
+        await wait(1800);
+        await streamEmployee.stopWorking();
+
+        let balance = await streamEmployee.balance();
+
+        let expectedBalance = BigNumber.from("0xd02ab486cedbef98");
+
+        expect(balance).to.eq(expectedBalance)
+    });
 });
+
+async function wait(amountOfTimeToWait: number) {
+    // Wait 10 minutes
+    await provider.send("evm_increaseTime", [amountOfTimeToWait])
+
+    // Process the block
+    await provider.send("evm_mine", [])
+}
