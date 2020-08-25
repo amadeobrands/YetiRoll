@@ -59,7 +59,7 @@ describe("Stream Employee", () => {
 
     // Assumption that pay per hour is 10
     it("Should calculate the amount earned per second", async () => {
-        let payPerSecond = await streamEmployee.payPerSecond().then(parseInt);
+        let payPerSecond = await streamEmployee.payPerSecond();
 
         // To get accurate value payPerSecond / 10 ^-18
         expect(payPerSecond).to.eq(2777777777777777);
@@ -73,12 +73,12 @@ describe("Stream Employee", () => {
 
         await streamEmployee
             .timeWorkedInSeconds()
-            .then((timeWorked: bigint) => expect(timeWorked).to.eq(3600))
+            .then(timeWorked => expect(timeWorked).to.eq(3600))
 
-        let payAccrued = await streamEmployee.payAccrued().then(parseInt)
+        let payAccrued = await streamEmployee.payAccrued().then(BigNumber.from)
 
         // Basically 10
-        expect(payAccrued).to.eq(9999999999999998000);
+        expect(payAccrued).to.eq(BigNumber.from("9999999999999997200"));
     });
 
     it("Should calculate the amount owed for each working block", async () => {
@@ -99,7 +99,7 @@ describe("Stream Employee", () => {
 });
 
 async function wait(amountOfTimeToWait: number) {
-    // Wait 10 minutes
+    // Update the clock
     await provider.send("evm_increaseTime", [amountOfTimeToWait])
 
     // Process the block

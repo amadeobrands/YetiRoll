@@ -10,8 +10,6 @@ contract StreamCompany {
 
     mapping(address => StreamEmployee) public employees;
 
-    uint public poolBalance;
-
     receive() external payable {
         topUp();
     }
@@ -27,5 +25,17 @@ contract StreamCompany {
         );
 
         employees[_address] = employee;
+    }
+
+    function getPayment(uint _amount) public {
+        payout(msg.sender, _amount);
+    }
+
+    function payout(address payable _address, uint _amount) internal {
+        StreamEmployee employee = employees[_address];
+        require(employee.balance() >= _amount, "You have not earned enough funds to withdraw that amount");
+        require(address(this).balance >= _amount, "Not enough funds");
+
+        _address.transfer(_amount);
     }
 }
