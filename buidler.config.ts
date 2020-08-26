@@ -2,6 +2,7 @@ import {BuidlerConfig, usePlugin} from "@nomiclabs/buidler/config";
 
 usePlugin("@nomiclabs/buidler-ethers");
 usePlugin("@nomiclabs/buidler-waffle");
+usePlugin('@openzeppelin/buidler-upgrades');
 
 const config: BuidlerConfig = {
     solc: {
