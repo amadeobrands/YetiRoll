@@ -1,29 +1,38 @@
 import React from 'react';
-import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
+import {BigNumber} from "ethers";
+import EmployeeForm from "./EmployeeForm";
+
+const {useCallback} = require("react");
 
 const {useEffect} = require("react");
 
 const {useState} = require("react");
 
 const Company = (props) => {
-    console.log(props.company);
+    let {company, provider} = props;
+
     const [balance, setBalance] = useState(undefined);
 
-    if (undefined === balance) {
+    useEffect(() => {
+        provider.getBalance(company.address).then(BigNumber.from).then(setBalance)
+    }, []);
+
+    if (undefined === provider || undefined === balance) {
         return (
             <div>
-                Awaiting company
+                Awaiting balance
             </div>
         )
     }
 
     return (
-        <Container>
-            <Grid container spacing={2}>
-                {balance}
-            </Grid>
-        </Container>
+        <div>
+            Balance: {balance.toString()}
+            <EmployeeForm
+                company={company}
+                provider={provider}
+            />
+        </div>
     )
 }
 

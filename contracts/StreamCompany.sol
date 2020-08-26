@@ -29,6 +29,7 @@ contract StreamCompany is AccessControl {
     function topUp() public payable {
     }
 
+    // Need to check the employee doesn't exist or we will overwrite it
     function createEmployee(address _address, uint _amount) public onlyEmployer {
         StreamEmployee employee = new StreamEmployee(
             _amount,
