@@ -48,7 +48,7 @@ contract StreamEmployee {
     }
 
     function payAccrued() public view returns (uint) {
-        if(timeWorkedInSeconds() > 0) {
+        if (timeWorkedInSeconds() > 0) {
             return timeWorkedInSeconds().mul(payPerSecond());
         }
 
