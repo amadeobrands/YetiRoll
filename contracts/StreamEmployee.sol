@@ -40,6 +40,7 @@ contract StreamEmployee {
         }
 
         isWorking = false;
+        // setting this to null confuses the calculatePay()
         workStarted = 0;
     }
 

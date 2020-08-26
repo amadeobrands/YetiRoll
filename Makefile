@@ -5,10 +5,11 @@ typechain:
 
 compile:
 	npx buidler compile
+	cp -R artifacts/** app/src/build
 
 compile-clean:
 	npx buidler clean
-	npx buidler compile
+	make compile
 
 test:
 	npm run-script test
