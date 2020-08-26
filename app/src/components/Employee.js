@@ -1,27 +1,38 @@
-import React from "react";
-import {BigNumber} from "ethers";
-
-const {useEffect} = require("react");
-
-const {useState} = require("react");
-
-const {useCallback} = require("react");
-
+import React, {useEffect, useState, useCallback} from "react";
+import {Contract} from "ethers";
+import StreamEmployee from "../build/StreamEmployee.json";
 
 const Employee = (props) => {
-    let {company, provider, alice, employeeAddress} = props;
+    let {company, provider, alice} = props;
 
-    const [employee, setEmployee] = useState(undefined);
+    const [employeeAddress, setEmployeeAddress] = useState(undefined);
+    const [employeeContract, setEmployeeContract] = useState(undefined);
 
     useEffect(() => {
-        if (undefined !== alice) {
-            company.functions.employees(alice).then(console.log)
-        }
+        company.employees(alice).then(setEmployeeAddress)
     }, [alice]);
+
+    useEffect(() => {
+        if(undefined !== employeeAddress) {
+            setEmployeeContract(new Contract(employeeAddress, StreamEmployee.abi, provider));
+        }
+    }, [employeeAddress]);
+
+    const startWorking = async () => {
+        employeeContract.payPerHour().then(console.log)
+    }
 
     return (
         <div>
-
+            <p>Contract address: {employeeAddress}</p>
+            <input type="submit"
+                   onClick={
+                       useCallback(
+                           () => startWorking(),
+                           [employeeContract]
+                       )
+                   }
+            />
         </div>
     )
 

@@ -5,7 +5,7 @@ const EmployeeForm = (props) => {
     let {company, provider} = props;
 
     const [alice, setAlice] = useState(undefined);
-    const [employeeAddress, setEmployeeAddress] = useState(undefined);
+    const [hasEmployee, setHasEmployee] = useState(undefined);
 
     useEffect(() => {
         provider.listAccounts().then(value => value[0]).then(setAlice)
@@ -14,7 +14,11 @@ const EmployeeForm = (props) => {
     const createEmployee = () => {
         company.createEmployee(
             alice, 100
-        ).then(block => setEmployeeAddress(block.to))
+        ).then(block => {
+            if (block.confirmations > 0) {
+                setHasEmployee(true)
+            }
+        })
     }
 
     const displayAddress = () => {
@@ -26,13 +30,12 @@ const EmployeeForm = (props) => {
     }
 
     const displayEmployee = () => {
-        if (undefined !== employeeAddress) {
+        if (undefined !== hasEmployee) {
             return (
                 <Employee
                     company={company}
                     provider={provider}
                     alice={alice}
-                    employeeAddress={employeeAddress}
                 />
             )
         }
