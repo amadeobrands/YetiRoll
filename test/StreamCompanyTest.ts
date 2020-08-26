@@ -14,12 +14,19 @@ describe("Stream Employee", () => {
     const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
     let streamCompany: StreamCompany;
+    let streamCompanyAliceAddress: Contract;
 
     beforeEach(async () => {
         streamCompany = await deployContract(
             wallet,
             StreamCompanyArtifact
         ) as StreamCompany;
+
+        streamCompanyAliceAddress = new Contract(
+            streamCompany.address,
+            StreamCompanyArtifact.abi,
+            alice
+        )
     });
 
     it("It should start the company with a pool balance of 0 and allow top ups", async () => {
@@ -31,27 +38,26 @@ describe("Stream Employee", () => {
         expect(balance).to.eq(1000);
     })
 
-    it("It should allow the creation of new employees", async () => {
+    it("It should allow the creation of new employees given the calling address has EMPLOYER_ROLE", async () => {
         await streamCompany.employees(alice.address).then(
             address => expect(address).to.eq(NULL_ADDRESS)
         );
 
-        let hourlyRate = 100;
-
-        await streamCompany.createEmployee(alice.address, hourlyRate);
+        await streamCompany.createEmployee(alice.address, 1);
 
         await streamCompany.employees(alice.address).then(
             address => expect(address).to.not.eq(NULL_ADDRESS)
         );
     })
+    it("It should disallow the creation of new employees if the calling address does not have the EMPLOYER_ROLE", async () => {
+        await streamCompany.employees(alice.address).then(
+            address => expect(address).to.eq(NULL_ADDRESS)
+        );
+
+        await expect(streamCompanyAliceAddress.createEmployee(alice.address, 100)).to.be.reverted;
+    })
 
     it("It should only allow withdrawal if there is sufficient balance in the pool", async () => {
-        const streamCompanyAliceAddress = new Contract(
-            streamCompany.address,
-            StreamCompanyArtifact.abi,
-            alice
-        )
-
         await streamCompany.createEmployee(alice.address, 100);
 
         // Alice has earned no money nor is there any balance

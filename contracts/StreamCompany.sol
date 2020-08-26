@@ -4,11 +4,23 @@ pragma solidity ^0.6.0;
 
 import "./StreamEmployee.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract StreamCompany {
+contract StreamCompany is AccessControl {
     using SafeMath for uint;
 
+    bytes32 public constant EMPLOYER_ROLE = keccak256("EMPLOYER_ROLE");
+
+    modifier onlyEmployer() {
+        require(hasRole(EMPLOYER_ROLE, msg.sender));
+        _;
+    }
+
     mapping(address => StreamEmployee) public employees;
+
+    constructor() public {
+        _setupRole(EMPLOYER_ROLE, msg.sender);
+    }
 
     receive() external payable {
         topUp();
@@ -17,8 +29,7 @@ contract StreamCompany {
     function topUp() public payable {
     }
 
-    // todo only owner
-    function createEmployee(address _address, uint _amount) public {
+    function createEmployee(address _address, uint _amount) public onlyEmployer {
         StreamEmployee employee = new StreamEmployee(
             _amount,
             _address

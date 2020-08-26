@@ -8,7 +8,7 @@ async function main() {
     const Stream = await ethers.getContractFactory("Stream");
     console.log("Deploying Stream...");
     const stream = await upgrades.deployProxy(Stream, [42], { initializer: 'store' });
-    console.log("Box deployed to:", stream.address);
+    console.log("Stream deployed to:", stream.address);
 }
 
 main();
