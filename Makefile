@@ -1,4 +1,4 @@
-.PHONY : typechain compile test
+.PHONY : typechain compile test compile-clean console run deploy
 
 typechain:
 	./node_modules/.bin/typechain --target ethers-v5 --outDir typechain './artifacts/*.json'
@@ -13,3 +13,9 @@ compile-clean:
 
 test:
 	npm run-script test
+
+run-node:
+	@npx buidler node
+
+deploy:
+	npx buidler run deployTest.ts

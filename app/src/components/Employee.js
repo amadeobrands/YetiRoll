@@ -48,8 +48,9 @@ const Employee = (props) => {
         if (isWorking) {
             return (
                 <div>
-                    Pay per second {payPerSecond.toString()}
-                    Balance {utils.formatEther(balanceEarned.toString())}
+                    <p>Pay per second {payPerSecond.toString()}</p>
+                    <p>Time worked {seconds}</p>
+                    <p>Balance {utils.formatEther(balanceEarned.toString())}</p>
                 </div>
             )
         }
