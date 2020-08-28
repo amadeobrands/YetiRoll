@@ -5,6 +5,7 @@ pragma solidity ^0.6.0;
 import "./StreamEmployee.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract StreamCompany is AccessControl {
     using SafeMath for uint;
