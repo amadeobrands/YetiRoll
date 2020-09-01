@@ -70,9 +70,15 @@ describe("Payment Stream", () => {
             startTime
         );
 
-        const stream = await paymentStream.getPausableStream(1);
+        let stream = await paymentStream.getPausableStream(1)
 
-        paymentStream.pauseStream(1);
+        expect(stream.isActive).to.eq(true)
+
+        await paymentStream.pauseStream(1);
+
+        stream = await paymentStream.getPausableStream(1)
+
+        expect(stream.isActive).to.eq(false)
     });
 
     function createPausableStream(deposit: BigNumber, token: MockErc20, startTime: number) {

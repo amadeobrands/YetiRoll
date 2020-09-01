@@ -11,7 +11,7 @@ import "./Sablier.sol";
 contract PaymentStream {
     using SafeMath for uint;
 
-    // __  __           _ _  __ _
+    //  __  __           _ _  __ _
     // |  \/  |         | (_)/ _(_)
     // | \  / | ___   __| |_| |_ _  ___ _ __
     // | |\/| |/ _ \ / _` | |  _| |/ _ \ '__|
@@ -44,7 +44,7 @@ contract PaymentStream {
     }
 
     //
-    // ______               _
+    //  ______               _
     // |  ____|             | |
     // | |____   _____ _ __ | |_ ___
     // |  __\ \ / / _ \ '_ \| __/ __|
@@ -116,7 +116,7 @@ contract PaymentStream {
         ratePerSecond = streams[streamId].ratePerSecond;
     }
 
-    // ______  __  __          _
+    //  ______  __  __          _
     // |  ____|/ _|/ _|        | |
     // | |__  | |_| |_ ___  ___| |_ ___
     // |  __| |  _|  _/ _ \/ __| __/ __|
@@ -201,7 +201,6 @@ contract PaymentStream {
     function pauseStream(uint _streamId) public streamIsPausable(_streamId) {
         pausableStreams[_streamId].isActive = false;
     }
-
 
     //  _____       _                        _  __      ___
     // |_   _|     | |                      | | \ \    / (_)
