@@ -8,6 +8,16 @@ import "./lib/Types.sol";
 import "./Sablier.sol";
 
 contract PaymentStream is Sablier {
+
+    modifier baseStreamRequirements(address recipient, uint deposit, uint startTime) {
+        require(recipient != address(0x00), "stream to the zero address");
+        require(recipient != address(this), "stream to the contract itself");
+        require(recipient != msg.sender, "stream to the caller");
+        require(deposit > 0, "deposit is zero");
+        require(startTime >= block.timestamp, "start time before block.timestamp");
+        _;
+    }
+
     event PausableStreamCreated(
         uint id,
         uint startTime,
@@ -29,7 +39,6 @@ contract PaymentStream is Sablier {
     //         | |__| |  __/ |_| ||  __/ |  \__ \
     //          \_____|\___|\__|\__\___|_|  |___/
     //
-
     function getPausableStream(
         uint _streamId
     ) external view returns (
@@ -55,7 +64,11 @@ contract PaymentStream is Sablier {
         address _tokenAddress,
         uint256 _startTime,
         uint256 _stopTime
-    ) public override returns (uint256 streamId) {
+    ) public override
+    baseStreamRequirements(_recipient, _deposit, _startTime)
+    returns (uint256 streamId) {
+        require(isNonZeroLengthStream(_startTime, _stopTime), "Stream must last a least a second");
+
         uint streamId = super.createStream(
             _recipient,
             _deposit,
@@ -73,7 +86,9 @@ contract PaymentStream is Sablier {
         address _ercTokenAddress,
         uint _duration,
         uint _startTime
-    ) public payable returns (uint _streamId){
+    ) public payable
+    baseStreamRequirements(_recipient, _deposit, _startTime)
+    returns (uint _streamId){
         uint streamId = nextStreamId;
         uint ratePerSecond = _ratePerSecond(_deposit, _duration);
         uint stopTime = _startTime.add(_duration);
@@ -87,15 +102,6 @@ contract PaymentStream is Sablier {
             true
         );
 
-
-        //        this.createStream(
-        //            _recipient,
-        //            _deposit,
-        //            _ercTokenAddress,
-        //            _startTime,
-        //            stopTime
-        //        );
-
         pausableStreams[streamId] = Types.PausableStream({
         duration : _duration,
         durationElapsed : 0,
@@ -107,5 +113,9 @@ contract PaymentStream is Sablier {
 
     function _ratePerSecond(uint _deposit, uint _duration) internal view returns (uint) {
         return _deposit.div(_duration);
+    }
+
+    function isNonZeroLengthStream(uint _startTime, uint _stopTime) internal view returns (bool) {
+        return _stopTime.sub(_startTime) > 0;
     }
 }

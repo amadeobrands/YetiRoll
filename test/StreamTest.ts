@@ -15,6 +15,7 @@ const [alice, bob] = provider.getWallets();
 
 describe("Payment Stream", () => {
     const oneHour = 3600;
+    const oneEther = BigNumber.from(10).pow(18);
 
     let paymentStream: PaymentStream;
     let token: MockErc20;
@@ -62,11 +63,13 @@ describe("Payment Stream", () => {
         await token.mint(alice.address, 10000000);
         await token.approve(paymentStream.address, 10000000);
 
-        // 10 dai
-        let deposit = BigNumber.from(10).pow(18);
+        // 36 dai
+        let deposit = BigNumber.from(36).mul(oneEther);
+
         let startTime = timestamp + 100;
 
-        let ratePerSecond = BigNumber.from(277777777777777);
+        // 0.01 dai per second
+        let ratePerSecond = BigNumber.from(1).mul(oneEther).div(100);
 
         await expect(paymentStream.createPausableStream(
             bob.address,
