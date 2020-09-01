@@ -2,46 +2,47 @@ import chai from "chai";
 
 import {deployContract, deployMockContract, MockProvider} from "ethereum-waffle";
 
-import IERC20 from "../artifacts/IERC20.json";
 import PaymentStreamArtifact from "../artifacts/PaymentStream.json";
-import {} from "../artifacts/Types.json";
+import MockERC20Artifact from "../artifacts/MockERC20.json";
 import {PaymentStream} from "../typechain/PaymentStream"
+import {MockErc20} from "../typechain/MockErc20"
+import {Contract} from "ethers";
+import StreamCompanyArtifact from "../artifacts/StreamCompany.json";
 
 const {expect} = chai;
 
 const provider = new MockProvider();
-const [wallet, alice] = provider.getWallets();
+const [alice, bob] = provider.getWallets();
 
-describe("Stream Employee", () => {
+describe("Payment Stream", () => {
     const ERC_20_ADDRESS = "0x6b175474e89094c44da98b954eedeac495271d0f";
     let paymentStream: PaymentStream;
-
-    async function setup() {
-        const mockErc20 = await deployMockContract(wallet, IERC20.abi);
-        await mockErc20.mock.address.returns(ERC_20_ADDRESS);
-
-        console.log(mockErc20)
-        return {mockErc20}
-
-        // const {mockErc20} = await setup();
-
-    }
-
+    let token: MockErc20;
 
     beforeEach(async () => {
-        paymentStream = await deployContract(wallet, PaymentStreamArtifact) as PaymentStream;
+        token = await deployContract(
+            alice,
+            MockERC20Artifact, ["MOCK", "MOCK"]
+        ) as MockErc20;
+        paymentStream = await deployContract(alice, PaymentStreamArtifact) as PaymentStream;
     });
 
     it("Should allow creation of a stream", async () => {
-        await paymentStream.createPausableStream(
-            alice.address,
-            100000,
-            600,
-            ERC_20_ADDRESS
-        );
+        const blockId = await provider.getBlockNumber();
+        const {timestamp} = await provider.getBlock(blockId)
+        await token.mint(alice.address, 10000000);
+        await token.approve(paymentStream.address, 10000000);
 
-        const stream = await paymentStream.pausableStreams(alice.address, 0)
+        const streamId = await paymentStream.createStream(
+            bob.address,
+            10000,
+            token.address,
+            timestamp + 100,
+            timestamp + 1100
+        )
 
-        console.log(stream)
+        // const stream = await paymentStream.getStream(streamId)
+        //
+        // console.log(stream)
     });
 });

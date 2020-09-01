@@ -1,13 +1,13 @@
-pragma solidity 0.5.11;
+// SPDX-License-Identifier:
 
-import "@openzeppelin/contracts/lifecycle/Pausable.sol";
-import "@openzeppelin/contracts/ownership/Ownable.sol";
+pragma solidity ^0.6.0;
+
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 import "./compound/Exponential.sol";
 import "./interface/IERC1620.sol";
-import "./Types.sol";
 import "./lib/Types.sol";
 
 
@@ -67,14 +67,9 @@ contract Sablier is IERC1620, Exponential, ReentrancyGuard {
 
     /*** View Functions ***/
 
-    /**
-     * @notice Returns the compounding stream with all its properties.
-     * @dev Throws if the id does not point to a valid stream.
-     * @param streamId The id of the stream to query.
-     * @return The stream object.
-     */
     function getStream(uint256 streamId)
     external
+    override
     view
     streamExists(streamId)
     returns (
@@ -98,14 +93,6 @@ contract Sablier is IERC1620, Exponential, ReentrancyGuard {
         ratePerSecond = streams[streamId].ratePerSecond;
     }
 
-    /**
-     * @notice Returns either the delta in seconds between `block.timestamp` and `startTime` or
-     *  between `stopTime` and `startTime, whichever is smaller. If `block.timestamp` is before
-     *  `startTime`, it returns 0.
-     * @dev Throws if the id does not point to a valid stream.
-     * @param streamId The id of the stream for which to query the delta.
-     * @return The time delta in seconds.
-     */
     function deltaOf(uint256 streamId) public view streamExists(streamId) returns (uint256 delta) {
         Types.Stream memory stream = streams[streamId];
         if (block.timestamp <= stream.startTime) return 0;
@@ -120,14 +107,7 @@ contract Sablier is IERC1620, Exponential, ReentrancyGuard {
         uint256 senderBalance;
     }
 
-    /**
-     * @notice Returns the available funds for the given stream id and address.
-     * @dev Throws if the id does not point to a valid stream.
-     * @param streamId The id of the stream for which to query the balance.
-     * @param who The address for which to query the balance.
-     * @return The total funds allocated to `who` as uint256.
-     */
-    function balanceOf(uint256 streamId, address who) public view streamExists(streamId) returns (uint256 balance) {
+    function balanceOf(uint256 streamId, address who) public override view streamExists(streamId) returns (uint256 balance) {
         Types.Stream memory stream = streams[streamId];
         BalanceOfLocalVars memory vars;
 
@@ -166,31 +146,13 @@ contract Sablier is IERC1620, Exponential, ReentrancyGuard {
         uint256 ratePerSecond;
     }
 
-    /**
-     * @notice Creates a new stream funded by `msg.sender` and paid towards `recipient`.
-     * @dev Throws if paused.
-     *  Throws if the recipient is the zero address, the contract itself or the caller.
-     *  Throws if the deposit is 0.
-     *  Throws if the start time is before `block.timestamp`.
-     *  Throws if the stop time is before the start time.
-     *  Throws if the duration calculation has a math error.
-     *  Throws if the deposit is smaller than the duration.
-     *  Throws if the deposit is not a multiple of the duration.
-     *  Throws if the rate calculation has a math error.
-     *  Throws if the next stream id calculation has a math error.
-     *  Throws if the contract is not allowed to transfer enough tokens.
-     *  Throws if there is a token transfer failure.
-     * @param recipient The address towards which the money is streamed.
-     * @param deposit The amount of money to be streamed.
-     * @param tokenAddress The ERC20 token to use as streaming currency.
-     * @param startTime The unix timestamp for when the stream starts.
-     * @param stopTime The unix timestamp for when the stream stops.
-     * @return The uint256 id of the newly created stream.
-     */
-    function createStream(address recipient, uint256 deposit, address tokenAddress, uint256 startTime, uint256 stopTime)
-    public
-    returns (uint256)
-    {
+    function createStream(
+        address recipient,
+        uint256 deposit,
+        address tokenAddress,
+        uint256 startTime,
+        uint256 stopTime
+    ) public virtual override returns (uint256) {
         require(recipient != address(0x00), "stream to the zero address");
         require(recipient != address(this), "stream to the contract itself");
         require(recipient != msg.sender, "stream to the caller");
@@ -230,7 +192,6 @@ contract Sablier is IERC1620, Exponential, ReentrancyGuard {
         /* Increment the next stream id. */
         (vars.mathErr, nextStreamId) = addUInt(nextStreamId, uint256(1));
         require(vars.mathErr == MathError.NO_ERROR, "next stream id calculation error");
-
         require(IERC20(tokenAddress).transferFrom(msg.sender, address(this), deposit), "token transfer failure");
         emit CreateStream(streamId, msg.sender, recipient, deposit, tokenAddress, startTime, stopTime);
         return streamId;
@@ -240,18 +201,9 @@ contract Sablier is IERC1620, Exponential, ReentrancyGuard {
         MathError mathErr;
     }
 
-    /**
-     * @notice Withdraws from the contract to the recipient's account.
-     * @dev Throws if the id does not point to a valid stream.
-     *  Throws if the caller is not the sender or the recipient of the stream.
-     *  Throws if the amount exceeds the available balance.
-     *  Throws if there is a token transfer failure.
-     * @param streamId The id of the stream to withdraw tokens from.
-     * @param amount The amount of tokens to withdraw.
-     * @return bool true=success, otherwise false.
-     */
     function withdrawFromStream(uint256 streamId, uint256 amount)
     external
+    override
     nonReentrant
     streamExists(streamId)
     onlySenderOrRecipient(streamId)
@@ -279,16 +231,9 @@ contract Sablier is IERC1620, Exponential, ReentrancyGuard {
         return true;
     }
 
-    /**
-     * @notice Cancels the stream and transfers the tokens back on a pro rata basis.
-     * @dev Throws if the id does not point to a valid stream.
-     *  Throws if the caller is not the sender or the recipient of the stream.
-     *  Throws if there is a token transfer failure.
-     * @param streamId The id of the stream to cancel.
-     * @return bool true=success, otherwise false.
-     */
     function cancelStream(uint256 streamId)
     external
+    override
     nonReentrant
     streamExists(streamId)
     onlySenderOrRecipient(streamId)

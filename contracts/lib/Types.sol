@@ -12,6 +12,7 @@ library Types {
 
     struct Stream {
         uint256 startTime;
+        uint256 stopTime;
         uint256 deposit;
         uint256 ratePerSecond;
         uint256 remainingBalance;
@@ -19,11 +20,7 @@ library Types {
         address tokenAddress;
         bool isEntity;
         address recipient;
-        StreamType type;
-    }
-
-    struct FixedDurationStream {
-        uint256 stopTime;
+//        StreamType streamType;
     }
 
     struct PausableStream {
