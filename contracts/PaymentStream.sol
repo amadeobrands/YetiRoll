@@ -7,9 +7,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./lib/Types.sol";
 import "./Sablier.sol";
 
+//http://patorjk.com/software/taag/#p=display&f=Big&t=View
 contract PaymentStream {
     using SafeMath for uint;
 
+    // __  __           _ _  __ _
+    // |  \/  |         | (_)/ _(_)
+    // | \  / | ___   __| |_| |_ _  ___ _ __
+    // | |\/| |/ _ \ / _` | |  _| |/ _ \ '__|
+    // | |  | | (_) | (_| | | | | |  __/ |
+    // |_|  |_|\___/ \__,_|_|_| |_|\___|_|
     modifier baseStreamRequirements(
         address _recipient,
         uint _deposit,
@@ -36,6 +43,13 @@ contract PaymentStream {
         _;
     }
 
+    //
+    // ______               _
+    // |  ____|             | |
+    // | |____   _____ _ __ | |_ ___
+    // |  __\ \ / / _ \ '_ \| __/ __|
+    // | |___\ V /  __/ | | | |_\__ \
+    // |______\_/ \___|_| |_|\__|___/
     event PausableStreamCreated(
         uint id,
         uint startTime,
@@ -53,13 +67,12 @@ contract PaymentStream {
         nextStreamId = 1;
     }
 
-    //     _____      _   _
-    //    / ____|    | | | |
-    //   | |  __  ___| |_| |_ ___ _ __ ___
-    //   | | |_ |/ _ \ __| __/ _ \ '__/ __|
-    //   | |__| |  __/ |_| ||  __/ |  \__ \
-    //    \_____|\___|\__|\__\___|_|  |___/
-    //
+    //  __      ___
+    //  \ \    / (_)
+    //   \ \  / / _  _____      __
+    //    \ \/ / | |/ _ \ \ /\ / /
+    //     \  /  | |  __/\ V  V /
+    //      \/   |_|\___| \_/\_/
     function getPausableStream(
         uint _streamId
     ) external view returns (
@@ -103,6 +116,12 @@ contract PaymentStream {
         ratePerSecond = streams[streamId].ratePerSecond;
     }
 
+    // ______  __  __          _
+    // |  ____|/ _|/ _|        | |
+    // | |__  | |_| |_ ___  ___| |_ ___
+    // |  __| |  _|  _/ _ \/ __| __/ __|
+    // | |____| | | ||  __/ (__| |_\__ \
+    // |______|_| |_| \___|\___|\__|___/
     function createStream(
         address _recipient,
         uint256 _deposit,
@@ -183,6 +202,13 @@ contract PaymentStream {
         pausableStreams[_streamId].isActive = false;
     }
 
+
+    //  _____       _                        _  __      ___
+    // |_   _|     | |                      | | \ \    / (_)
+    //   | |  _ __ | |_ ___ _ __ _ __   __ _| |  \ \  / / _  _____      _____
+    //   | | | '_ \| __/ _ \ '__| '_ \ / _` | |   \ \/ / | |/ _ \ \ /\ / / __|
+    //  _| |_| | | | ||  __/ |  | | | | (_| | |    \  /  | |  __/\ V  V /\__ \
+    // |_____|_| |_|\__\___|_|  |_| |_|\__,_|_|     \/   |_|\___| \_/\_/ |___/
     function _isStreamPausable(uint _streamId) internal view returns (bool) {
         return Types.StreamType.PausableStream == streams[_streamId].streamType;
     }
