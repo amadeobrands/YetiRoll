@@ -20,7 +20,7 @@ library Types {
         address tokenAddress;
         bool isEntity;
         address recipient;
-//        StreamType streamType;
+        //        StreamType streamType;
     }
 
     struct PausableStream {

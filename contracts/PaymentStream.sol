@@ -8,62 +8,104 @@ import "./lib/Types.sol";
 import "./Sablier.sol";
 
 contract PaymentStream is Sablier {
+    event PausableStreamCreated(
+        uint id,
+        uint startTime,
+        uint deposit,
+        uint duration,
+        uint ratePerSecond,
+        bool isActive
+    );
+
     using SafeMath for uint;
 
     mapping(uint256 => Types.PausableStream) private pausableStreams;
 
-    function createStream(
-        address recipient,
-        uint256 deposit,
-        address tokenAddress,
-        uint256 startTime,
-        uint256 stopTime
-    ) public override returns (uint256 streamId) {
-       return super.createStream(
-            recipient,
-            deposit,
-            tokenAddress,
-            startTime,
-            stopTime
+
+    //           _____      _   _
+    //          / ____|    | | | |
+    //         | |  __  ___| |_| |_ ___ _ __ ___
+    //         | | |_ |/ _ \ __| __/ _ \ '__/ __|
+    //         | |__| |  __/ |_| ||  __/ |  \__ \
+    //          \_____|\___|\__|\__\___|_|  |___/
+    //
+
+    function getPausableStream(
+        uint _streamId
+    ) external view returns (
+        uint256 duration,
+        uint256 durationElapsed,
+        uint256 durationRemaining,
+        bool isActive
+    ) {
+        Types.PausableStream memory stream = pausableStreams[_streamId];
+
+        return (
+        stream.duration,
+        stream.durationElapsed,
+        stream.duration.sub(stream.durationElapsed),
+        stream.isActive
         );
     }
 
-    //    function createPausableStream(
-    //        address _recipient,
-    //        uint _amount,
-    //        uint _duration,
-    //        address _ercTokenAddress
-    //    ) public payable {
-    //        uint ratePerSecond = ratePerSecond();
-    //        pausableStreams[nextStreamId] = Types.PausableStream(
-    //            msg.value,
-    //            msg.value,
-    //            _duration,
-    //            0,
-    //            false,
-    //            _recipient,
-    //            msg.sender,
-    //            _ercTokenAddress
-    //        );
-    //    }
-    //
-    //    function ratePerSecond(uint _amountInWei, uint _duration) internal view returns (uint) {
-    //        uint amountPerSecond = _amount.div(_duration);
-    //
-    //        uint hourly = payPerHour.mul(10 ** 18);
-    //        uint minutely = hourly.div(60);
-    //        return minutely.div(60);
-    //    }
-    //
-    //    function getStream(uint256 streamId)
-    //    external
-    //    view
-    //    streamExists(streamId)
-    //    returns (
-    //        uint256 ratePerSecond
-    //    )
-    //    {
-    //        return streams[streamId].ratePerSecond;
-    //    }
 
+    function createStream(
+        address _recipient,
+        uint256 _deposit,
+        address _tokenAddress,
+        uint256 _startTime,
+        uint256 _stopTime
+    ) public override returns (uint256 streamId) {
+        uint streamId = super.createStream(
+            _recipient,
+            _deposit,
+            _tokenAddress,
+            _startTime,
+            _stopTime
+        );
+
+        return streamId;
+    }
+
+    function createPausableStream(
+        address _recipient,
+        uint _deposit,
+        address _ercTokenAddress,
+        uint _duration,
+        uint _startTime
+    ) public payable returns (uint _streamId){
+        uint streamId = nextStreamId;
+        uint ratePerSecond = _ratePerSecond(_deposit, _duration);
+        uint stopTime = _startTime.add(_duration);
+
+        emit PausableStreamCreated(
+            streamId,
+            _startTime,
+            _deposit,
+            _duration,
+            ratePerSecond,
+            true
+        );
+
+
+        //        this.createStream(
+        //            _recipient,
+        //            _deposit,
+        //            _ercTokenAddress,
+        //            _startTime,
+        //            stopTime
+        //        );
+
+        pausableStreams[streamId] = Types.PausableStream({
+        duration : _duration,
+        durationElapsed : 0,
+        isActive : true
+        });
+
+        return streamId;
+    }
+
+    function _ratePerSecond(uint _deposit, uint _duration) internal view returns (uint) {
+        return _deposit.div(_duration);
+    }
 }
