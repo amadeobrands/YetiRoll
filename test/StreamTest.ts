@@ -57,41 +57,4 @@ describe("Payment Stream", () => {
         expect(stream.startTime).to.eq(startTime);
         expect(stream.stopTime).to.eq(stopTime);
     });
-
-    it("Should create a pausable stream", async () => {
-        const {timestamp} = await provider.getBlock(blockId)
-        await token.mint(alice.address, 10000000);
-        await token.approve(paymentStream.address, 10000000);
-
-        // 36 dai
-        let deposit = BigNumber.from(36).mul(oneEther);
-
-        let startTime = timestamp + 100;
-
-        // 0.01 dai per second
-        let ratePerSecond = BigNumber.from(1).mul(oneEther).div(100);
-
-        await expect(paymentStream.createPausableStream(
-            bob.address,
-            deposit.toString(),
-            token.address,
-            oneHour,
-            startTime
-        )).to.emit(paymentStream, "PausableStreamCreated")
-            .withArgs(
-                1,
-                startTime,
-                deposit,
-                oneHour,
-                ratePerSecond,
-                true
-            );
-
-        // todo get the id from stream creation
-        const stream = await paymentStream.getPausableStream(1);
-
-        expect(stream.duration).to.eq(oneHour);
-        expect(stream.durationElapsed).to.eq(0);
-        expect(stream.durationRemaining).to.eq(oneHour);
-    });
 });

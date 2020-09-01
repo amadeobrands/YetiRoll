@@ -10,17 +10,29 @@ import "./Sablier.sol";
 contract PaymentStream {
     using SafeMath for uint;
 
-    modifier baseStreamRequirements(address recipient, uint deposit, uint startTime) {
-        require(recipient != address(0x00), "stream to the zero address");
-        require(recipient != address(this), "stream to the contract itself");
-        require(recipient != msg.sender, "stream to the caller");
-        require(deposit > 0, "deposit is zero");
-        require(startTime >= block.timestamp, "start time before block.timestamp");
+    modifier baseStreamRequirements(
+        address _recipient,
+        uint _deposit,
+        uint _startTime
+    ) {
+        require(_recipient != address(0x00), "stream to the zero address");
+        require(_recipient != address(this), "stream to the contract itself");
+        require(_recipient != msg.sender, "stream to the caller");
+        require(_deposit > 0, "deposit is zero");
+        require(_startTime >= block.timestamp, "start time before block.timestamp");
         _;
     }
 
-    modifier streamExists(uint256 streamId) {
-        require(streams[streamId].isEntity, "Stream does not exist");
+    modifier streamExists(uint256 _streamId) {
+        require(streams[_streamId].isEntity, "Stream does not exist");
+        _;
+    }
+
+    modifier streamIsPausable(uint256 _streamId) {
+        require(
+            _isStreamPausable(_streamId),
+            "Cannot pause a stream of this type"
+        );
         _;
     }
 
@@ -33,7 +45,6 @@ contract PaymentStream {
         bool isActive
     );
 
-
     mapping(uint256 => Types.Stream) private streams;
     mapping(uint256 => Types.PausableStream) private pausableStreams;
     uint256 public nextStreamId;
@@ -42,13 +53,12 @@ contract PaymentStream {
         nextStreamId = 1;
     }
 
-
-    //           _____      _   _
-    //          / ____|    | | | |
-    //         | |  __  ___| |_| |_ ___ _ __ ___
-    //         | | |_ |/ _ \ __| __/ _ \ '__/ __|
-    //         | |__| |  __/ |_| ||  __/ |  \__ \
-    //          \_____|\___|\__|\__\___|_|  |___/
+    //     _____      _   _
+    //    / ____|    | | | |
+    //   | |  __  ___| |_| |_ ___ _ __ ___
+    //   | | |_ |/ _ \ __| __/ _ \ '__/ __|
+    //   | |__| |  __/ |_| ||  __/ |  \__ \
+    //    \_____|\___|\__|\__\___|_|  |___/
     //
     function getPausableStream(
         uint _streamId
@@ -93,7 +103,6 @@ contract PaymentStream {
         ratePerSecond = streams[streamId].ratePerSecond;
     }
 
-
     function createStream(
         address _recipient,
         uint256 _deposit,
@@ -113,13 +122,14 @@ contract PaymentStream {
         streams[streamId] = Types.Stream({
         remainingBalance : _deposit,
         deposit : _deposit,
-        isEntity : true,
         ratePerSecond : ratePerSecond,
         recipient : _recipient,
         sender : msg.sender,
         startTime : _startTime,
         stopTime : _stopTime,
-        tokenAddress : _tokenAddress
+        tokenAddress : _tokenAddress,
+        isEntity : true,
+        streamType : Types.StreamType.FixedTimeStream
         });
 
         return streamId;
@@ -128,7 +138,7 @@ contract PaymentStream {
     function createPausableStream(
         address _recipient,
         uint _deposit,
-        address _ercTokenAddress,
+        address _tokenAddress,
         uint _duration,
         uint _startTime
     ) public payable
@@ -137,6 +147,19 @@ contract PaymentStream {
         uint streamId = nextStreamId;
         uint ratePerSecond = _ratePerSecond(_deposit, _duration);
         uint stopTime = _startTime.add(_duration);
+
+        streams[streamId] = Types.Stream({
+        remainingBalance : _deposit,
+        deposit : _deposit,
+        ratePerSecond : ratePerSecond,
+        recipient : _recipient,
+        sender : msg.sender,
+        startTime : _startTime,
+        stopTime : 0,
+        tokenAddress : _tokenAddress,
+        isEntity : true,
+        streamType : Types.StreamType.PausableStream
+        });
 
         emit PausableStreamCreated(
             streamId,
@@ -154,6 +177,14 @@ contract PaymentStream {
         });
 
         return streamId;
+    }
+
+    function pauseStream(uint _streamId) public streamIsPausable(_streamId) {
+        pausableStreams[_streamId].isActive = false;
+    }
+
+    function _isStreamPausable(uint _streamId) internal view returns (bool) {
+        return Types.StreamType.PausableStream == streams[_streamId].streamType;
     }
 
     function _ratePerSecond(uint _deposit, uint _duration) internal view returns (uint) {

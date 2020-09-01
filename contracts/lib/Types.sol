@@ -5,7 +5,7 @@ pragma solidity ^0.6.0;
 library Types {
 
     enum StreamType {
-        FixedDurationStream,
+        FixedTimeStream,
         PausableStream,
         SplitStream
     }
@@ -20,7 +20,7 @@ library Types {
         address tokenAddress;
         bool isEntity;
         address recipient;
-        //        StreamType streamType;
+        StreamType streamType;
     }
 
     struct PausableStream {

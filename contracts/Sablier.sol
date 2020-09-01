@@ -186,7 +186,8 @@ contract Sablier is IERC1620, Exponential, ReentrancyGuard {
         sender : msg.sender,
         startTime : startTime,
         stopTime : stopTime,
-        tokenAddress : tokenAddress
+        tokenAddress : tokenAddress,
+        streamType : Types.StreamType.PausableStream
         });
 
         /* Increment the next stream id. */
