@@ -7,7 +7,7 @@ import {PaymentStream} from "../typechain/PaymentStream"
 import {MockErc20} from "../typechain/MockErc20"
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20} from "./helpers/contract";
+import {deployErc20, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -60,10 +60,7 @@ describe("Payment Stream", () => {
         expect(stream.durationRemaining).to.eq(oneHour);
     });
 
-    it("Should calculate an accurate amount of money paid from a running stream over 10 minutes", async () => {
-        // 0.01 dai per second
-        let ratePerSecond = BigNumber.from(1).mul(oneEther).div(100);
-
+    it("Should allow a stream to be started and paused", async () => {
         await createPausableStream(
             deposit,
             token,
@@ -79,6 +76,25 @@ describe("Payment Stream", () => {
         stream = await paymentStream.getPausableStream(1)
 
         expect(stream.isActive).to.eq(false)
+    });
+
+    it("Should calculate an accurate amount of money paid from a running stream over 10 minutes", async () => {
+        await createPausableStream(
+            deposit,
+            token,
+            startTime
+        );
+
+        let pausedStream = await paymentStream.getPausableStream(1);
+
+        // console.log(pausedStream);
+
+        await wait(1800, provider);
+        // pausedStream = await paymentStream.getPausableStream(1);
+
+
+        console.log(pausedStream);
+
     });
 
     function createPausableStream(deposit: BigNumber, token: MockErc20, startTime: number) {

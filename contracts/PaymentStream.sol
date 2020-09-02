@@ -17,28 +17,44 @@ contract PaymentStream {
     // | |\/| |/ _ \ / _` | |  _| |/ _ \ '__|
     // | |  | | (_) | (_| | | | | |  __/ |
     // |_|  |_|\___/ \__,_|_|_| |_|\___|_|
-    modifier baseStreamRequirements(
+    modifier _baseStreamRequirements(
         address _recipient,
         uint _deposit,
         uint _startTime
     ) {
-        require(_recipient != address(0x00), "stream to the zero address");
-        require(_recipient != address(this), "stream to the contract itself");
-        require(_recipient != msg.sender, "stream to the caller");
-        require(_deposit > 0, "deposit is zero");
-        require(_startTime >= block.timestamp, "start time before block.timestamp");
+        require(_recipient != address(0x00), "Cannot start a stream to the 0x address");
+        require(_recipient != address(this), "Cannot start a stream to the stream contract");
+        require(_recipient != msg.sender, "Cannot start a stream to yourself");
+        require(_deposit > 0, "Cannot start a stream with 0 balance");
+        require(_startTime >= block.timestamp, "Cannot start a stream in the past");
         _;
     }
 
-    modifier streamExists(uint256 _streamId) {
+    modifier _streamExists(uint256 _streamId) {
         require(streams[_streamId].isEntity, "Stream does not exist");
         _;
     }
 
-    modifier streamIsPausable(uint256 _streamId) {
+    modifier _streamIsPausable(uint256 _streamId) {
         require(
             _isStreamPausable(_streamId),
             "Cannot pause a stream of this type"
+        );
+        _;
+    }
+
+    modifier _streamIsActive(uint256 _streamId) {
+        require(
+            _isStreamActive(_streamId),
+            "Stream is not running"
+        );
+        _;
+    }
+
+    modifier _streamIsPaused(uint256 _streamId) {
+        require(
+            false == _isStreamActive(_streamId),
+            "Stream is running"
         );
         _;
     }
@@ -75,26 +91,88 @@ contract PaymentStream {
     //      \/   |_|\___| \_/\_/
     function getPausableStream(
         uint _streamId
-    ) external view returns (
+    ) external view
+    returns (
         uint256 duration,
         uint256 durationElapsed,
         uint256 durationRemaining,
         bool isActive
-    ) {
-        Types.PausableStream memory stream = pausableStreams[_streamId];
+    )
+    {
+        Types.PausableStream memory pausableStream = pausableStreams[_streamId];
+        Types.Stream memory stream = streams[_streamId];
 
-        return (
-        stream.duration,
-        stream.durationElapsed,
-        stream.duration.sub(stream.durationElapsed),
-        stream.isActive
-        );
+        // Different cases
+        // Stream is active & start time + duration is inside the current time period
+        // Stream is active & start time + duration is outside of current time period
+        // Stream is active & start time + duration is before the current time period
+        // Stream is inactive and has duration
+
+        // Stream has finished
+        if (pausableStream.duration == pausableStream.durationElapsed) {
+
+        }
+
+        if (pausableStream.isActive) {
+            // Stream has ended
+            if (block.timestamp > stream.stopTime) {
+                return (
+                pausableStream.duration,
+                pausableStream.duration,
+                0,
+                false
+                );
+                // stream is yet to start
+            } else if (stream.startTime > block.timestamp) {
+
+
+            } else {
+                uint runTime = block.timestamp.sub(stream.startTime);
+                uint durationElapsed = runTime.add(pausableStream.durationElapsed);
+
+                uint timeRemaining = stream.stopTime.sub(durationElapsed);
+
+                return (
+                pausableStream.duration,
+                durationElapsed,
+                timeRemaining,
+                true
+                );
+            }
+        }
+
+
+        stream.startTime = block.timestamp.add(durationRemaining);
+
+        if (durationElapsed > stream.startTime.add(duration)) {
+            // Stream has finished
+        }
+
+
+        //        if (stream.isActive) {
+        //            if (stream.startTime > block.timestamp) {
+        //                if()
+        //                uint durationElapsed = block.timestamp.sub(stream.startTime);
+        //
+        //            }
+        //
+        //            return (
+        //            stream.duration,
+        //
+        //            )
+        //            }
+        //            return (
+        //            stream.duration,
+        //            stream.durationElapsed,
+        //            stream.duration.sub(stream.durationElapsed),
+        //            stream.isActive
+        //            );
     }
 
     function getStream(uint256 streamId)
     external
     view
-    streamExists(streamId)
+    _streamExists(streamId)
     returns (
         address sender,
         address recipient,
@@ -129,9 +207,9 @@ contract PaymentStream {
         uint256 _startTime,
         uint256 _stopTime
     ) public
-    baseStreamRequirements(_recipient, _deposit, _startTime)
+    _baseStreamRequirements(_recipient, _deposit, _startTime)
     returns (uint256 streamId) {
-        require(isNonZeroLengthStream(_startTime, _stopTime), "Stream must last a least a second");
+        require(_isNonZeroLengthStream(_startTime, _stopTime), "Stream must last a least a second");
 
         uint duration = _stopTime.sub(_startTime);
         uint ratePerSecond = _ratePerSecond(_deposit, duration);
@@ -161,7 +239,7 @@ contract PaymentStream {
         uint _duration,
         uint _startTime
     ) public payable
-    baseStreamRequirements(_recipient, _deposit, _startTime)
+    _baseStreamRequirements(_recipient, _deposit, _startTime)
     returns (uint _streamId){
         uint streamId = nextStreamId;
         uint ratePerSecond = _ratePerSecond(_deposit, _duration);
@@ -198,8 +276,49 @@ contract PaymentStream {
         return streamId;
     }
 
-    function pauseStream(uint _streamId) public streamIsPausable(_streamId) {
+    function pauseStream(uint _streamId) public _streamIsPausable _streamIsActive(_streamId) {
+        Types.Stream memory stream = streams[_streamId];
+        Types.PausableStream memory pausableStream = pausableStreams[_streamId];
+
+        if (false == _hasStreamStarted(_streamId)) {
+            revert("Stream has not started yet");
+        }
+
+        if (_hasStreamStopped(_streamId)) {
+            revert("Stream has finished");
+        }
+
+        // How long has the stream run for
+        uint runningDuration = block.timestamp.sub(stream.startTime);
+
+        // add any previous time accrued to the total duration of the stream
+        pausableStream.durationElapsed = pausableStream.durationElapsed.add(runningDuration);
+
+        // Reset start and stop points
+        stream.startTime = 0;
+        stream.stopTime = 0;
+
+        // Pause the stream
         pausableStreams[_streamId].isActive = false;
+    }
+
+    function startStream(uint _streamId) public _streamIsPausable _streamIsPaused(_streamId) {
+        Types.Stream memory stream = streams[_streamId];
+        Types.PausableStream memory pausableStream = pausableStreams[_streamId];
+
+        // Need a way to calculate the duration elapsed
+        if (pausableStream.duration == pausableStream.durationElapsed) {
+            revert("Stream has finished");
+        }
+
+        uint durationRemaining = pausableStream.duration.sub(pausableStream.durationElapsed);
+
+        // Initiate start and end points
+        stream.startTime = block.timestamp;
+        stream.stopTime = block.timestamp.add(durationRemaining);
+
+        // Activate the stream
+        pausableStreams[_streamId].isActive = true;
     }
 
     //  _____       _                        _  __      ___
@@ -216,7 +335,19 @@ contract PaymentStream {
         return _deposit.div(_duration);
     }
 
-    function isNonZeroLengthStream(uint _startTime, uint _stopTime) internal view returns (bool) {
+    function _isNonZeroLengthStream(uint _startTime, uint _stopTime) internal view returns (bool) {
         return _stopTime.sub(_startTime) > 0;
+    }
+
+    function _isStreamActive(uint _streamId) internal view returns (bool) {
+        return pausableStreams[_streamId].isActive;
+    }
+
+    function _hasStreamStarted(uint _streamId) internal view returns (bool) {
+        return streams[_streamId].startTime > block.timestamp;
+    }
+
+    function _hasStreamStopped(uint _streamId) internal view returns (bool) {
+        return block.timestamp >= streams[_streamId].stopTime;
     }
 }
