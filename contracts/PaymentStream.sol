@@ -112,8 +112,6 @@ contract PaymentStream {
         // Stream is inactive and has duration
 
         // Stream has finished
-        if (pausableStream.duration == pausableStream.durationElapsed) {}
-
         if (pausableStream.isActive) {
             // Stream has ended
             if (block.timestamp > stream.stopTime) {
