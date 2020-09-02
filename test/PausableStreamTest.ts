@@ -56,7 +56,7 @@ describe("Payment Stream", () => {
   });
 
   it("Should allow a stream to be started and paused", async () => {
-    await createPausableStream(deposit, token, startTime);
+    await createPausableStream(deposit, token, timestamp + 1);
 
     let stream = await paymentStream.getPausableStream(1);
 
@@ -69,17 +69,17 @@ describe("Payment Stream", () => {
     expect(stream.isActive).to.eq(false);
   });
 
-  it("Should calculate an accurate amount of money paid from a running stream over 10 minutes", async () => {
-    await createPausableStream(deposit, token, startTime);
-
-    let pausedStream = await paymentStream.getPausableStream(1);
-
-    // console.log(pausedStream);
+  it("Should calculate an accurate amount of money paid from a running stream over 30 minutes", async () => {
+    await createPausableStream(deposit, token, timestamp + 1);
 
     await wait(1800, provider);
-    // pausedStream = await paymentStream.getPausableStream(1);
+    let pausedStream = await paymentStream.getPausableStream(1);
 
-    console.log(pausedStream);
+    expect(pausedStream.duration).to.eq(
+      pausedStream.durationElapsed.add(pausedStream.durationRemaining)
+    );
+
+    expect(pausedStream.balanceAccrued).to.eq(BigNumber.from(18).mul(oneEther));
   });
 
   function createPausableStream(

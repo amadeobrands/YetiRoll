@@ -92,6 +92,7 @@ contract PaymentStream {
     //    \ \/ / | |/ _ \ \ /\ / /
     //     \  /  | |  __/\ V  V /
     //      \/   |_|\___| \_/\_/
+
     function getPausableStream(uint256 _streamId)
         external
         view
@@ -99,7 +100,8 @@ contract PaymentStream {
             uint256 duration,
             uint256 durationElapsed,
             uint256 durationRemaining,
-            bool isActive
+            bool isActive,
+            uint256 balanceAccrued
         )
     {
         Types.PausableStream memory pausableStream = pausableStreams[_streamId];
@@ -111,7 +113,6 @@ contract PaymentStream {
         // Stream is active & start time + duration is before the current time period
         // Stream is inactive and has duration
 
-        // Stream has finished
         if (pausableStream.isActive) {
             // Stream has ended
             if (block.timestamp > stream.stopTime) {
@@ -119,50 +120,50 @@ contract PaymentStream {
                     pausableStream.duration,
                     pausableStream.duration,
                     0,
-                    false
+                    false,
+                    stream.deposit
                 );
-                // stream is yet to start
-            } else if (stream.startTime > block.timestamp) {} else {
+                // Stream is yet to start
+            } else if (stream.startTime > block.timestamp) {
+                return (
+                    pausableStream.duration,
+                    0,
+                    pausableStream.duration,
+                    true,
+                    0
+                );
+                // Stream is running
+            } else {
                 uint256 runTime = block.timestamp.sub(stream.startTime);
                 uint256 durationElapsed = runTime.add(
                     pausableStream.durationElapsed
                 );
 
-                uint256 timeRemaining = stream.stopTime.sub(durationElapsed);
+                uint256 durationRemaining = pausableStream.duration.sub(
+                    durationElapsed
+                );
+
+                uint256 balanceAccrued = stream.ratePerSecond.mul(
+                    durationElapsed
+                );
 
                 return (
                     pausableStream.duration,
                     durationElapsed,
-                    timeRemaining,
-                    true
+                    durationRemaining,
+                    true,
+                    balanceAccrued
                 );
             }
         }
 
-        stream.startTime = block.timestamp.add(durationRemaining);
-
-        if (durationElapsed > stream.startTime.add(duration)) {
-            // Stream has finished
-        }
-
-        //        if (stream.isActive) {
-        //            if (stream.startTime > block.timestamp) {
-        //                if()
-        //                uint durationElapsed = block.timestamp.sub(stream.startTime);
-        //
-        //            }
-        //
-        //            return (
-        //            stream.duration,
-        //
-        //            )
-        //            }
-        //            return (
-        //            stream.duration,
-        //            stream.durationElapsed,
-        //            stream.duration.sub(stream.durationElapsed),
-        //            stream.isActive
-        //            );
+        return (
+            pausableStream.duration,
+            pausableStream.duration.sub(pausableStream.durationElapsed),
+            pausableStream.durationElapsed,
+            false,
+            stream.ratePerSecond.mul(pausableStream.durationElapsed)
+        );
     }
 
     function getStream(uint256 streamId)
@@ -233,6 +234,7 @@ contract PaymentStream {
         return streamId;
     }
 
+    // todo toggle if stream starts active or not
     function createPausableStream(
         address _recipient,
         uint256 _deposit,
@@ -256,7 +258,7 @@ contract PaymentStream {
             recipient: _recipient,
             sender: msg.sender,
             startTime: _startTime,
-            stopTime: 0,
+            stopTime: _startTime.add(_duration),
             tokenAddress: _tokenAddress,
             isEntity: true,
             streamType: Types.StreamType.PausableStream
@@ -282,27 +284,23 @@ contract PaymentStream {
 
     function pauseStream(uint256 _streamId)
         public
-        _streamIsPausable
+        _streamIsPausable(_streamId)
         _streamIsActive(_streamId)
     {
         Types.Stream memory stream = streams[_streamId];
         Types.PausableStream memory pausableStream = pausableStreams[_streamId];
 
-        if (false == _hasStreamStarted(_streamId)) {
-            revert("Stream has not started yet");
-        }
-
         if (_hasStreamStopped(_streamId)) {
             revert("Stream has finished");
         }
 
-        // How long has the stream run for
-        uint256 runningDuration = block.timestamp.sub(stream.startTime);
-
-        // add any previous time accrued to the total duration of the stream
-        pausableStream.durationElapsed = pausableStream.durationElapsed.add(
-            runningDuration
-        );
+        if (_hasStreamStarted(_streamId)) {
+            uint256 runningDuration = block.timestamp.sub(stream.startTime);
+            // add any previous time accrued to the total duration of the stream
+            pausableStream.durationElapsed = pausableStream.durationElapsed.add(
+                runningDuration
+            );
+        }
 
         // Reset start and stop points
         stream.startTime = 0;
@@ -314,7 +312,7 @@ contract PaymentStream {
 
     function startStream(uint256 _streamId)
         public
-        _streamIsPausable
+        _streamIsPausable(_streamId)
         _streamIsPaused(_streamId)
     {
         Types.Stream memory stream = streams[_streamId];
@@ -368,7 +366,7 @@ contract PaymentStream {
     }
 
     function _hasStreamStarted(uint256 _streamId) internal view returns (bool) {
-        return streams[_streamId].startTime > block.timestamp;
+        return block.timestamp >= streams[_streamId].startTime;
     }
 
     function _hasStreamStopped(uint256 _streamId) internal view returns (bool) {

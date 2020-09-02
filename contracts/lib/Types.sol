@@ -3,12 +3,7 @@
 pragma solidity ^0.6.0;
 
 library Types {
-
-    enum StreamType {
-        FixedTimeStream,
-        PausableStream,
-        SplitStream
-    }
+    enum StreamType {FixedTimeStream, PausableStream, SplitStream}
 
     struct Stream {
         uint256 startTime;
