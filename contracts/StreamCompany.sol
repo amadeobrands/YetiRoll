@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract StreamCompany is AccessControl {
-    using SafeMath for uint;
+    using SafeMath for uint256;
 
     bytes32 public constant EMPLOYER_ROLE = keccak256("EMPLOYER_ROLE");
 
@@ -27,26 +27,28 @@ contract StreamCompany is AccessControl {
         topUp();
     }
 
-    function topUp() public payable {
-    }
+    function topUp() public payable {}
 
     // Need to check the employee doesn't exist or we will overwrite it
-    function createEmployee(address _address, uint _amount) public onlyEmployer {
-        StreamEmployee employee = new StreamEmployee(
-            _amount,
-            _address
-        );
+    function createEmployee(address _address, uint256 _amount)
+        public
+        onlyEmployer
+    {
+        StreamEmployee employee = new StreamEmployee(_amount, _address);
 
         employees[_address] = employee;
     }
 
-    function getPayment(uint _amount) public {
+    function getPayment(uint256 _amount) public {
         payout(msg.sender, _amount);
     }
 
-    function payout(address payable _address, uint _amount) internal {
+    function payout(address payable _address, uint256 _amount) internal {
         StreamEmployee employee = employees[_address];
-        require(employee.balance() >= _amount, "You have not earned enough funds to withdraw that amount");
+        require(
+            employee.balance() >= _amount,
+            "You have not earned enough funds to withdraw that amount"
+        );
         require(address(this).balance >= _amount, "Not enough funds");
 
         _address.transfer(_amount);

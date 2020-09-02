@@ -7,7 +7,8 @@
     "build": "npm run compile && npm run typechain",
     "compile": "npx buidler compile",
     "typechain": "./node_modules/.bin/typechain --target ethers-v5 --outDir typechain './artifacts/*.json'",
-    "test": "npx buidler test"
+    "test": "npx buidler test",
+    "prettier": "prettier --write **/*.sol"
   },
   "author": "",
   "license": "ISC",
