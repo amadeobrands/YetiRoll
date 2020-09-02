@@ -93,6 +93,11 @@ contract PaymentStream {
     //     \  /  | |  __/\ V  V /
     //      \/   |_|\___| \_/\_/
 
+    // Different cases
+    // Stream is active & start time + duration is inside the current time period
+    // Stream is active & start time + duration is outside of current time period
+    // Stream is active & start time + duration is before the current time period
+    // Stream is inactive and has duration
     function getPausableStream(uint256 _streamId)
         external
         view
@@ -107,53 +112,13 @@ contract PaymentStream {
         Types.PausableStream memory pausableStream = pausableStreams[_streamId];
         Types.Stream memory stream = streams[_streamId];
 
-        // Different cases
-        // Stream is active & start time + duration is inside the current time period
-        // Stream is active & start time + duration is outside of current time period
-        // Stream is active & start time + duration is before the current time period
-        // Stream is inactive and has duration
-
         if (pausableStream.isActive) {
-            // Stream has ended
-            if (block.timestamp > stream.stopTime) {
-                return (
-                    pausableStream.duration,
-                    pausableStream.duration,
-                    0,
-                    false,
-                    stream.deposit
-                );
-                // Stream is yet to start
-            } else if (stream.startTime > block.timestamp) {
-                return (
-                    pausableStream.duration,
-                    0,
-                    pausableStream.duration,
-                    true,
-                    0
-                );
-                // Stream is running
+            if (_hasStreamStopped(_streamId)) {
+                return _buildFinishedPausedStream(pausableStream, stream);
+            } else if (_hasStreamStarted(_streamId)) {
+                return _buildActivePausedStream(pausableStream, stream);
             } else {
-                uint256 runTime = block.timestamp.sub(stream.startTime);
-                uint256 durationElapsed = runTime.add(
-                    pausableStream.durationElapsed
-                );
-
-                uint256 durationRemaining = pausableStream.duration.sub(
-                    durationElapsed
-                );
-
-                uint256 balanceAccrued = stream.ratePerSecond.mul(
-                    durationElapsed
-                );
-
-                return (
-                    pausableStream.duration,
-                    durationElapsed,
-                    durationRemaining,
-                    true,
-                    balanceAccrued
-                );
+                return _buildPendingStream(pausableStream, stream);
             }
         }
 
@@ -310,7 +275,7 @@ contract PaymentStream {
         pausableStreams[_streamId].isActive = false;
     }
 
-    function startStream(uint256 _streamId)
+    function startPausedStream(uint256 _streamId)
         public
         _streamIsPausable(_streamId)
         _streamIsPaused(_streamId)
@@ -371,5 +336,84 @@ contract PaymentStream {
 
     function _hasStreamStopped(uint256 _streamId) internal view returns (bool) {
         return block.timestamp >= streams[_streamId].stopTime;
+    }
+
+    function _buildFinishedPausedStream(
+        Types.PausableStream memory pausableStream,
+        Types.Stream memory stream
+    )
+        internal
+        view
+        returns (
+            uint256 duration,
+            uint256 durationElapsed,
+            uint256 durationRemaining,
+            bool isActive,
+            uint256 balanceAccrued
+        )
+    {
+        return (
+            pausableStream.duration,
+            pausableStream.duration,
+            0,
+            false,
+            stream.deposit
+        );
+    }
+
+    function _buildActivePausedStream(
+        Types.PausableStream memory pausableStream,
+        Types.Stream memory stream
+    )
+        internal
+        view
+        returns (
+            uint256 duration,
+            uint256 durationElapsed,
+            uint256 durationRemaining,
+            bool isActive,
+            uint256 balanceAccrued
+        )
+    {
+        uint256 runTime = block.timestamp.sub(stream.startTime);
+        uint256 durationElapsed = runTime.add(pausableStream.durationElapsed);
+
+        uint256 durationRemaining = pausableStream.duration.sub(
+            durationElapsed
+        );
+
+        uint256 balanceAccrued = stream.ratePerSecond.mul(durationElapsed);
+
+        return (
+            pausableStream.duration,
+            durationElapsed,
+            durationRemaining,
+            true,
+            balanceAccrued
+        );
+    }
+
+    // todo check multiplication by potential 0
+    function _buildPendingStream(
+        Types.PausableStream memory pausableStream,
+        Types.Stream memory stream
+    )
+        internal
+        view
+        returns (
+            uint256 duration,
+            uint256 durationElapsed,
+            uint256 durationRemaining,
+            bool isActive,
+            uint256 balanceAccrued
+        )
+    {
+        return (
+            pausableStream.duration,
+            durationElapsed,
+            pausableStream.duration,
+            true,
+            stream.ratePerSecond.mul(durationElapsed)
+        );
     }
 }
