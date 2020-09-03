@@ -11,7 +11,7 @@ contract PausableStream is Stream {
 
     // todo toggle if stream starts active or not
     // todo only Stream Manager
-    function createPausableStream(
+    function createStream(
         address _recipient,
         uint256 _deposit,
         address _tokenAddress,
@@ -19,6 +19,7 @@ contract PausableStream is Stream {
         uint256 _startTime
     )
         public
+        override
         payable
         _baseStreamRequirements(_recipient, _deposit, _startTime)
         returns (uint256 _streamId)
@@ -86,7 +87,7 @@ contract PausableStream is Stream {
         pausableStreams[_streamId].isActive = false;
     }
 
-    function startPausedStream(uint256 _streamId)
+    function startStream(uint256 _streamId)
         public
         _streamIsPausable(_streamId)
         _streamIsPaused(_streamId)

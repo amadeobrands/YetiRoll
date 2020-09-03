@@ -21,6 +21,8 @@ contract Stream {
         uint256 _stopTime
     )
         public
+        virtual
+        payable
         _baseStreamRequirements(_recipient, _deposit, _startTime)
         returns (uint256 streamId)
     {

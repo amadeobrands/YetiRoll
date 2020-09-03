@@ -45,7 +45,7 @@ describe("Pausable Stream", () => {
     // 0.01 dai per second
     let ratePerSecond = BigNumber.from(1).mul(oneEther).div(100);
 
-    await expect(createPausableStream(deposit, token, startTime))
+    await expect(createStream(deposit, token, startTime))
       .to.emit(pausableStream, "PausableStreamCreated")
       .withArgs(1, startTime, deposit, oneHour, ratePerSecond, true);
 
@@ -58,7 +58,7 @@ describe("Pausable Stream", () => {
   });
 
   it("Should allow a stream to be started and paused", async () => {
-    await createPausableStream(deposit, token, timestamp + 1);
+    await createStream(deposit, token, timestamp + 1);
 
     let stream = await pausableStream.getPausableStream(1);
 
@@ -72,9 +72,9 @@ describe("Pausable Stream", () => {
   });
 
   it("Should calculate an accurate amount of money paid from a running stream over 30 minutes", async () => {
-    await createPausableStream(deposit, token, timestamp + 1);
+    await createStream(deposit, token, timestamp + 1);
 
-    await wait(1801, provider);
+    await wait(1800, provider);
     let pausedStream = await pausableStream.getPausableStream(1);
 
     expect(pausedStream.duration).to.eq(
@@ -84,12 +84,12 @@ describe("Pausable Stream", () => {
     expect(pausedStream.balanceAccrued).to.eq(BigNumber.from(18).mul(oneEther));
   });
 
-  function createPausableStream(
+  function createStream(
     deposit: BigNumber,
     token: MockErc20,
     startTime: number
   ) {
-    return pausableStream.createPausableStream(
+    return pausableStream.createStream(
       bob.address,
       deposit.toString(),
       token.address,

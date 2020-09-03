@@ -13,7 +13,7 @@ contract StreamManager {
         fixedDurationStream = new Stream();
     }
 
-    function startPausableStream(
+    function createPausableStream(
         address _recipient,
         uint256 _deposit,
         address _tokenAddress,
@@ -21,12 +21,20 @@ contract StreamManager {
         uint256 _startTime
     ) public returns (uint256 streamId) {
         return
-            pausableStream.createPausableStream(
+            pausableStream.createStream(
                 _recipient,
                 _deposit,
                 _tokenAddress,
                 _duration,
                 _startTime
             );
+    }
+
+    function pauseStream(uint256 _streamId) public {
+        pausableStream.pauseStream(_streamId);
+    }
+
+    function startStream(uint256 _streamId) public {
+        pausableStream.startStream(_streamId);
     }
 }
