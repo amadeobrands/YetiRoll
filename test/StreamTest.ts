@@ -2,9 +2,9 @@ import chai from "chai";
 
 import {deployContract, MockProvider} from "ethereum-waffle";
 
-import PaymentStreamArtifact from "../artifacts/PaymentStream.json";
+import StreamArtifact from "../artifacts/Stream.json";
+import {Stream} from "../typechain/Stream";
 import MockERC20Artifact from "../artifacts/MockERC20.json";
-import {PaymentStream} from "../typechain/PaymentStream";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 
@@ -17,7 +17,7 @@ describe("Payment Stream", () => {
   const oneHour = 3600;
   const oneEther = BigNumber.from(10).pow(18);
 
-  let paymentStream: PaymentStream;
+  let paymentStream: Stream;
   let token: MockErc20;
   let blockId: number;
 
@@ -26,10 +26,7 @@ describe("Payment Stream", () => {
       "MOCK",
       "MOCK",
     ])) as MockErc20;
-    paymentStream = (await deployContract(
-      alice,
-      PaymentStreamArtifact
-    )) as PaymentStream;
+    paymentStream = (await deployContract(alice, StreamArtifact)) as Stream;
 
     blockId = await provider.getBlockNumber();
   });

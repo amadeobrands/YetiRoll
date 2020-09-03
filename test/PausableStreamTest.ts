@@ -2,8 +2,9 @@ import chai from "chai";
 
 import {deployContract, MockProvider} from "ethereum-waffle";
 
-import PaymentStreamArtifact from "../artifacts/PaymentStream.json";
-import {PaymentStream} from "../typechain/PaymentStream";
+import PausableStreamArtifact from "../artifacts/PausableStream.json";
+import {PausableStream} from "../typechain/PausableStream";
+
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
@@ -14,8 +15,8 @@ const {expect} = chai;
 const provider = new MockProvider();
 const [alice, bob] = provider.getWallets();
 
-describe("Payment Stream", () => {
-  let paymentStream: PaymentStream;
+describe("Pausable Stream", () => {
+  let pausableStream: PausableStream;
   let token: MockErc20;
   let blockId: number;
   let timestamp: number;
@@ -28,13 +29,14 @@ describe("Payment Stream", () => {
     timestamp = await provider
       .getBlock(blockId)
       .then((block) => block.timestamp);
-    paymentStream = (await deployContract(
+
+    pausableStream = (await deployContract(
       alice,
-      PaymentStreamArtifact
-    )) as PaymentStream;
+      PausableStreamArtifact
+    )) as PausableStream;
 
     await token.mint(alice.address, 10000000);
-    await token.approve(paymentStream.address, 10000000);
+    await token.approve(pausableStream.address, 10000000);
 
     startTime = timestamp + 100;
   });
@@ -44,11 +46,11 @@ describe("Payment Stream", () => {
     let ratePerSecond = BigNumber.from(1).mul(oneEther).div(100);
 
     await expect(createPausableStream(deposit, token, startTime))
-      .to.emit(paymentStream, "PausableStreamCreated")
+      .to.emit(pausableStream, "PausableStreamCreated")
       .withArgs(1, startTime, deposit, oneHour, ratePerSecond, true);
 
     // todo get the id from stream creation
-    const stream = await paymentStream.getPausableStream(1);
+    const stream = await pausableStream.getPausableStream(1);
 
     expect(stream.duration).to.eq(oneHour);
     expect(stream.durationElapsed).to.eq(0);
@@ -58,13 +60,13 @@ describe("Payment Stream", () => {
   it("Should allow a stream to be started and paused", async () => {
     await createPausableStream(deposit, token, timestamp + 1);
 
-    let stream = await paymentStream.getPausableStream(1);
+    let stream = await pausableStream.getPausableStream(1);
 
     expect(stream.isActive).to.eq(true);
 
-    await paymentStream.pauseStream(1);
+    await pausableStream.pauseStream(1);
 
-    stream = await paymentStream.getPausableStream(1);
+    stream = await pausableStream.getPausableStream(1);
 
     expect(stream.isActive).to.eq(false);
   });
@@ -72,8 +74,8 @@ describe("Payment Stream", () => {
   it("Should calculate an accurate amount of money paid from a running stream over 30 minutes", async () => {
     await createPausableStream(deposit, token, timestamp + 1);
 
-    await wait(1800, provider);
-    let pausedStream = await paymentStream.getPausableStream(1);
+    await wait(1801, provider);
+    let pausedStream = await pausableStream.getPausableStream(1);
 
     expect(pausedStream.duration).to.eq(
       pausedStream.durationElapsed.add(pausedStream.durationRemaining)
@@ -87,7 +89,7 @@ describe("Payment Stream", () => {
     token: MockErc20,
     startTime: number
   ) {
-    return paymentStream.createPausableStream(
+    return pausableStream.createPausableStream(
       bob.address,
       deposit.toString(),
       token.address,
