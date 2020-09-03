@@ -60,7 +60,11 @@ contract PausableStream is IPausableStream, Stream {
         return streamId;
     }
 
-    function withdraw(uint256 _streamId, uint256 _amount) public {}
+    function withdraw(uint256 _streamId, uint256 _amount) public {
+        streams[_streamId].remainingBalance = streams[_streamId]
+            .remainingBalance
+            .sub(_amount);
+    }
 
     function canWithdrawFunds(
         uint256 _streamId,
@@ -84,10 +88,9 @@ contract PausableStream is IPausableStream, Stream {
         }
 
         if (_hasStreamStarted(_streamId)) {
-            uint256 runningDuration = block.timestamp.sub(stream.startTime);
             // add any previous time accrued to the total duration of the stream
-            pausableStream.durationElapsed = pausableStream.durationElapsed.add(
-                runningDuration
+            pausableStream.durationElapsed = _calculateDurationElapsed(
+                _streamId
             );
         }
 

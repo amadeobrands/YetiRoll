@@ -50,6 +50,10 @@ contract StreamManager {
             );
 
             pausableStream.withdraw(_streamId, _amount);
+            IERC20(pausableStream.getStreamTokenAddress(_streamId)).transfer(
+                _who,
+                _amount
+            );
         }
     }
 

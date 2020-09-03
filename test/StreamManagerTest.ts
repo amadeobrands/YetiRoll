@@ -86,5 +86,13 @@ describe("The stream manager", () => {
 
     // 1 should represent PausableStream
     await streamManager.withdrawFromStream(1, oneEther.mul(9), bob.address, 1);
+
+    await token
+      .balanceOf(streamManager.address)
+      .then((balance) => expect(balance).to.eq(oneEther.mul(27)));
+
+    await token
+      .balanceOf(bob.address)
+      .then((balance) => expect(balance).to.eq(oneEther.mul(9)));
   });
 });

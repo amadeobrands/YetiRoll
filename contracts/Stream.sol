@@ -1,6 +1,7 @@
 pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
 import "./lib/Types.sol";
 
 contract Stream {
@@ -52,6 +53,38 @@ contract Stream {
         return streamId;
     }
 
+    function getStream(uint256 streamId)
+        external
+        view
+        _streamExists(streamId)
+        returns (
+            address sender,
+            address recipient,
+            uint256 deposit,
+            address tokenAddress,
+            uint256 startTime,
+            uint256 stopTime,
+            uint256 remainingBalance,
+            uint256 ratePerSecond
+        )
+    {
+        sender = streams[streamId].sender;
+        recipient = streams[streamId].recipient;
+        deposit = streams[streamId].deposit;
+        tokenAddress = streams[streamId].tokenAddress;
+        startTime = streams[streamId].startTime;
+        stopTime = streams[streamId].stopTime;
+        remainingBalance = streams[streamId].remainingBalance;
+        ratePerSecond = streams[streamId].ratePerSecond;
+    }
+
+    function getStreamTokenAddress(uint256 _streamId)
+        public
+        returns (address token)
+    {
+        return streams[_streamId].tokenAddress;
+    }
+
     modifier _baseStreamRequirements(
         address _recipient,
         uint256 _deposit,
@@ -86,31 +119,6 @@ contract Stream {
         returns (uint256)
     {
         return _deposit.div(_duration);
-    }
-
-    function getStream(uint256 streamId)
-        external
-        view
-        _streamExists(streamId)
-        returns (
-            address sender,
-            address recipient,
-            uint256 deposit,
-            address tokenAddress,
-            uint256 startTime,
-            uint256 stopTime,
-            uint256 remainingBalance,
-            uint256 ratePerSecond
-        )
-    {
-        sender = streams[streamId].sender;
-        recipient = streams[streamId].recipient;
-        deposit = streams[streamId].deposit;
-        tokenAddress = streams[streamId].tokenAddress;
-        startTime = streams[streamId].startTime;
-        stopTime = streams[streamId].stopTime;
-        remainingBalance = streams[streamId].remainingBalance;
-        ratePerSecond = streams[streamId].ratePerSecond;
     }
 
     function _isNonZeroLengthStream(uint256 _startTime, uint256 _stopTime)
