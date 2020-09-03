@@ -135,6 +135,7 @@ contract PausableStream is Stream {
             uint256 durationElapsed,
             uint256 durationRemaining,
             bool isActive,
+            uint256 deposit,
             uint256 balanceAccrued
         )
     {
@@ -156,6 +157,7 @@ contract PausableStream is Stream {
             pausableStream.duration.sub(pausableStream.durationElapsed),
             pausableStream.durationElapsed,
             false,
+            stream.deposit,
             stream.ratePerSecond.mul(pausableStream.durationElapsed)
         );
     }
@@ -195,6 +197,7 @@ contract PausableStream is Stream {
             uint256 durationElapsed,
             uint256 durationRemaining,
             bool isActive,
+            uint256 deposit,
             uint256 balanceAccrued
         )
     {
@@ -203,6 +206,7 @@ contract PausableStream is Stream {
             pausableStream.duration,
             0,
             false,
+            stream.deposit,
             stream.deposit
         );
     }
@@ -218,6 +222,7 @@ contract PausableStream is Stream {
             uint256 durationElapsed,
             uint256 durationRemaining,
             bool isActive,
+            uint256 deposit,
             uint256 balanceAccrued
         )
     {
@@ -235,6 +240,7 @@ contract PausableStream is Stream {
             durationElapsed,
             durationRemaining,
             true,
+            stream.deposit,
             balanceAccrued
         );
     }
@@ -251,6 +257,7 @@ contract PausableStream is Stream {
             uint256 durationElapsed,
             uint256 durationRemaining,
             bool isActive,
+            uint256 deposit,
             uint256 balanceAccrued
         )
     {
@@ -259,6 +266,7 @@ contract PausableStream is Stream {
             durationElapsed,
             pausableStream.duration,
             true,
+            stream.deposit,
             stream.ratePerSecond.mul(durationElapsed)
         );
     }

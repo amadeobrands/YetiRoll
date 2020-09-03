@@ -1,8 +1,11 @@
 pragma solidity ^0.6.0;
 
+import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
+
 import "./PaymentStream.sol";
 import "./PausableStream.sol";
 import "./Stream.sol";
+import "./lib/Types.sol";
 
 contract StreamManager {
     Stream fixedDurationStream;
@@ -20,6 +23,8 @@ contract StreamManager {
         uint256 _duration,
         uint256 _startTime
     ) public returns (uint256 streamId) {
+        IERC20(_tokenAddress).transferFrom(msg.sender, address(this), _deposit);
+
         return
             pausableStream.createStream(
                 _recipient,
@@ -36,5 +41,20 @@ contract StreamManager {
 
     function startStream(uint256 _streamId) public {
         pausableStream.startStream(_streamId);
+    }
+
+    function getPausableStream(uint256 _streamId)
+        public
+        view
+        returns (
+            uint256 duration,
+            uint256 durationElapsed,
+            uint256 durationRemaining,
+            bool isActive,
+            uint256 deposit,
+            uint256 balanceAccrued
+        )
+    {
+        return pausableStream.getPausableStream(_streamId);
     }
 }
