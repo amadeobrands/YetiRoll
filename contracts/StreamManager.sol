@@ -35,6 +35,24 @@ contract StreamManager {
             );
     }
 
+    function withdrawFromStream(
+        uint256 _streamId,
+        uint256 _amount,
+        address _who,
+        Types.StreamType _streamType
+    ) public {
+        if (_streamType == Types.StreamType.FixedTimeStream) {
+            //
+        } else if (_streamType == Types.StreamType.PausableStream) {
+            require(
+                pausableStream.canWithdrawFunds(_streamId, _amount, _who),
+                ""
+            );
+
+            pausableStream.withdraw(_streamId, _amount);
+        }
+    }
+
     function pauseStream(uint256 _streamId) public {
         pausableStream.pauseStream(_streamId);
     }
