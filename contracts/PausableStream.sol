@@ -75,11 +75,7 @@ contract PausableStream is IPausableStream, Stream {
             _calculateBalanceAccrued(_streamId) >= _amount);
     }
 
-    function pauseStream(uint256 _streamId)
-        public
-        _streamIsPausable(_streamId)
-        _streamIsActive(_streamId)
-    {
+    function pauseStream(uint256 _streamId) public _streamIsActive(_streamId) {
         Types.Stream memory stream = streams[_streamId];
         Types.PausableStream memory pausableStream = pausableStreams[_streamId];
 
@@ -102,16 +98,12 @@ contract PausableStream is IPausableStream, Stream {
         pausableStreams[_streamId].isActive = false;
     }
 
-    function startStream(uint256 _streamId)
-        public
-        _streamIsPausable(_streamId)
-        _streamIsPaused(_streamId)
-    {
+    function startStream(uint256 _streamId) public _streamIsPaused(_streamId) {
         Types.Stream memory stream = streams[_streamId];
         Types.PausableStream memory pausableStream = pausableStreams[_streamId];
 
         // Need a way to calculate the duration elapsed on the fly here
-        if (pausableStream.duration == pausableStream.durationElapsed) {
+        if (_calculateDurationElapsed(_streamId) == pausableStream.duration) {
             revert("Stream has finished");
         }
 
@@ -159,14 +151,6 @@ contract PausableStream is IPausableStream, Stream {
         );
     }
 
-    modifier _streamIsPausable(uint256 _streamId) {
-        require(
-            _isStreamPausable(_streamId),
-            "Cannot pause a stream of this type"
-        );
-        _;
-    }
-
     modifier _streamIsActive(uint256 _streamId) {
         require(_isStreamActive(_streamId), "Stream is not running");
         _;
@@ -192,6 +176,8 @@ contract PausableStream is IPausableStream, Stream {
         if (_isStreamRunning(_streamId)) {
             uint256 runTime = block.timestamp.sub(streams[_streamId].startTime);
             return runTime.add(pausableStreams[_streamId].durationElapsed);
+        } else if (_hasStreamFinished(_streamId)) {
+            return pausableStreams[_streamId].duration;
         }
 
         return pausableStreams[_streamId].durationElapsed;
@@ -219,10 +205,6 @@ contract PausableStream is IPausableStream, Stream {
             );
     }
 
-    function _isStreamPausable(uint256 _streamId) internal view returns (bool) {
-        return Types.StreamType.PausableStream == streams[_streamId].streamType;
-    }
-
     function _isStreamActive(uint256 _streamId) internal view returns (bool) {
         return pausableStreams[_streamId].isActive;
     }
@@ -232,7 +214,9 @@ contract PausableStream is IPausableStream, Stream {
     }
 
     function _hasStreamStarted(uint256 _streamId) internal view returns (bool) {
-        return block.timestamp >= streams[_streamId].startTime;
+        return
+            _isStreamActive(_streamId) &&
+            block.timestamp >= streams[_streamId].startTime;
     }
 
     function _hasStreamFinished(uint256 _streamId)
@@ -240,7 +224,9 @@ contract PausableStream is IPausableStream, Stream {
         view
         returns (bool)
     {
-        return block.timestamp >= streams[_streamId].stopTime && true;
+        return
+            _isStreamActive(_streamId) &&
+            block.timestamp >= streams[_streamId].stopTime;
     }
 
     function _ratePerSecond(uint256 _deposit, uint256 _duration)
