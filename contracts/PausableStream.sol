@@ -159,10 +159,9 @@ contract PausableStream is IPausableStream, Stream {
     //   | | | '_ \| __/ _ \ '__| '_ \ / _` | |   \ \/ / | |/ _ \ \ /\ / / __|
     //  _| |_| | | | ||  __/ |  | | | | (_| | |    \  /  | |  __/\ V  V /\__ \
     // |_____|_| |_|\__\___|_|  |_| |_|\__,_|_|     \/   |_|\___| \_/\_/ |___/
-
-    // todo make generic and override
     function _calculateDurationElapsed(uint256 _streamId)
         internal
+        override
         view
         returns (uint256 durationElapsed)
     {
@@ -176,9 +175,9 @@ contract PausableStream is IPausableStream, Stream {
         return pausableStreams[_streamId].durationElapsed;
     }
 
-    // todo make generic and override
     function _calculateDurationRemaining(uint256 _streamId)
         internal
+        override
         view
         returns (uint256 durationElapsed)
     {
@@ -189,61 +188,30 @@ contract PausableStream is IPausableStream, Stream {
     }
 
     // todo make generic and override
-    function _calculateBalanceAccrued(uint256 _streamId)
-        internal
-        view
-        returns (uint256 balanceAccrued)
-    {
-        return
-            _calculateDurationElapsed(_streamId).mul(
-                streams[_streamId].ratePerSecond
-            );
-    }
-
-    // todo make generic and override
-    function _calculateBalanceRemaining(uint256 _streamId)
-        internal
-        view
-        returns (uint256 BalanceRemaining)
-    {
-        return
-            streams[_streamId].deposit.sub(_calculateBalanceAccrued(_streamId));
-    }
 
     function _isStreamActive(uint256 _streamId) internal view returns (bool) {
         return pausableStreams[_streamId].isActive;
     }
 
-    // todo make generic and override
-    function _isStreamRunning(uint256 _streamId) internal view returns (bool) {
-        return _hasStreamStarted(_streamId) && !_hasStreamFinished(_streamId);
-    }
-
-    // todo make generic and override
-    function _hasStreamStarted(uint256 _streamId) internal view returns (bool) {
+    function _hasStreamStarted(uint256 _streamId)
+        internal
+        override
+        view
+        returns (bool)
+    {
         return
             _isStreamActive(_streamId) &&
             block.timestamp >= streams[_streamId].startTime;
     }
 
-    // todo make generic and override
     function _hasStreamFinished(uint256 _streamId)
         internal
+        override
         view
         returns (bool)
     {
         return
             _isStreamActive(_streamId) &&
             block.timestamp >= streams[_streamId].stopTime;
-    }
-
-    // todo make generic and override
-    function _ratePerSecond(uint256 _deposit, uint256 _duration)
-        internal
-        override
-        view
-        returns (uint256)
-    {
-        return _deposit.div(_duration);
     }
 }

@@ -119,9 +119,51 @@ contract Stream is Ownable {
         _;
     }
 
+    function _calculateBalanceAccrued(uint256 _streamId)
+        internal
+        view
+        returns (uint256 balanceAccrued)
+    {
+        return
+            _calculateDurationElapsed(_streamId).mul(
+                streams[_streamId].ratePerSecond
+            );
+    }
+
+    function _calculateBalanceRemaining(uint256 _streamId)
+        internal
+        view
+        returns (uint256 BalanceRemaining)
+    {
+        return
+            streams[_streamId].deposit.sub(_calculateBalanceAccrued(_streamId));
+    }
+
     modifier _streamExists(uint256 _streamId) {
         require(streams[_streamId].isEntity, "Stream does not exist");
         _;
+    }
+
+    function _isStreamRunning(uint256 _streamId) internal view returns (bool) {
+        return _hasStreamStarted(_streamId) && !_hasStreamFinished(_streamId);
+    }
+
+    function _hasStreamStarted(uint256 _streamId)
+        internal
+        virtual
+        view
+        returns (bool)
+    {
+        return block.timestamp >= streams[_streamId].startTime;
+    }
+
+    function _hasStreamFinished(uint256 _streamId)
+        internal
+        virtual
+        view
+        returns (bool)
+    {
+        return block.timestamp >= streams[_streamId].stopTime;
     }
 
     // todo more specific cases when streams can be withdrawn from
@@ -153,5 +195,34 @@ contract Stream is Ownable {
         returns (bool)
     {
         return _stopTime.sub(_startTime) > 0;
+    }
+
+    // todo write test cases for this
+    function _calculateDurationElapsed(uint256 _streamId)
+        internal
+        virtual
+        view
+        returns (uint256 durationElapsed)
+    {
+        if (_isStreamRunning(_streamId)) {
+            return block.timestamp.sub(streams[_streamId].startTime);
+        } else if (_hasStreamFinished(_streamId)) {
+            return
+                streams[_streamId].stopTime.sub(streams[_streamId].startTime);
+        }
+
+        return 0;
+    }
+
+    function _calculateDurationRemaining(uint256 _streamId)
+        internal
+        virtual
+        view
+        returns (uint256 durationElapsed)
+    {
+        if (_calculateDurationElapsed(_streamId) > 0) {
+            return streams[_streamId].stopTime.sub(block.timestamp);
+        }
+        return 0;
     }
 }
