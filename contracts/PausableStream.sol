@@ -60,12 +60,7 @@ contract PausableStream is IPausableStream, Stream {
         return streamId;
     }
 
-    function withdraw(uint256 _streamId, uint256 _amount) public {
-        streams[_streamId].remainingBalance = streams[_streamId]
-            .remainingBalance
-            .sub(_amount);
-    }
-
+    // todo make generic and override see _canWithdrawFunds
     function canWithdrawFunds(
         uint256 _streamId,
         uint256 _amount,
@@ -138,15 +133,12 @@ contract PausableStream is IPausableStream, Stream {
             uint256 balanceAccrued
         )
     {
-        Types.PausableStream memory pausableStream = pausableStreams[_streamId];
-        Types.Stream memory stream = streams[_streamId];
-
         return (
-            pausableStream.duration,
+            pausableStreams[_streamId].duration,
             _calculateDurationElapsed(_streamId),
             _calculateDurationRemaining(_streamId),
-            pausableStream.isActive,
-            stream.deposit,
+            pausableStreams[_streamId].isActive,
+            streams[_streamId].deposit,
             _calculateBalanceAccrued(_streamId)
         );
     }
@@ -168,6 +160,7 @@ contract PausableStream is IPausableStream, Stream {
     //  _| |_| | | | ||  __/ |  | | | | (_| | |    \  /  | |  __/\ V  V /\__ \
     // |_____|_| |_|\__\___|_|  |_| |_|\__,_|_|     \/   |_|\___| \_/\_/ |___/
 
+    // todo make generic and override
     function _calculateDurationElapsed(uint256 _streamId)
         internal
         view
@@ -183,6 +176,7 @@ contract PausableStream is IPausableStream, Stream {
         return pausableStreams[_streamId].durationElapsed;
     }
 
+    // todo make generic and override
     function _calculateDurationRemaining(uint256 _streamId)
         internal
         view
@@ -194,6 +188,7 @@ contract PausableStream is IPausableStream, Stream {
             );
     }
 
+    // todo make generic and override
     function _calculateBalanceAccrued(uint256 _streamId)
         internal
         view
@@ -205,6 +200,7 @@ contract PausableStream is IPausableStream, Stream {
             );
     }
 
+    // todo make generic and override
     function _calculateBalanceRemaining(uint256 _streamId)
         internal
         view
@@ -218,16 +214,19 @@ contract PausableStream is IPausableStream, Stream {
         return pausableStreams[_streamId].isActive;
     }
 
+    // todo make generic and override
     function _isStreamRunning(uint256 _streamId) internal view returns (bool) {
         return _hasStreamStarted(_streamId) && !_hasStreamFinished(_streamId);
     }
 
+    // todo make generic and override
     function _hasStreamStarted(uint256 _streamId) internal view returns (bool) {
         return
             _isStreamActive(_streamId) &&
             block.timestamp >= streams[_streamId].startTime;
     }
 
+    // todo make generic and override
     function _hasStreamFinished(uint256 _streamId)
         internal
         view
@@ -238,6 +237,7 @@ contract PausableStream is IPausableStream, Stream {
             block.timestamp >= streams[_streamId].stopTime;
     }
 
+    // todo make generic and override
     function _ratePerSecond(uint256 _deposit, uint256 _duration)
         internal
         override

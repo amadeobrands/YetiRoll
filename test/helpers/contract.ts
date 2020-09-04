@@ -5,6 +5,10 @@ import {deployContract, MockProvider} from "ethereum-waffle";
 // @ts-ignore
 import {MockErc20} from "../../typechain/MockErc20";
 
+// export function getProvider() {
+//   return;
+// }
+
 export async function deployErc20(signer: Signer) {
   return (await deployContract(signer, MockERC20Artifact, [
     "MOCK",

@@ -41,7 +41,7 @@ describe("Pausable Stream", () => {
     startTime = timestamp + 100;
   });
 
-  xit("Should create a pausable stream", async () => {
+  it("Should create a pausable stream", async () => {
     // 0.01 dai per second
     let ratePerSecond = BigNumber.from(1).mul(oneEther).div(100);
 
@@ -57,7 +57,7 @@ describe("Pausable Stream", () => {
     expect(stream.durationRemaining).to.eq(oneHour);
   });
 
-  xit("Should allow a stream to be started and paused", async () => {
+  it("Should allow a stream to be started and paused", async () => {
     await createStream(deposit, token, timestamp + 1);
 
     let stream = await pausableStream.getPausableStream(1);
@@ -71,7 +71,7 @@ describe("Pausable Stream", () => {
     expect(stream.isActive).to.eq(false);
   });
 
-  xit("Should calculate an accurate amount of money paid from a running stream over 30 minutes", async () => {
+  it("Should calculate an accurate amount of money paid from a running stream over 30 minutes", async () => {
     await createStream(deposit, token, timestamp + 1);
 
     await pausableStream
@@ -99,33 +99,16 @@ describe("Pausable Stream", () => {
   it("Should disallow calling of the withdraw function unless called by the stream manager", async () => {
     await createStream(deposit, token, timestamp + 1);
 
-    await pausableStream.withdraw(1, 800);
+    const bobStream = await pausableStream.connect(bob);
+
+    await expect(bobStream.withdraw(1, 800)).to.be.reverted;
   });
 
-  // it("Should not allow withdrawal unless balance has accrued", async () => {
-  //   await createStream(deposit, token, timestamp + 1);
-  //
-  //   await pausableStream
-  //     .getPausableStream(1)
-  //     .then((stream) => expect(stream.balanceAccrued).to.eq(0));
-  //
-  //   await pausableStream
-  //     .getStream(1)
-  //     .then((stream) => expect(stream.deposit).to.eq(oneEther.mul(36)));
-  //
-  //   await wait(901, provider);
-  //
-  //   let stream = await pausableStream.getPausableStream(1);
-  //
-  //   expect(stream.duration).to.eq(
-  //     stream.durationElapsed.add(stream.durationRemaining)
-  //   );
-  //
-  //   expect(stream.durationElapsed).to.eq(900);
-  //   expect(stream.durationRemaining).to.eq(2700);
-  //
-  //   expect(stream.balanceAccrued).to.eq(BigNumber.from(9).mul(oneEther));
-  // });
+  it("Should not allow withdrawal unless balance has accrued", async () => {
+    await createStream(deposit, token, timestamp + 1);
+
+    await expect(pausableStream.withdraw(1, 800)).to.be.reverted;
+  });
 
   function createStream(
     deposit: BigNumber,

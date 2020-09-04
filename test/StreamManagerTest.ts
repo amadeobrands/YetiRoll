@@ -54,9 +54,9 @@ describe("The stream manager", () => {
       startTime
     );
 
-    await streamManager
-      .getPausableStream(1)
-      .then((stream: PausableStream) => expect(stream.deposit).to.eq(oneEther));
+    const stream = await streamManager.getPausableStream(1);
+
+    expect(stream.deposit).to.eq(oneEther);
 
     await token
       .balanceOf(alice.address)
@@ -76,19 +76,20 @@ describe("The stream manager", () => {
       timestamp + 1
     );
 
-    const stream = await streamManager.getPausableStream(1);
+    // Check balance matches deposit and no funds have been paid out
+    let stream = await streamManager.getPausableStream(1);
     expect(stream.balanceAccrued).to.eq(0);
     expect(stream.deposit).to.eq(oneEther.mul(36));
 
+    // Set the clock forward 30 minutes
     await wait(1800, provider);
 
-    await streamManager
-      .getPausableStream(1)
-      .then((stream: PausableStream) =>
-        expect(stream.balanceAccrued).to.eq(oneEther.mul(18))
-      );
+    // Should see 18 Dai have been paid out (Out of 36 deposit)
+    stream = await streamManager.getPausableStream(1);
+    expect(stream.balanceAccrued).to.eq(oneEther.mul(18));
 
     // 1 should represent PausableStream
+    // Withdraw funds from stream
     await streamManager.withdrawFromStream(1, oneEther.mul(9), bob.address, 1);
 
     await token

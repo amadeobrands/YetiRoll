@@ -2,9 +2,10 @@ pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./lib/Types.sol";
 
-contract Stream {
+contract Stream is Ownable {
     using SafeMath for uint256;
 
     mapping(uint256 => Types.Stream) internal streams;
@@ -24,6 +25,7 @@ contract Stream {
         public
         virtual
         payable
+        //        onlyOwner
         _baseStreamRequirements(_recipient, _deposit, _startTime)
         returns (uint256 streamId)
     {
@@ -51,6 +53,16 @@ contract Stream {
         });
 
         return streamId;
+    }
+
+    function withdraw(
+        uint256 _streamId,
+        uint256 _amount,
+        address _who
+    ) public onlyOwner _canWithdrawFunds(_streamId, _amount, _who) {
+        streams[_streamId].remainingBalance = streams[_streamId]
+            .remainingBalance
+            .sub(_amount);
     }
 
     function getStream(uint256 streamId)
@@ -109,6 +121,20 @@ contract Stream {
 
     modifier _streamExists(uint256 _streamId) {
         require(streams[_streamId].isEntity, "Stream does not exist");
+        _;
+    }
+
+    // todo more specific cases when streams can be withdrawn from
+    modifier _canWithdrawFunds(
+        uint256 _streamId,
+        uint256 _amount,
+        address _who
+    ) {
+        require(_who == streams[_streamId].recipient, "Not the stream owner");
+        require(
+            streams[_streamId].remainingBalance >= _amount,
+            "Not enough balance to withdraw"
+        );
         _;
     }
 

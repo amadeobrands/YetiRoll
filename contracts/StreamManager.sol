@@ -49,7 +49,7 @@ contract StreamManager is ReentrancyGuard {
                 "Unable to withdraw from stream"
             );
 
-            pausableStream.withdraw(_streamId, _amount);
+            pausableStream.withdraw(_streamId, _amount, _who);
             IERC20(pausableStream.getStreamTokenAddress(_streamId)).transfer(
                 _who,
                 _amount
