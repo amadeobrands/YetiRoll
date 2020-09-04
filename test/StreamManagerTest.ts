@@ -37,7 +37,7 @@ describe("The stream manager", () => {
     await token.mint(alice.address, deposit);
     await token.approve(streamManager.address, oneEther.mul(9999));
 
-    timestamp = await getBlockTime();
+    timestamp = (await getBlockTime()) + 1;
   });
 
   it("Should allow creation of streams through its interface", async () => {
