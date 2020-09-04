@@ -76,6 +76,10 @@ describe("The stream manager", () => {
       timestamp + 1
     );
 
+    const stream = await streamManager.getPausableStream(1);
+    expect(stream.balanceAccrued).to.eq(0);
+    expect(stream.deposit).to.eq(oneEther.mul(36));
+
     await wait(1800, provider);
 
     await streamManager

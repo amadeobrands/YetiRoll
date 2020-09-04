@@ -1,13 +1,13 @@
 pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-import "./PaymentStream.sol";
 import "./PausableStream.sol";
 import "./Stream.sol";
 import "./lib/Types.sol";
 
-contract StreamManager {
+contract StreamManager is ReentrancyGuard {
     Stream fixedDurationStream;
     PausableStream pausableStream;
 
@@ -40,13 +40,13 @@ contract StreamManager {
         uint256 _amount,
         address _who,
         Types.StreamType _streamType
-    ) public {
+    ) public nonReentrant {
         if (_streamType == Types.StreamType.FixedTimeStream) {
             //
         } else if (_streamType == Types.StreamType.PausableStream) {
             require(
                 pausableStream.canWithdrawFunds(_streamId, _amount, _who),
-                ""
+                "Unable to withdraw from stream"
             );
 
             pausableStream.withdraw(_streamId, _amount);

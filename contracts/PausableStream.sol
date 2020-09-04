@@ -205,6 +205,15 @@ contract PausableStream is IPausableStream, Stream {
             );
     }
 
+    function _calculateBalanceRemaining(uint256 _streamId)
+        internal
+        view
+        returns (uint256 BalanceRemaining)
+    {
+        return
+            streams[_streamId].deposit.sub(_calculateBalanceAccrued(_streamId));
+    }
+
     function _isStreamActive(uint256 _streamId) internal view returns (bool) {
         return pausableStreams[_streamId].isActive;
     }
