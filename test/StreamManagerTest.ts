@@ -8,7 +8,7 @@ import {StreamManager} from "../typechain/StreamManager";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, getProvider, wait} from "./helpers/contract";
+import {deployErc20, getBlockTime, getProvider, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -19,7 +19,6 @@ describe("The stream manager", () => {
   let token: MockErc20;
   let blockId: number;
   let timestamp: number;
-  let startTime: number;
 
   let deposit = BigNumber.from(36).mul(oneEther);
 
@@ -38,18 +37,16 @@ describe("The stream manager", () => {
     await token.mint(alice.address, deposit);
     await token.approve(streamManager.address, oneEther.mul(9999));
 
-    startTime = timestamp + 100;
+    timestamp = await getBlockTime();
   });
 
   it("Should allow creation of streams through its interface", async () => {
-    let startTime = timestamp + 100;
-
     await streamManager.createPausableStream(
       bob.address,
       oneEther,
       token.address,
       oneHour,
-      startTime
+      timestamp
     );
 
     const stream = await streamManager.getPausableStream(1);
@@ -71,7 +68,7 @@ describe("The stream manager", () => {
       oneEther.mul(36),
       token.address,
       oneHour,
-      timestamp + 1
+      timestamp
     );
 
     // Check balance matches deposit and no funds have been paid out

@@ -8,7 +8,7 @@ import {PausableStream} from "../typechain/PausableStream";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, getProvider, wait} from "./helpers/contract";
+import {deployErc20, getBlockTime, getProvider, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -17,17 +17,12 @@ const [alice, bob, charlie] = getProvider().getWallets();
 describe("Pausable Stream", () => {
   let pausableStream: PausableStream;
   let token: MockErc20;
-  let blockId: number;
   let timestamp: number;
-  let startTime: number;
 
   let deposit = BigNumber.from(36).mul(oneEther);
 
   beforeEach(async () => {
     token = await deployErc20(alice);
-    timestamp = await getProvider()
-      .getBlock(blockId)
-      .then((block) => block.timestamp);
 
     pausableStream = (await deployContract(
       alice,
@@ -37,16 +32,16 @@ describe("Pausable Stream", () => {
     await token.mint(alice.address, 10000000);
     await token.approve(pausableStream.address, 10000000);
 
-    startTime = timestamp + 100;
+    timestamp = (await getBlockTime()) + 1;
   });
 
   it("Should create a pausable stream", async () => {
     // 0.01 dai per second
-    let ratePerSecond = BigNumber.from(1).mul(oneEther).div(100);
+    let ratePerSecond = oneEther.div(100);
 
-    await expect(createStream(deposit, token, startTime))
+    await expect(createStream(deposit, token, timestamp))
       .to.emit(pausableStream, "PausableStreamCreated")
-      .withArgs(1, startTime, deposit, oneHour, ratePerSecond, true);
+      .withArgs(1, timestamp, deposit, oneHour, ratePerSecond, true);
 
     // todo get the id from stream creation
     const stream = await pausableStream.getPausableStream(1);
@@ -57,7 +52,7 @@ describe("Pausable Stream", () => {
   });
 
   it("Should allow a stream to be started and paused", async () => {
-    await createStream(deposit, token, timestamp + 1);
+    await createStream(deposit, token, timestamp);
 
     let stream = await pausableStream.getPausableStream(1);
 
@@ -71,7 +66,7 @@ describe("Pausable Stream", () => {
   });
 
   it("Should calculate an accurate amount of money paid from a running stream over 30 minutes", async () => {
-    await createStream(deposit, token, timestamp + 1);
+    await createStream(deposit, token, timestamp);
 
     await pausableStream
       .getPausableStream(1)
@@ -81,7 +76,8 @@ describe("Pausable Stream", () => {
       .getStream(1)
       .then((stream) => expect(stream.deposit).to.eq(oneEther.mul(36)));
 
-    await wait(1800);
+    // +1 to offset the later timestamp
+    await wait(1801);
 
     let stream = await pausableStream.getPausableStream(1);
 
@@ -96,7 +92,7 @@ describe("Pausable Stream", () => {
   });
 
   it("Should disallow calling of the withdraw function unless called by the stream manager", async () => {
-    await createStream(deposit, token, timestamp + 1);
+    await createStream(deposit, token, timestamp);
 
     const bobStream = await pausableStream.connect(bob);
 
@@ -104,7 +100,7 @@ describe("Pausable Stream", () => {
   });
 
   it("Should not allow withdrawal unless balance has accrued", async () => {
-    await createStream(deposit, token, timestamp + 1);
+    await createStream(deposit, token, timestamp);
 
     await expect(pausableStream.withdraw(1, 800)).to.be.reverted;
   });

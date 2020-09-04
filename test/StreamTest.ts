@@ -7,7 +7,7 @@ import {Stream} from "../typechain/Stream";
 import MockERC20Artifact from "../artifacts/MockERC20.json";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
-import {getProvider} from "./helpers/contract";
+import {getBlockTime, getProvider} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -19,7 +19,7 @@ describe("Payment Stream", () => {
 
   let paymentStream: Stream;
   let token: MockErc20;
-  let blockId: number;
+  let timestamp: number;
 
   beforeEach(async () => {
     token = (await deployContract(alice, MockERC20Artifact, [
@@ -28,24 +28,21 @@ describe("Payment Stream", () => {
     ])) as MockErc20;
     paymentStream = (await deployContract(alice, StreamArtifact)) as Stream;
 
-    blockId = await getProvider().getBlockNumber();
+    timestamp = (await getBlockTime()) + 1;
   });
 
   it("Should allow creation of a stream", async () => {
-    const {timestamp} = await getProvider().getBlock(blockId);
     await token.mint(alice.address, 10000000);
     await token.approve(paymentStream.address, 10000000);
 
     let deposit = 10000;
-    let startTime = timestamp + 100;
-    let stopTime = timestamp + 1100;
 
     await paymentStream.createStream(
       bob.address,
       deposit,
       token.address,
-      startTime,
-      stopTime
+      timestamp,
+      timestamp + 100
     );
 
     // todo get the id from stream creation
@@ -54,7 +51,13 @@ describe("Payment Stream", () => {
     expect(stream.recipient).to.eq(bob.address);
     expect(stream.deposit).to.eq(deposit);
     expect(stream.tokenAddress).to.eq(token.address);
-    expect(stream.startTime).to.eq(startTime);
-    expect(stream.stopTime).to.eq(stopTime);
+    expect(stream.startTime).to.eq(timestamp);
+    expect(stream.stopTime).to.eq(timestamp + 100);
+  });
+
+  it("Prevent creation of a stream with a start time in the past", async () => {
+    await expect(
+      paymentStream.createStream(bob.address, oneEther, token.address, 100, 200)
+    ).to.be.reverted;
   });
 });
