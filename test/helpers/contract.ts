@@ -5,9 +5,14 @@ import {deployContract, MockProvider} from "ethereum-waffle";
 // @ts-ignore
 import {MockErc20} from "../../typechain/MockErc20";
 
-// export function getProvider() {
-//   return;
-// }
+let provider: MockProvider;
+
+export function getProvider() {
+  if (provider == undefined) {
+    provider = new MockProvider();
+  }
+  return provider;
+}
 
 export async function deployErc20(signer: Signer) {
   return (await deployContract(signer, MockERC20Artifact, [
@@ -17,10 +22,10 @@ export async function deployErc20(signer: Signer) {
 }
 
 // todo best if provider is wrapped up in here
-export async function wait(amountOfTimeToWait: number, provider: MockProvider) {
+export async function wait(amountOfTimeToWait: number) {
   // Update the clock
-  await provider.send("evm_increaseTime", [amountOfTimeToWait]);
+  await getProvider().send("evm_increaseTime", [amountOfTimeToWait]);
 
   // Process the block
-  await provider.send("evm_mine", []);
+  await getProvider().send("evm_mine", []);
 }

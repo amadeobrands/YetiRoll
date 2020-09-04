@@ -1,6 +1,6 @@
 import chai from "chai";
 
-import {deployContract, MockProvider} from "ethereum-waffle";
+import {deployContract} from "ethereum-waffle";
 
 import PausableStreamArtifact from "../artifacts/PausableStream.json";
 import {PausableStream} from "../typechain/PausableStream";
@@ -8,12 +8,11 @@ import {PausableStream} from "../typechain/PausableStream";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, wait} from "./helpers/contract";
+import {deployErc20, getProvider, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
-const provider = new MockProvider();
-const [alice, bob, charlie] = provider.getWallets();
+const [alice, bob, charlie] = getProvider().getWallets();
 
 describe("Pausable Stream", () => {
   let pausableStream: PausableStream;
@@ -26,7 +25,7 @@ describe("Pausable Stream", () => {
 
   beforeEach(async () => {
     token = await deployErc20(alice);
-    timestamp = await provider
+    timestamp = await getProvider()
       .getBlock(blockId)
       .then((block) => block.timestamp);
 
@@ -82,7 +81,7 @@ describe("Pausable Stream", () => {
       .getStream(1)
       .then((stream) => expect(stream.deposit).to.eq(oneEther.mul(36)));
 
-    await wait(1800, provider);
+    await wait(1800);
 
     let stream = await pausableStream.getPausableStream(1);
 

@@ -1,17 +1,17 @@
 import chai from "chai";
 
-import {deployContract, MockProvider} from "ethereum-waffle";
+import {deployContract} from "ethereum-waffle";
 
 import StreamArtifact from "../artifacts/Stream.json";
 import {Stream} from "../typechain/Stream";
 import MockERC20Artifact from "../artifacts/MockERC20.json";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
+import {getProvider} from "./helpers/contract";
 
 const {expect} = chai;
 
-const provider = new MockProvider();
-const [alice, bob] = provider.getWallets();
+const [alice, bob] = getProvider().getWallets();
 
 describe("Payment Stream", () => {
   const oneHour = 3600;
@@ -28,11 +28,11 @@ describe("Payment Stream", () => {
     ])) as MockErc20;
     paymentStream = (await deployContract(alice, StreamArtifact)) as Stream;
 
-    blockId = await provider.getBlockNumber();
+    blockId = await getProvider().getBlockNumber();
   });
 
   it("Should allow creation of a stream", async () => {
-    const {timestamp} = await provider.getBlock(blockId);
+    const {timestamp} = await getProvider().getBlock(blockId);
     await token.mint(alice.address, 10000000);
     await token.approve(paymentStream.address, 10000000);
 

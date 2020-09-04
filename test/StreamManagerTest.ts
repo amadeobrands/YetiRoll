@@ -1,20 +1,18 @@
 import chai from "chai";
 
-import {deployContract, MockProvider} from "ethereum-waffle";
+import {deployContract} from "ethereum-waffle";
 
 import StreamManagerArtifact from "../artifacts/StreamManager.json";
 import {StreamManager} from "../typechain/StreamManager";
-import {PausableStream} from "../typechain/PausableStream";
 
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, wait} from "./helpers/contract";
+import {deployErc20, getProvider, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
-const provider = new MockProvider();
-const [alice, bob] = provider.getWallets();
+const [alice, bob] = getProvider().getWallets();
 
 describe("The stream manager", () => {
   let streamManager: StreamManager;
@@ -28,7 +26,7 @@ describe("The stream manager", () => {
   beforeEach(async () => {
     token = await deployErc20(alice);
 
-    timestamp = await provider
+    timestamp = await getProvider()
       .getBlock(blockId)
       .then((block) => block.timestamp);
 
@@ -82,7 +80,7 @@ describe("The stream manager", () => {
     expect(stream.deposit).to.eq(oneEther.mul(36));
 
     // Set the clock forward 30 minutes
-    await wait(1800, provider);
+    await wait(1800);
 
     // Should see 18 Dai have been paid out (Out of 36 deposit)
     stream = await streamManager.getPausableStream(1);
