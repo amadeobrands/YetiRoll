@@ -81,7 +81,11 @@ describe("The stream manager", () => {
 
     // Should see 18 Dai have been paid out (Out of 36 deposit)
     stream = await streamManager.getPausableStream(1);
-    expect(stream.balanceAccrued).to.eq(oneEther.mul(18));
+
+    expect(stream.balanceAccrued.div(oneEther).toNumber()).to.be.approximately(
+      18,
+      1
+    );
 
     // 1 should represent PausableStream
     // Withdraw funds from stream

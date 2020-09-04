@@ -35,78 +35,81 @@ describe("Pausable Stream", () => {
     timestamp = (await getBlockTime()) + 1;
   });
 
-  it("Should create a pausable stream", async () => {
-    // 0.01 dai per second
-    let ratePerSecond = oneEther.div(100);
+  describe("Start and stop assertions", () => {
+    it("Should create a pausable stream", async () => {
+      // 0.01 dai per second
+      let ratePerSecond = oneEther.div(100);
 
-    await expect(createStream(deposit, token, timestamp))
-      .to.emit(pausableStream, "PausableStreamCreated")
-      .withArgs(1, timestamp, deposit, oneHour, ratePerSecond, true);
+      await expect(createStream(deposit, token, timestamp))
+        .to.emit(pausableStream, "PausableStreamCreated")
+        .withArgs(1, timestamp, deposit, oneHour, ratePerSecond, true);
 
-    // todo get the id from stream creation
-    const stream = await pausableStream.getPausableStream(1);
+      // todo get the id from stream creation
+      const stream = await pausableStream.getPausableStream(1);
 
-    expect(stream.duration).to.eq(oneHour);
-    expect(stream.durationElapsed).to.eq(0);
-    expect(stream.durationRemaining).to.eq(oneHour);
+      expect(stream.duration).to.eq(oneHour);
+      expect(stream.durationElapsed).to.eq(0);
+      expect(stream.durationRemaining).to.eq(oneHour);
+    });
+
+    it("Should allow a stream to be started and paused", async () => {
+      await createStream(deposit, token, timestamp);
+
+      let stream = await pausableStream.getPausableStream(1);
+
+      expect(stream.isActive).to.eq(true);
+
+      await pausableStream.pauseStream(1);
+
+      stream = await pausableStream.getPausableStream(1);
+
+      expect(stream.isActive).to.eq(false);
+    });
   });
 
-  it("Should allow a stream to be started and paused", async () => {
-    await createStream(deposit, token, timestamp);
+  describe("Balance accruing", () => {
+    it("Should calculate an accurate amount of money paid from a running stream over 30 minutes", async () => {
+      await createStream(deposit, token, timestamp);
 
-    let stream = await pausableStream.getPausableStream(1);
+      await pausableStream
+        .getPausableStream(1)
+        .then((stream) => expect(stream.balanceAccrued).to.eq(0));
 
-    expect(stream.isActive).to.eq(true);
+      await pausableStream
+        .getStream(1)
+        .then((stream) => expect(stream.deposit).to.eq(oneEther.mul(36)));
 
-    await pausableStream.pauseStream(1);
+      // +1 to offset the later timestamp
+      await wait(1801);
 
-    stream = await pausableStream.getPausableStream(1);
+      let stream = await pausableStream.getPausableStream(1);
 
-    expect(stream.isActive).to.eq(false);
-  });
+      expect(stream.duration).to.eq(
+        stream.durationElapsed.add(stream.durationRemaining)
+      );
 
-  it("Should calculate an accurate amount of money paid from a running stream over 30 minutes", async () => {
-    await createStream(deposit, token, timestamp);
+      // Not great assumptions - todo look at how to fix blocktime
+      expect(stream.durationElapsed.toNumber()).to.be.approximately(1800, 1);
+      expect(stream.durationRemaining.toNumber()).to.be.approximately(1800, 1);
 
-    await pausableStream
-      .getPausableStream(1)
-      .then((stream) => expect(stream.balanceAccrued).to.eq(0));
+      expect(
+        stream.balanceAccrued.div(oneEther).toNumber()
+      ).to.be.approximately(18, 1);
+    });
 
-    await pausableStream
-      .getStream(1)
-      .then((stream) => expect(stream.deposit).to.eq(oneEther.mul(36)));
+    it("Should disallow calling of the withdraw function unless called by the stream manager", async () => {
+      await createStream(deposit, token, timestamp);
 
-    // +1 to offset the later timestamp
-    await wait(1801);
+      const bobStream = await pausableStream.connect(bob);
 
-    let stream = await pausableStream.getPausableStream(1);
+      await expect(bobStream.withdraw(1, 800)).to.be.reverted;
+    });
 
-    expect(stream.duration).to.eq(
-      stream.durationElapsed.add(stream.durationRemaining)
-    );
+    it("Should not allow withdrawal unless balance has accrued", async () => {
+      await createStream(deposit, token, timestamp);
 
-    // Not great assumptions - todo look at how to fix blocktime
-    expect(stream.durationElapsed.toNumber()).to.be.approximately(1800, 2);
-    expect(stream.durationRemaining.toNumber()).to.be.approximately(1800, 2);
-
-    expect(stream.balanceAccrued.div(oneEther).toNumber()).to.be.approximately(
-      18,
-      1
-    );
-  });
-
-  it("Should disallow calling of the withdraw function unless called by the stream manager", async () => {
-    await createStream(deposit, token, timestamp);
-
-    const bobStream = await pausableStream.connect(bob);
-
-    await expect(bobStream.withdraw(1, 800)).to.be.reverted;
-  });
-
-  it("Should not allow withdrawal unless balance has accrued", async () => {
-    await createStream(deposit, token, timestamp);
-
-    await expect(pausableStream.withdraw(1, 800)).to.be.reverted;
+      await expect(pausableStream.withdraw(1, 800)).to.be.reverted;
+    });
   });
 
   function createStream(
