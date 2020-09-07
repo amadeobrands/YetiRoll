@@ -4,20 +4,14 @@ import PausableStream from "./PausableStream";
 const PausableStreamBuilder = (props) => {
   let {streamManager, provider, token} = props;
 
-  const [alice, setAlice] = useState(undefined);
-  const [bob, setBob] = useState(undefined);
   const [aliceStreamManager, setAliceStreamManager] = useState(undefined);
   const [hasStream, setHasStream] = useState(undefined);
 
-  useEffect(() => {
-    provider.listAccounts().then((accounts) => {
-      setAlice(accounts[0]);
-      setBob(accounts[1]);
-    });
-  }, []);
+  const alice = provider.getSigner(0);
+  const bob = provider.getSigner(1);
 
   useEffect(() => {
-    if (undefined !== streamManager && undefined !== alice) {
+    if (undefined !== streamManager && undefined === aliceStreamManager) {
       let sm = streamManager.connect(alice);
       setAliceStreamManager(sm);
     }
@@ -31,7 +25,7 @@ const PausableStreamBuilder = (props) => {
         <PausableStreamForm
           token={token}
           streamManager={aliceStreamManager}
-          recipient={bob}
+          recipient={bob.getAddress()}
           setHasStream={setHasStream}
         />
       );
@@ -51,12 +45,11 @@ const PausableStreamForm = (props) => {
   const createPausableStream = () => {
     streamManager
       .createPausableStream(recipient, 100, token.address, 3600, Date.now() + 1)
-      .then(console.log);
-    // .then((block) => {
-    //   if (block.confirmations > 0) {
-    //     setHasStream(true);
-    //   }
-    // });
+      .then((block) => {
+        if (block.confirmations > 0) {
+          setHasStream(true);
+        }
+      });
   };
 
   return (

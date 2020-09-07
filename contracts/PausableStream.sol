@@ -12,6 +12,7 @@ contract PausableStream is IPausableStream, Stream {
 
     // todo toggle if stream starts active or not
     // todo only Stream Manager
+    // todo add test case for multiple streams being created
     function createStream(
         address _recipient,
         uint256 _deposit,
@@ -26,6 +27,7 @@ contract PausableStream is IPausableStream, Stream {
         returns (uint256 _streamId)
     {
         uint256 streamId = nextStreamId;
+        nextStreamId = nextStreamId.add(1);
         uint256 ratePerSecond = _ratePerSecond(_deposit, _duration);
         uint256 stopTime = _startTime.add(_duration);
 

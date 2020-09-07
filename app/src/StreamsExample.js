@@ -8,10 +8,12 @@ const {useEffect, useState} = require("react");
 
 const StreamsExample = () => {
   const provider = new providers.JsonRpcProvider("http://127.0.0.1:7545/");
-  const [manager, setManager] = useState(undefined);
+  const [streamManager, setStreamManager] = useState(undefined);
   const [token, setToken] = useState(undefined);
-  const [alice, setAlice] = useState(undefined);
   const [aliceBalance, setAliceBalance] = useState(undefined);
+  const [aliceAddress, setAliceAddress] = useState(undefined);
+
+  let alice = provider.getSigner(0);
 
   const streamManagerFactory = new ContractFactory(
     StreamManager.abi,
@@ -27,7 +29,7 @@ const StreamsExample = () => {
 
   useEffect(() => {
     streamManagerFactory.deploy().then((manager) => {
-      setManager(manager);
+      setStreamManager(manager);
     });
   }, []);
 
@@ -38,32 +40,28 @@ const StreamsExample = () => {
   }, []);
 
   useEffect(() => {
-    provider.listAccounts().then((accounts) => {
-      setAlice(accounts[0]);
-    });
+    if (undefined === aliceAddress) {
+      alice.getAddress().then(setAliceAddress);
+    }
   }, []);
 
-  // Mint some tokens for Alice
   useEffect(() => {
     if (
-      undefined !== alice &&
+      undefined !== aliceAddress &&
       undefined !== token &&
       undefined === aliceBalance
     ) {
-      token.mint(alice, 100000);
+      let contract = token.connect(alice);
 
-      token.balanceOf(alice).then(setAliceBalance);
+      contract.mint(aliceAddress, 100000);
+
+      contract.balanceOf(aliceAddress).then(setAliceBalance);
+
+      contract.approve(streamManager.address, 100000);
     }
-  }, [alice, token, aliceBalance]);
+  }, [token, aliceBalance, aliceAddress]);
 
-  useEffect(() => {
-    if (undefined !== aliceBalance) {
-      let aliceToken = token.attach(alice);
-      aliceToken.approve(manager.address, 100000);
-    }
-  }, [aliceBalance]);
-
-  if (undefined === manager || undefined === token) {
+  if (undefined === streamManager || undefined === token) {
     return <div>Awaiting stream manager & ERC 20 token</div>;
   }
 
@@ -73,12 +71,16 @@ const StreamsExample = () => {
 
   return (
     <div>
-      <p>Stream manager's address: {manager.address}</p>
+      <p>Stream manager's address: {streamManager.address}</p>
       <p>Token address: {token.address}</p>
       <p>
-        Alice's address : {alice} & balance: {aliceBalance.toString()}
+        Alice's address : {aliceAddress} & balance: {aliceBalance.toString()}
       </p>
-      <Streams streamManager={manager} provider={provider} token={token} />
+      <Streams
+        streamManager={streamManager}
+        provider={provider}
+        token={token}
+      />
     </div>
   );
 };
