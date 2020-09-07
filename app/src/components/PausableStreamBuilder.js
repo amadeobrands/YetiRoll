@@ -33,7 +33,13 @@ const PausableStreamBuilder = (props) => {
   };
 
   const renderStream = () => {
-    return <PausableStream streamManager={streamManager} streamId={1} />;
+    return (
+      <PausableStream
+        streamManager={streamManager}
+        streamId={1}
+        provider={provider}
+      />
+    );
   };
 
   return <div>{renderer()}</div>;

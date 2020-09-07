@@ -1,88 +1,43 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 
 const PausableStream = (props) => {
-  let {streamId, streamManager} = props;
-  console.log(streamManager);
+  let {streamId, streamManager, provider} = props;
+  const [stream, setStream] = useState(undefined);
+  const [watcher, setWatcher] = useState(undefined);
 
   useEffect(() => {
-    if (undefined !== streamId || undefined !== streamManager) {
-      console.log(streamId);
-      streamManager.getPausableStream(streamId).then(console.log);
+    if (
+      undefined !== streamId &&
+      undefined !== streamManager &&
+      undefined !== provider
+    ) {
+      const watcher = setInterval(() => {
+        streamManager.getPausableStream(streamId).then(setStream);
+
+        provider.send("evm_increaseTime", [1]);
+
+        // Process the block
+        provider.send("evm_mine", []);
+      }, 1000);
+
+      setWatcher(watcher);
     }
-  }, []);
+  }, [streamId, streamManager]);
+
+  if (undefined === stream) {
+    return <div>Loading stream...</div>;
+  }
 
   return (
     <div>
-      <p>yo</p>
+      <p>Start time {stream.startTime.toNumber()}</p>
+      <p>{stream.duration.toNumber()}</p>
+      <p>{stream.durationElapsed.toNumber()}</p>
+      <p>{stream.durationRemaining.toNumber()}</p>
+      <p>{stream.deposit.toNumber()}</p>
+      <p>{stream.balanceAccrued.toNumber()}</p>
     </div>
   );
-
-  //
-  // useEffect(() => {
-  //     company.employees(alice).then(setEmployeeAddress)
-  // }, [alice]);
-  //
-  // useEffect(() => {
-  //     if (undefined !== employeeAddress) {
-  //         setEmployeeContract(new Contract(employeeAddress, StreamEmployee.abi, provider.getSigner()));
-  //     }
-  // }, [employeeAddress]);
-  //
-  // useEffect(() => {
-  //     if (undefined !== employeeContract) {
-  //         employeeContract.payPerSecond().then(setPayPerSecond);
-  //     }
-  // }, [employeeContract]);
-  //
-  // useEffect(() => {
-  //     if (undefined !== payPerSecond) {
-  //         const interval = setInterval(() => {
-  //             setSeconds(seconds => seconds + 1)
-  //             setBalanceEarned(payPerSecond.mul(seconds))
-  //         }, 1000)
-  //
-  //         return () => clearInterval(interval);
-  //     }
-  // }, [payPerSecond, seconds]);
-  //
-  // const startWorking = async () => {
-  //     await employeeContract.startWorking()
-  //     await employeeContract.isWorking().then(setIsWorking)
-  // }
-  //
-  // const displayWorkingClock = () => {
-  //     if (isWorking) {
-  //         return (
-  //             <div>
-  //                 <p>Pay per second {payPerSecond.toString()}</p>
-  //                 <p>Time worked {seconds}</p>
-  //                 <p>Balance {utils.formatEther(balanceEarned.toString())}</p>
-  //             </div>
-  //         )
-  //     }
-  //     return (
-  //         <div>
-  //             Not working
-  //         </div>
-  //     )
-  // }
-  //
-  // return (
-  //     <div>
-  //         <p>Contract address: {employeeAddress}</p>
-  //         <input type="submit"
-  //                value="Start working"
-  //                onClick={
-  //                    useCallback(
-  //                        () => startWorking(),
-  //                        [employeeContract]
-  //                    )
-  //                }
-  //         />
-  //
-  //         {displayWorkingClock()}
-  //     </div>
-  // )
 };
 
 export default PausableStream;

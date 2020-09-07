@@ -7,12 +7,11 @@ import Streams from "./components/Streams";
 const {useEffect, useState} = require("react");
 
 const StreamsExample = () => {
-  const provider = new providers.JsonRpcProvider("http://127.0.0.1:7545/");
+  const provider = new providers.JsonRpcProvider("http://127.0.0.1:8545/");
   const [streamManager, setStreamManager] = useState(undefined);
   const [token, setToken] = useState(undefined);
   const [aliceBalance, setAliceBalance] = useState(undefined);
   const [aliceAddress, setAliceAddress] = useState(undefined);
-
   let alice = provider.getSigner(0);
 
   const streamManagerFactory = new ContractFactory(
@@ -53,10 +52,9 @@ const StreamsExample = () => {
     ) {
       let contract = token.connect(alice);
 
-      contract.mint(aliceAddress, 100000);
-
-      contract.balanceOf(aliceAddress).then(setAliceBalance);
-
+      contract
+        .mint(aliceAddress, 100000)
+        .then(contract.balanceOf(aliceAddress).then(setAliceBalance));
       contract.approve(streamManager.address, 100000);
     }
   }, [token, aliceBalance, aliceAddress]);
