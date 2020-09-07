@@ -187,8 +187,6 @@ contract PausableStream is IPausableStream, Stream {
             );
     }
 
-    // todo make generic and override
-
     function _isStreamActive(uint256 _streamId) internal view returns (bool) {
         return pausableStreams[_streamId].isActive;
     }
