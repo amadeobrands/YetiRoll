@@ -1,15 +1,13 @@
-import React, {Component} from "react";
-import Page from "./Page.js";
+import React from "react";
+import StreamsExample from "./StreamsExample.js";
 import "./App.css";
 
-class App extends Component {
-    render() {
-        return (
-            <div>
-                <Page />
-            </div>
-        );
-    }
-}
+const App = () => {
+  return (
+    <div>
+      <StreamsExample />
+    </div>
+  );
+};
 
 export default App;
