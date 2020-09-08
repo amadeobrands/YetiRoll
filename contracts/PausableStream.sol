@@ -28,6 +28,7 @@ contract PausableStream is IPausableStream, Stream {
     {
         uint256 streamId = nextStreamId;
         nextStreamId = nextStreamId.add(1);
+        // todo ensure over 0
         uint256 ratePerSecond = _ratePerSecond(_deposit, _duration);
         uint256 stopTime = _startTime.add(_duration);
 
@@ -132,7 +133,8 @@ contract PausableStream is IPausableStream, Stream {
             uint256 durationRemaining,
             bool isActive,
             uint256 deposit,
-            uint256 balanceAccrued
+            uint256 balanceAccrued,
+            uint256 startTime
         )
     {
         return (
@@ -141,7 +143,8 @@ contract PausableStream is IPausableStream, Stream {
             _calculateDurationRemaining(_streamId),
             pausableStreams[_streamId].isActive,
             streams[_streamId].deposit,
-            _calculateBalanceAccrued(_streamId)
+            _calculateBalanceAccrued(_streamId),
+            streams[_streamId].startTime
         );
     }
 
@@ -177,6 +180,26 @@ contract PausableStream is IPausableStream, Stream {
         return pausableStreams[_streamId].durationElapsed;
     }
 
+    function calculateDurationElapsed(uint256 _streamId)
+        external
+        view
+        returns (
+            uint256 durationElapsed,
+            bool isRunning,
+            uint256 startTime,
+            uint256 endTime,
+            uint256 ratePerSecond
+        )
+    {
+        return (
+            _calculateDurationElapsed(_streamId),
+            _isStreamRunning(_streamId),
+            streams[_streamId].startTime,
+            streams[_streamId].stopTime,
+            streams[_streamId].ratePerSecond
+        );
+    }
+
     function _calculateDurationRemaining(uint256 _streamId)
         internal
         override
@@ -200,7 +223,7 @@ contract PausableStream is IPausableStream, Stream {
         returns (bool)
     {
         return
-            _isStreamActive(_streamId) &&
+            //            _isStreamActive(_streamId) &&
             block.timestamp >= streams[_streamId].startTime;
     }
 

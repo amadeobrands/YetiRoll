@@ -8,6 +8,14 @@ const {useEffect, useState} = require("react");
 
 const StreamsExample = () => {
   const provider = new providers.JsonRpcProvider("http://127.0.0.1:8545/");
+
+  useEffect(() => {
+    // provider.send("evm_setNextBlockTimestamp", [Date.now()]);
+    //
+    // // Process the block
+    // provider.send("evm_mine", []);
+  }, []);
+
   const [streamManager, setStreamManager] = useState(undefined);
   const [token, setToken] = useState(undefined);
   const [aliceBalance, setAliceBalance] = useState(undefined);

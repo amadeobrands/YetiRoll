@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import PausableStream from "./PausableStream";
+import {BigNumber} from "ethers";
 
 const PausableStreamBuilder = (props) => {
   let {streamManager, provider, token} = props;
@@ -50,7 +51,13 @@ const PausableStreamForm = (props) => {
 
   const createPausableStream = () => {
     streamManager
-      .createPausableStream(recipient, 100, token.address, 3600, Date.now() + 1)
+      .createPausableStream(
+        recipient,
+        100,
+        token.address,
+        3600,
+        Math.ceil(BigNumber.from(new Date().getTime()).div(1000).add(100))
+      )
       .then((block) => {
         if (block.confirmations > 0) {
           setHasStream(true);

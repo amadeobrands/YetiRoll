@@ -74,9 +74,28 @@ contract StreamManager is ReentrancyGuard {
             uint256 durationRemaining,
             bool isActive,
             uint256 deposit,
-            uint256 balanceAccrued
+            uint256 balanceAccrued,
+            uint256 startTime
         )
     {
         return pausableStream.getPausableStream(_streamId);
+    }
+
+    function calculateDurationElapsed(uint256 _streamId)
+        external
+        view
+        returns (
+            uint256 durationElapsed,
+            bool isRunning,
+            uint256 startTime,
+            uint256 endTime,
+            uint256 ratePerSecond
+        )
+    {
+        return pausableStream.calculateDurationElapsed(_streamId);
+    }
+
+    function now() public view returns (uint256 time) {
+        return block.timestamp;
     }
 }
