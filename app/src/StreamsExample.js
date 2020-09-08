@@ -5,7 +5,7 @@ import Streams from "./components/Streams";
 const {useEffect, useState} = require("react");
 
 const StreamsExample = (props) => {
-  let {provider, streamManager, erc20} = props;
+  let {provider, streamManager, erc20, time} = props;
 
   const [aliceAddress, setAliceAddress] = useState(undefined);
   const [aliceBalance, setAliceBalance] = useState(undefined);
@@ -43,6 +43,7 @@ const StreamsExample = (props) => {
         provider={provider}
         streamManager={streamManager}
         erc20={erc20}
+        time={time}
       />
     </div>
   );

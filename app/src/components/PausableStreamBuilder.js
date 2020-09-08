@@ -3,7 +3,7 @@ import PausableStream from "./PausableStream";
 import {BigNumber} from "ethers";
 
 const PausableStreamBuilder = (props) => {
-  let {streamManager, provider, erc20} = props;
+  let {streamManager, provider, erc20, time} = props;
 
   const [aliceStreamManager, setAliceStreamManager] = useState(undefined);
   const [hasStream, setHasStream] = useState(undefined);
@@ -28,6 +28,7 @@ const PausableStreamBuilder = (props) => {
           streamManager={aliceStreamManager}
           recipient={bob.getAddress()}
           setHasStream={setHasStream}
+          time={time}
         />
       );
     }
@@ -39,6 +40,7 @@ const PausableStreamBuilder = (props) => {
         streamManager={streamManager}
         streamId={1}
         provider={provider}
+        time={time}
       />
     );
   };
@@ -47,7 +49,7 @@ const PausableStreamBuilder = (props) => {
 };
 
 const PausableStreamForm = (props) => {
-  let {erc20, streamManager, recipient, setHasStream} = props;
+  let {erc20, streamManager, recipient, setHasStream, time} = props;
 
   const createPausableStream = () => {
     streamManager
@@ -56,7 +58,7 @@ const PausableStreamForm = (props) => {
         BigNumber.from(1).mul(BigNumber.from(10).pow(18)),
         erc20.address,
         3600,
-        Math.ceil(BigNumber.from(new Date().getTime()).div(1000).add(10))
+        time + 3
       )
       .then((block) => {
         if (block.confirmations > 0) {
@@ -73,6 +75,7 @@ const PausableStreamForm = (props) => {
           recipient,
           erc20,
           streamManager,
+          time,
         ])}
       />
     </form>

@@ -3,6 +3,7 @@ import {BigNumber, providers} from "ethers";
 import {MockErc20Factory, StreamManagerFactory} from "./typechain";
 import {MockErc20} from "./typechain/MockErc20";
 import {StreamManager} from "./typechain/StreamManager";
+import {getBlockTime} from "./test/helpers/contract";
 
 const provider = new providers.JsonRpcProvider("http://127.0.0.1:8545/");
 const alice = provider.getSigner(0);
@@ -16,6 +17,10 @@ async function main() {
   const balance = BigNumber.from(10000).mul(oneEther);
 
   await mintAndApproveBalance(erc20, balance, streamManager);
+
+  // Predicable date should make testing easier
+  const now = Math.ceil(new Date().getTime() / 1000);
+  await provider.send("evm_setNextBlockTimestamp", [now + 1]);
 }
 
 async function deployStreamManager() {
