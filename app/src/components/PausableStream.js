@@ -10,13 +10,11 @@ const PausableStream = (props) => {
 
   useEffect(() => {
     const watcher = setInterval(() => {
-      streamManager.calculateDurationElapsed(streamId).then(setStream);
+      streamManager.getPausableStream(streamId).then(setStream);
       streamManager
         .now()
         .then((time) => time.mul(1000))
         .then(setTime);
-
-      // provider.send("evm_increaseTime", [1]);
 
       // Process the block
       provider.send("evm_mine", []);
@@ -29,19 +27,16 @@ const PausableStream = (props) => {
     return <div>Loading..</div>;
   }
 
+  console.log(stream);
+
   return (
     <div>
-      <p> {stream.durationElapsed.toNumber()}</p>
+      <p> {stream.durationElapsed.toString()}</p>
       <p> {stream.isRunning ? "running" : "not"}</p>
       <p>
         {"Start time: "}
         {new Date(stream.startTime.mul(1000).toNumber()).toTimeString()}{" "}
         {new Date(stream.startTime.mul(1000).toNumber()).toDateString()}
-      </p>
-      <p>
-        {"End time: "}
-        {new Date(stream.endTime.mul(1000).toNumber()).toTimeString()}{" "}
-        {new Date(stream.endTime.mul(1000).toNumber()).toDateString()}
       </p>
       <p>
         {"Block time: "}
@@ -53,28 +48,9 @@ const PausableStream = (props) => {
         {new Date().toTimeString()}
         {new Date().toDateString()}
       </p>
+      <p>{stream.balanceAccrued.div(BigNumber.from(10).pow(18)).toString()}</p>
     </div>
   );
-
-  // useEffect(() => {
-  //   if (
-  //     undefined !== streamId &&
-  //     undefined !== streamManager &&
-  //     undefined !== provider
-  //   ) {
-  //     const watcher = setInterval(() => {
-  //       streamManager.getPausableStream(streamId).then(setStream);
-  //       streamManager.now().then(setTime);
-  //
-  //       provider.send("evm_increaseTime", [1]);
-  //
-  //       // Process the block
-  //       provider.send("evm_mine", []);
-  //     }, 1000);
-  //
-  //     setWatcher(watcher);
-  //   }
-  // }, [streamId, streamManager]);
 
   if (undefined === stream) {
     return <div>Loading stream...</div>;

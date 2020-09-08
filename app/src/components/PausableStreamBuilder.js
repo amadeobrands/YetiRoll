@@ -3,7 +3,7 @@ import PausableStream from "./PausableStream";
 import {BigNumber} from "ethers";
 
 const PausableStreamBuilder = (props) => {
-  let {streamManager, provider, token} = props;
+  let {streamManager, provider, erc20} = props;
 
   const [aliceStreamManager, setAliceStreamManager] = useState(undefined);
   const [hasStream, setHasStream] = useState(undefined);
@@ -24,7 +24,7 @@ const PausableStreamBuilder = (props) => {
     } else {
       return (
         <PausableStreamForm
-          token={token}
+          erc20={erc20}
           streamManager={aliceStreamManager}
           recipient={bob.getAddress()}
           setHasStream={setHasStream}
@@ -47,16 +47,16 @@ const PausableStreamBuilder = (props) => {
 };
 
 const PausableStreamForm = (props) => {
-  let {token, streamManager, recipient, setHasStream} = props;
+  let {erc20, streamManager, recipient, setHasStream} = props;
 
   const createPausableStream = () => {
     streamManager
       .createPausableStream(
         recipient,
-        100,
-        token.address,
+        BigNumber.from(1).mul(BigNumber.from(10).pow(18)),
+        erc20.address,
         3600,
-        Math.ceil(BigNumber.from(new Date().getTime()).div(1000).add(100))
+        Math.ceil(BigNumber.from(new Date().getTime()).div(1000).add(10))
       )
       .then((block) => {
         if (block.confirmations > 0) {
@@ -71,7 +71,7 @@ const PausableStreamForm = (props) => {
         type="submit"
         onClick={useCallback(() => createPausableStream(), [
           recipient,
-          token,
+          erc20,
           streamManager,
         ])}
       />
