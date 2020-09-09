@@ -12,7 +12,7 @@ import {deployErc20, getBlockTime, getProvider, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
-const [alice, bob, charlie] = getProvider().getWallets();
+const [alice, bob] = getProvider().getWallets();
 
 describe("Pausable Stream", () => {
   let pausableStream: PausableStream;
@@ -65,6 +65,7 @@ describe("Pausable Stream", () => {
       stream = await pausableStream.getPausableStream(1);
 
       expect(stream.isRunning).to.eq(false);
+      expect(stream.startTime.toNumber()).to.be.eq(0);
     });
   });
 
@@ -109,6 +110,7 @@ describe("Pausable Stream", () => {
     it("Should not allow withdrawal unless balance has accrued", async () => {
       await createStream(deposit, token, timestamp);
 
+      // todo have a message
       await expect(pausableStream.withdraw(1, 800, bob.address)).to.be.reverted;
     });
   });

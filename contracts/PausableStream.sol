@@ -89,8 +89,8 @@ contract PausableStream is IPausableStream, Stream {
         }
 
         // Reset start and stop points
-        stream.startTime = 0;
-        stream.stopTime = 0;
+        streams[_streamId].startTime = 0;
+        streams[_streamId].stopTime = 0;
 
         // Pause the stream
         pausableStreams[_streamId].isActive = false;
