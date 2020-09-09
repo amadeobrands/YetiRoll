@@ -157,6 +157,14 @@ contract PausableStream is IPausableStream, Stream {
         require(false == _isStreamActive(_streamId), "Stream is running");
         _;
     }
+    modifier _canWithdrawFunds(
+        uint256 _streamId,
+        uint256 _amount,
+        address _who
+    ) override {
+        require(canWithdrawFunds(_streamId, _amount, _who));
+        _;
+    }
 
     //  _____       _                        _  __      ___
     // |_   _|     | |                      | | \ \    / (_)
@@ -223,7 +231,7 @@ contract PausableStream is IPausableStream, Stream {
         returns (bool)
     {
         return
-            //            _isStreamActive(_streamId) &&
+            _isStreamActive(_streamId) &&
             block.timestamp >= streams[_streamId].startTime;
     }
 

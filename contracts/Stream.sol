@@ -150,7 +150,7 @@ contract Stream is Ownable, IStream {
         uint256 _streamId,
         uint256 _amount,
         address _who
-    ) {
+    ) virtual {
         require(_who == streams[_streamId].recipient, "Not the stream owner");
         require(
             streams[_streamId].remainingBalance >= _amount,

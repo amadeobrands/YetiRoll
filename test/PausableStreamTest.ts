@@ -52,18 +52,19 @@ describe("Pausable Stream", () => {
       expect(stream.durationRemaining).to.eq(oneHour);
     });
 
-    it("Should allow a stream to be started and paused", async () => {
+    it("Should allow a running stream to be started and paused", async () => {
       await createStream(deposit, token, timestamp);
 
+      await wait(1800);
       let stream = await pausableStream.getPausableStream(1);
 
-      expect(stream.isActive).to.eq(true);
+      expect(stream.isRunning).to.eq(true);
 
       await pausableStream.pauseStream(1);
 
       stream = await pausableStream.getPausableStream(1);
 
-      expect(stream.isActive).to.eq(false);
+      expect(stream.isRunning).to.eq(false);
     });
   });
 
@@ -102,13 +103,13 @@ describe("Pausable Stream", () => {
 
       const bobStream = await pausableStream.connect(bob);
 
-      await expect(bobStream.withdraw(1, 800)).to.be.reverted;
+      await expect(bobStream.withdraw(1, 800, bob.address)).to.be.reverted;
     });
 
     it("Should not allow withdrawal unless balance has accrued", async () => {
       await createStream(deposit, token, timestamp);
 
-      await expect(pausableStream.withdraw(1, 800)).to.be.reverted;
+      await expect(pausableStream.withdraw(1, 800, bob.address)).to.be.reverted;
     });
   });
 
