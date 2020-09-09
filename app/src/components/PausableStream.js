@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 
-import {BigNumber} from "ethers";
+import {constants} from "ethers";
 
 const PausableStream = (props) => {
   let {streamId, streamManager, provider, time} = props;
@@ -24,7 +24,6 @@ const PausableStream = (props) => {
 
   return (
     <div>
-      <p> {stream.durationElapsed.toString()}</p>
       <p> {stream.isRunning ? "running" : "not"}</p>
       <p>
         {"Start time: "}
@@ -36,11 +35,9 @@ const PausableStream = (props) => {
         {new Date(time * 1000).toTimeString()}
         {new Date(time * 1000).toDateString()}
       </p>
-      <p>Depost: {stream.deposit.toString()}</p>
-      <p>
-        Balance accrued:
-        {stream.balanceAccrued.div(BigNumber.from(10).pow(10)).toString()}
-      </p>
+      <p>Deposit: {stream.deposit.toString()}</p>
+      <p>Balance accrued: {stream.balanceAccrued.toNumber()}</p>
+      <p>Time running: {stream.durationElapsed.toString()}</p>
     </div>
   );
 };

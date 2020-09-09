@@ -28,7 +28,7 @@ const TimeKeeper = (props) => {
 
   return (
     <h3>
-      Blockchain time is: {new Date(time).toUTCString()} : {time}
+      Blockchain time is: {new Date(time * 1000).toTimeString()} : {time}
     </h3>
   );
 };

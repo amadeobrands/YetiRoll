@@ -20,7 +20,7 @@ async function main() {
 
   // Predicable date should make testing easier
   const now = Math.ceil(new Date().getTime() / 1000);
-  await provider.send("evm_setNextBlockTimestamp", [now + 1]);
+  await provider.send("evm_setNextBlockTimestamp", [now + 10]);
 }
 
 async function deployStreamManager() {
