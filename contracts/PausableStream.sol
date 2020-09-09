@@ -97,21 +97,17 @@ contract PausableStream is IPausableStream, Stream {
     }
 
     function startStream(uint256 _streamId) public _streamIsPaused(_streamId) {
-        Types.Stream memory stream = streams[_streamId];
-        Types.PausableStream memory pausableStream = pausableStreams[_streamId];
-
-        // Need a way to calculate the duration elapsed on the fly here
-        if (_calculateDurationElapsed(_streamId) == pausableStream.duration) {
+        if (_calculateDurationElapsed(_streamId) == pausableStreams[_streamId].duration) {
             revert("Stream has finished");
         }
 
-        uint256 durationRemaining = pausableStream.duration.sub(
-            pausableStream.durationElapsed
+        uint256 durationRemaining = pausableStreams[_streamId].duration.sub(
+            pausableStreams[_streamId].durationElapsed
         );
 
         // Initiate start and end points
-        stream.startTime = block.timestamp;
-        stream.stopTime = block.timestamp.add(durationRemaining);
+        streams[_streamId].startTime = block.timestamp;
+        streams[_streamId].stopTime = block.timestamp.add(durationRemaining);
 
         // Activate the stream
         pausableStreams[_streamId].isActive = true;
@@ -146,6 +142,10 @@ contract PausableStream is IPausableStream, Stream {
             streams[_streamId].startTime,
             _isStreamRunning(_streamId)
         );
+    }
+
+    function isStreamActive(uint256 _streamId) public returns (bool isStreamActive) {
+        return false;
     }
 
     modifier _streamIsActive(uint256 _streamId) {
@@ -186,26 +186,6 @@ contract PausableStream is IPausableStream, Stream {
         }
 
         return pausableStreams[_streamId].durationElapsed;
-    }
-
-    function calculateDurationElapsed(uint256 _streamId)
-        external
-        view
-        returns (
-            uint256 durationElapsed,
-            bool isRunning,
-            uint256 startTime,
-            uint256 endTime,
-            uint256 ratePerSecond
-        )
-    {
-        return (
-            _calculateDurationElapsed(_streamId),
-            _isStreamRunning(_streamId),
-            streams[_streamId].startTime,
-            streams[_streamId].stopTime,
-            streams[_streamId].ratePerSecond
-        );
     }
 
     function _calculateDurationRemaining(uint256 _streamId)
