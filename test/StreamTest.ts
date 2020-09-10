@@ -14,7 +14,6 @@ const {expect} = chai;
 const [alice, bob] = getProvider().getWallets();
 
 describe("Payment Stream", () => {
-  const oneHour = 3600;
   const oneEther = BigNumber.from(10).pow(18);
 
   let paymentStream: Stream;
@@ -28,7 +27,7 @@ describe("Payment Stream", () => {
     ])) as MockErc20;
     paymentStream = (await deployContract(alice, StreamArtifact)) as Stream;
 
-    timestamp = (await getBlockTime()) + 1;
+    timestamp = (await getBlockTime()) + 10;
   });
 
   it("Should allow creation of a stream", async () => {
@@ -55,9 +54,49 @@ describe("Payment Stream", () => {
     expect(stream.stopTime).to.eq(timestamp + 100);
   });
 
-  it("Prevent creation of a stream with a start time in the past", async () => {
+  it("Should prevent creation of a stream with a start time in the past", async () => {
+    // todo check revert message
     await expect(
       paymentStream.createStream(bob.address, oneEther, token.address, 100, 200)
+    ).to.be.reverted;
+  });
+
+  it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
+    // todo check revert message
+    await expect(
+      paymentStream.createStream(
+        bob.address,
+        1800,
+        token.address,
+        timestamp,
+        timestamp + 3601
+      )
+    ).to.be.reverted;
+  });
+
+  it("Should prevent creation of a stream an end date before the start date", async () => {
+    // todo check revert message
+    await expect(
+      paymentStream.createStream(
+        bob.address,
+        1800,
+        token.address,
+        timestamp + 3600,
+        timestamp
+      )
+    ).to.be.reverted;
+  });
+
+  it("Should prevent creation of a stream where start and end date are the same time", async () => {
+    // todo check revert message
+    await expect(
+      paymentStream.createStream(
+        bob.address,
+        1800,
+        token.address,
+        timestamp,
+        timestamp
+      )
     ).to.be.reverted;
   });
 });

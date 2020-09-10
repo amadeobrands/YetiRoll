@@ -37,7 +37,7 @@ contract Stream is Ownable, IStream {
 
         uint256 duration = _stopTime.sub(_startTime);
         uint256 ratePerSecond = _ratePerSecond(_deposit, duration);
-        require(ratePerSecond > 0, "Rate per second is under 0");
+        require(ratePerSecond > 0, "Rate per second must be above 0");
 
         uint256 streamId = nextStreamId;
         streams[streamId] = Types.Stream({
