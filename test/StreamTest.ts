@@ -82,4 +82,15 @@ describe("Payment Stream", () => {
         timestamp
       )).to.be.reverted;
   });
+
+  it("Should prevent creation of a stream where start and end date are the same time", async () => {
+    // todo check revert message
+    await  expect(paymentStream.createStream(
+          bob.address,
+          1800,
+          token.address,
+        timestamp,
+        timestamp
+      )).to.be.reverted;
+  });
 });
