@@ -97,7 +97,10 @@ contract PausableStream is IPausableStream, Stream {
     }
 
     function startStream(uint256 _streamId) public _streamIsPaused(_streamId) {
-        if (_calculateDurationElapsed(_streamId) == pausableStreams[_streamId].duration) {
+        if (
+            _calculateDurationElapsed(_streamId) ==
+            pausableStreams[_streamId].duration
+        ) {
             revert("Stream has finished");
         }
 
@@ -144,7 +147,10 @@ contract PausableStream is IPausableStream, Stream {
         );
     }
 
-    function isStreamActive(uint256 _streamId) public returns (bool isStreamActive) {
+    function isStreamActive(uint256 _streamId)
+        public
+        returns (bool isStreamActive)
+    {
         return false;
     }
 

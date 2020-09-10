@@ -63,34 +63,40 @@ describe("Payment Stream", () => {
 
   it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
     // todo check revert message
-    await  expect(paymentStream.createStream(
-          bob.address,
-          1800,
-          token.address,
+    await expect(
+      paymentStream.createStream(
+        bob.address,
+        1800,
+        token.address,
         timestamp,
         timestamp + 3601
-      )).to.be.reverted;
+      )
+    ).to.be.reverted;
   });
 
   it("Should prevent creation of a stream an end date before the start date", async () => {
     // todo check revert message
-    await  expect(paymentStream.createStream(
-          bob.address,
-          1800,
-          token.address,
+    await expect(
+      paymentStream.createStream(
+        bob.address,
+        1800,
+        token.address,
         timestamp + 3600,
         timestamp
-      )).to.be.reverted;
+      )
+    ).to.be.reverted;
   });
 
   it("Should prevent creation of a stream where start and end date are the same time", async () => {
     // todo check revert message
-    await  expect(paymentStream.createStream(
-          bob.address,
-          1800,
-          token.address,
+    await expect(
+      paymentStream.createStream(
+        bob.address,
+        1800,
+        token.address,
         timestamp,
         timestamp
-      )).to.be.reverted;
+      )
+    ).to.be.reverted;
   });
 });

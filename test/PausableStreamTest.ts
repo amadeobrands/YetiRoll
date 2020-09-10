@@ -81,17 +81,17 @@ describe("Pausable Stream", () => {
     });
 
     it("Should set the correct start and stop times to a paused stream which is restarted", async () => {
-        await createStream(deposit, token, timestamp);
-        await pausableStream.pauseStream(1);
-        await pausableStream.startStream(1);
+      await createStream(deposit, token, timestamp);
+      await pausableStream.pauseStream(1);
+      await pausableStream.startStream(1);
 
-        let stream = await pausableStream.getPausableStream(1);
+      let stream = await pausableStream.getPausableStream(1);
 
       expect(stream.isRunning).to.eq(true);
 
       // todo maybe we can check what the actual start time should be
-        expect(stream.startTime.toNumber()).to.not.be.eq(0);
-      });
+      expect(stream.startTime.toNumber()).to.not.be.eq(0);
+    });
   });
 
   describe("Balance accruing", () => {
