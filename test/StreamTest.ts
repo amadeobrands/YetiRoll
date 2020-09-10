@@ -55,9 +55,20 @@ describe("Payment Stream", () => {
     expect(stream.stopTime).to.eq(timestamp + 100);
   });
 
-  it("Prevent creation of a stream with a start time in the past", async () => {
+  it("Should prevent creation of a stream with a start time in the past", async () => {
+    // todo check message
     await expect(
       paymentStream.createStream(bob.address, oneEther, token.address, 100, 200)
     ).to.be.reverted;
+  });
+  it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
+    // todo check message
+    await  expect(paymentStream.createStream(
+          bob.address,
+          1800,
+          token.address,
+          await getBlockTime() + 1,
+          await getBlockTime() + 3601
+      )).to.be.reverted;
   });
 });
