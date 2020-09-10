@@ -5,6 +5,7 @@ import {Contract, providers} from "ethers";
 import StreamManager from "./build/StreamManager.json";
 import MockERC20 from "./build/MockERC20.json";
 import TimeKeeper from "./components/TimeKeeper";
+import Grid from "@material-ui/core/Grid";
 
 const App = () => {
   const provider = new providers.JsonRpcProvider("http://127.0.0.1:8545/");
@@ -22,21 +23,33 @@ const App = () => {
   let erc20 = new Contract(erc20Address, MockERC20.abi, provider);
 
   return (
-    <div>
-      <TimeKeeper
-        provider={provider}
-        streamManager={streamManager}
-        time={time}
-        setTime={setTime}
-      />
-
-      <StreamsExample
-        provider={provider}
-        streamManager={streamManager}
-        erc20={erc20}
-        time={time}
-      />
-    </div>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <TimeKeeper
+          provider={provider}
+          streamManager={streamManager}
+          time={time}
+          setTime={setTime}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <StreamsExample
+          provider={provider}
+          streamManager={streamManager}
+          erc20={erc20}
+          time={time}
+        />
+      </Grid>
+      {/**/}
+      {/*  <Grid container justify="center" spacing={spacing}>*/}
+      {/*    {[0, 1, 2].map((value) => (*/}
+      {/*      <Grid key={value} item>*/}
+      {/*        <Paper className={classes.paper} />*/}
+      {/*      </Grid>*/}
+      {/*    ))}*/}
+      {/*  </Grid>*/}
+      {/*</Grid>*/}
+    </Grid>
   );
 };
 

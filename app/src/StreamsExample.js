@@ -1,6 +1,7 @@
 import React from "react";
 import {BigNumber} from "ethers";
 import Streams from "./components/Streams";
+import Grid from "@material-ui/core/Grid";
 
 const {useEffect, useState} = require("react");
 
@@ -33,19 +34,23 @@ const StreamsExample = (props) => {
   }
 
   return (
-    <div>
-      <p>Stream manager's address: {streamManager.address}</p>
-      <p>Token address: {erc20.address}</p>
-      <p>
-        Alice's address : {aliceAddress} & balance: {aliceBalance.toString()}
-      </p>
-      <Streams
-        provider={provider}
-        streamManager={streamManager}
-        erc20={erc20}
-        time={time}
-      />
-    </div>
+    <Grid container xs={12}>
+      <Grid item xs={6}>
+        <p>Stream manager's address: {streamManager.address}</p>
+        <p>Token address: {erc20.address}</p>
+        <p>
+          Alice's address : {aliceAddress} & balance: {aliceBalance.toString()}
+        </p>
+      </Grid>
+      <Grid item xs={5}>
+        <Streams
+          provider={provider}
+          streamManager={streamManager}
+          erc20={erc20}
+          time={time}
+        />
+      </Grid>
+    </Grid>
   );
 };
 
