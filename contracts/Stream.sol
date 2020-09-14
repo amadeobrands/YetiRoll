@@ -28,7 +28,7 @@ contract Stream is Ownable, IStream {
         payable
         onlyOwner
         _baseStreamRequirements(_recipient, _deposit, _startTime)
-        returns (uint256 streamId)
+        returns (uint256)
     {
         require(
             _isNonZeroLengthStream(_startTime, _stopTime),
@@ -40,6 +40,8 @@ contract Stream is Ownable, IStream {
         require(ratePerSecond > 0, "Rate per second must be above 0");
 
         uint256 streamId = nextStreamId;
+        nextStreamId = nextStreamId.add(1);
+
         streams[streamId] = Types.Stream({
             remainingBalance: _deposit,
             deposit: _deposit,

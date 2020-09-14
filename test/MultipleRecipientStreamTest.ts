@@ -3,10 +3,8 @@ import chai from "chai";
 import {deployContract} from "ethereum-waffle";
 
 import MultipleRecipientStreamArtifact from "../artifacts/MultipleRecipientStream.json";
-import StreamArtifact from "../artifacts/Stream.json";
 
 import {MultipleRecipientStream} from "../typechain/MultipleRecipientStream";
-import {Stream} from "../typechain/Stream";
 import {MockErc20} from "../typechain/MockErc20";
 
 import {oneEther, oneHour} from "./helpers/numbers";
@@ -34,7 +32,7 @@ describe("Multiple Recipient Stream", () => {
         timestamp = (await getBlockTime()) + 100;
     });
 
-    it("Should accept an array of addresses and create a stream to each with splitting the deposit in an eqaul proportion ", async () => {
+    it("Should accept an array of addresses and create a stream to each with splitting the deposit in an equal proportion ", async () => {
         await multipleRecipient.createStream(
             Array.of(bob.address, charlie.address, dennis.address, ethan.address),
             oneEther.mul(100),
@@ -43,8 +41,13 @@ describe("Multiple Recipient Stream", () => {
             timestamp + oneHour
         );
 
+        await multipleRecipient.getStream(1, charlie.address).then((stream : any) => expect(stream.recipient).to.eq(charlie.address));
+        await multipleRecipient.getStream(1, dennis.address).then((stream : any) => expect(stream.recipient).to.eq(dennis.address));
+        await multipleRecipient.getStream(1, ethan.address).then((stream : any) => expect(stream.recipient).to.eq(ethan.address));
+
         const stream =  await multipleRecipient.getStream(1, bob.address);
 
         expect(stream.deposit).to.eq(oneEther.mul(25));
+        expect(stream.recipient).to.eq(bob.address);
     });
 });
