@@ -1,4 +1,4 @@
-.PHONY : typechain compile test compile-clean console run deploy
+.PHONY : typechain compile test compile-clean console run deploy prettier
 
 typechain:
 	./node_modules/.bin/typechain --target ethers-v5 --outDir typechain './artifacts/*.json'
@@ -19,3 +19,6 @@ run-node:
 
 deploy:
 	npx buidler run deployTest.ts
+
+prettier:
+	npm run prettier

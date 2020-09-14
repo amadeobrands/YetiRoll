@@ -24,7 +24,7 @@ library Types {
         bool isActive;
     }
 
-    struct SplitStream {
-        address[] recipients;
+    struct MultipleRecipientStream {
+        Stream streams;
     }
 }

@@ -14,7 +14,9 @@ This extends on the idea of a payment stream and strives to implement different 
 
 -- todo
 
-https://prettier.io/docs/en/install.html <-- Look at githooks
+https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code
+
+
 Add more tests around streams specifically withdrawal of funds
 Multiple recipient streams
 Stream to stream payments
