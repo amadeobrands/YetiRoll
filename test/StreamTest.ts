@@ -55,14 +55,12 @@ describe("Payment Stream", () => {
   });
 
   it("Should prevent creation of a stream with a start time in the past", async () => {
-    // todo check revert message
     await expect(
       paymentStream.createStream(bob.address, oneEther, token.address, 100, 200)
-    ).to.be.reverted;
+    ).to.be.revertedWith("Cannot start a stream in the past");
   });
 
   it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
-    // todo check revert message
     await expect(
       paymentStream.createStream(
         bob.address,
@@ -71,11 +69,10 @@ describe("Payment Stream", () => {
         timestamp,
         timestamp + 3601
       )
-    ).to.be.reverted;
+    ).to.be.revertedWith("Rate per second must be above 0");
   });
 
   it("Should prevent creation of a stream an end date before the start date", async () => {
-    // todo check revert message
     await expect(
       paymentStream.createStream(
         bob.address,
@@ -84,11 +81,10 @@ describe("Payment Stream", () => {
         timestamp + 3600,
         timestamp
       )
-    ).to.be.reverted;
+    ).to.be.revertedWith("SafeMath: subtraction overflow");
   });
 
   it("Should prevent creation of a stream where start and end date are the same time", async () => {
-    // todo check revert message
     await expect(
       paymentStream.createStream(
         bob.address,
@@ -97,6 +93,6 @@ describe("Payment Stream", () => {
         timestamp,
         timestamp
       )
-    ).to.be.reverted;
+    ).to.be.revertedWith("Stream must last a least a second");
   });
 });

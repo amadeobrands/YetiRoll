@@ -17,7 +17,7 @@ This extends on the idea of a payment stream and strives to implement different 
 https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code
 
 
-Add more tests around streams specifically withdrawal of funds
-Multiple recipient streams
-Stream to stream payments
-React frontend
+- Add more tests around streams specifically withdrawal of funds
+- Stream to stream payments
+- React frontend
+- More events emitted
