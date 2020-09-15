@@ -1,15 +1,18 @@
 import chai from "chai";
 
-import {deployContract} from "ethereum-waffle";
-
-import MultipleRecipientStreamArtifact from "../artifacts/MultipleRecipientStream.json";
-
 import {MultipleRecipientStream} from "../typechain/MultipleRecipientStream";
 import {MockErc20} from "../typechain/MockErc20";
 
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, getBlockTime, getProvider} from "./helpers/contract";
+import {
+    deployErc20,
+    deployMultipleRecipientStream,
+    deployPausableStream,
+    getBlockTime,
+    getProvider
+} from "./helpers/contract";
 import {BigNumber} from "ethers";
+import {Stream} from "../typechain/Stream";
 
 const {expect} = chai;
 
@@ -22,10 +25,7 @@ describe("Multiple Recipient Stream", () => {
 
     beforeEach(async () => {
         token = await deployErc20(alice);
-        multipleRecipient = (await deployContract(
-            alice,
-            MultipleRecipientStreamArtifact
-        )) as MultipleRecipientStream;
+        multipleRecipient = await deployMultipleRecipientStream(alice);
 
         await token.mint(alice.address, 10000000);
         await token.approve(multipleRecipient.address, 10000000);
@@ -57,6 +57,17 @@ describe("Multiple Recipient Stream", () => {
             .then((streamId : BigNumber) => expect(streamId.toNumber()).to.eq(3));
         await multipleRecipient.getStreamId(1, ethan.address)
             .then((streamId : BigNumber) => expect(streamId.toNumber()).to.eq(4));
+    });
+
+    // todo implement access control first
+    xit("Should allow withdrawal from each stream", async () => {
+        await createMultipleRecipientStream();
+
+        await multipleRecipient.getStreamId(1, charlie.address).then(
+            (streamId:BigNumber) => {
+
+            }
+        );
     });
 
     async function createMultipleRecipientStream() {

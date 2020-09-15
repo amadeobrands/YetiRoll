@@ -1,14 +1,10 @@
 import chai from "chai";
-
-import {deployContract} from "ethereum-waffle";
-
-import StreamManagerArtifact from "../artifacts/StreamManager.json";
 import {StreamManager} from "../typechain/StreamManager";
 
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, getBlockTime, getProvider, wait} from "./helpers/contract";
+import {deployErc20, deployStreamManager, getBlockTime, getProvider, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -17,7 +13,6 @@ const [alice, bob] = getProvider().getWallets();
 describe("The stream manager", () => {
   let streamManager: StreamManager;
   let token: MockErc20;
-  let blockId: number;
   let timestamp: number;
 
   let deposit = BigNumber.from(36).mul(oneEther);
@@ -25,14 +20,7 @@ describe("The stream manager", () => {
   beforeEach(async () => {
     token = await deployErc20(alice);
 
-    timestamp = await getProvider()
-      .getBlock(blockId)
-      .then((block) => block.timestamp);
-
-    streamManager = (await deployContract(
-      alice,
-      StreamManagerArtifact
-    )) as StreamManager;
+    streamManager = await deployStreamManager(alice);
 
     await token.mint(alice.address, deposit);
     await token.approve(streamManager.address, oneEther.mul(9999));

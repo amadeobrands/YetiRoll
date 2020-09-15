@@ -1,14 +1,10 @@
 import chai from "chai";
-
-import {deployContract} from "ethereum-waffle";
-
-import PausableStreamArtifact from "../artifacts/PausableStream.json";
 import {PausableStream} from "../typechain/PausableStream";
 
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, getBlockTime, getProvider, wait} from "./helpers/contract";
+import {deployErc20, deployPausableStream, getBlockTime, getProvider, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -24,10 +20,7 @@ describe("Pausable Stream", () => {
   beforeEach(async () => {
     token = await deployErc20(alice);
 
-    pausableStream = (await deployContract(
-      alice,
-      PausableStreamArtifact
-    )) as PausableStream;
+    pausableStream = await deployPausableStream(alice);
 
     await token.mint(alice.address, 10000000);
     await token.approve(pausableStream.address, 10000000);
@@ -129,6 +122,7 @@ describe("Pausable Stream", () => {
 
       const bobStream = await pausableStream.connect(bob);
 
+      // todo have a message
       await expect(bobStream.withdraw(1, 800, bob.address)).to.be.reverted;
     });
 

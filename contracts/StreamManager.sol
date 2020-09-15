@@ -11,6 +11,7 @@ contract StreamManager is ReentrancyGuard {
     Stream fixedDurationStream;
     PausableStream pausableStream;
 
+    // todo inject streams
     constructor() public {
         pausableStream = new PausableStream();
         fixedDurationStream = new Stream();

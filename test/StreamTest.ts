@@ -1,98 +1,91 @@
 import chai from "chai";
-
-import {deployContract} from "ethereum-waffle";
-
-import StreamArtifact from "../artifacts/Stream.json";
 import {Stream} from "../typechain/Stream";
-import MockERC20Artifact from "../artifacts/MockERC20.json";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
-import {getBlockTime, getProvider} from "./helpers/contract";
+import {deployErc20, deployStream, getBlockTime, getProvider} from "./helpers/contract";
 
 const {expect} = chai;
 
 const [alice, bob] = getProvider().getWallets();
 
 describe("Payment Stream", () => {
-  const oneEther = BigNumber.from(10).pow(18);
+    const oneEther = BigNumber.from(10).pow(18);
 
-  let paymentStream: Stream;
-  let token: MockErc20;
-  let timestamp: number;
+    let paymentStream: Stream;
+    let token: MockErc20;
+    let timestamp: number;
 
-  beforeEach(async () => {
-    token = (await deployContract(alice, MockERC20Artifact, [
-      "MOCK",
-      "MOCK",
-    ])) as MockErc20;
-    paymentStream = (await deployContract(alice, StreamArtifact)) as Stream;
+    beforeEach(async () => {
+        token = await deployErc20(alice);
 
-    timestamp = (await getBlockTime()) + 10;
-  });
+        paymentStream = await deployStream(alice);
 
-  it("Should allow creation of a stream", async () => {
-    await token.mint(alice.address, 10000000);
-    await token.approve(paymentStream.address, 10000000);
+        timestamp = (await getBlockTime()) + 10;
+    });
 
-    let deposit = 10000;
+    it("Should allow creation of a stream", async () => {
+        await token.mint(alice.address, 10000000);
+        await token.approve(paymentStream.address, 10000000);
 
-    await paymentStream.createStream(
-      bob.address,
-      deposit,
-      token.address,
-      timestamp,
-      timestamp + 100
-    );
+        let deposit = 10000;
 
-    // todo get the id from stream creation
-    const stream = await paymentStream.getStream(1);
+        await paymentStream.createStream(
+            bob.address,
+            deposit,
+            token.address,
+            timestamp,
+            timestamp + 100
+        );
 
-    expect(stream.recipient).to.eq(bob.address);
-    expect(stream.deposit).to.eq(deposit);
-    expect(stream.tokenAddress).to.eq(token.address);
-    expect(stream.startTime).to.eq(timestamp);
-    expect(stream.stopTime).to.eq(timestamp + 100);
-  });
+        // todo get the id from stream creation
+        const stream = await paymentStream.getStream(1);
 
-  it("Should prevent creation of a stream with a start time in the past", async () => {
-    await expect(
-      paymentStream.createStream(bob.address, oneEther, token.address, 100, 200)
-    ).to.be.revertedWith("Cannot start a stream in the past");
-  });
+        expect(stream.recipient).to.eq(bob.address);
+        expect(stream.deposit).to.eq(deposit);
+        expect(stream.tokenAddress).to.eq(token.address);
+        expect(stream.startTime).to.eq(timestamp);
+        expect(stream.stopTime).to.eq(timestamp + 100);
+    });
 
-  it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
-    await expect(
-      paymentStream.createStream(
-        bob.address,
-        1800,
-        token.address,
-        timestamp,
-        timestamp + 3601
-      )
-    ).to.be.revertedWith("Rate per second must be above 0");
-  });
+    it("Should prevent creation of a stream with a start time in the past", async () => {
+        await expect(
+            paymentStream.createStream(bob.address, oneEther, token.address, 100, 200)
+        ).to.be.revertedWith("Cannot start a stream in the past");
+    });
 
-  it("Should prevent creation of a stream an end date before the start date", async () => {
-    await expect(
-      paymentStream.createStream(
-        bob.address,
-        1800,
-        token.address,
-        timestamp + 3600,
-        timestamp
-      )
-    ).to.be.revertedWith("SafeMath: subtraction overflow");
-  });
+    it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
+        await expect(
+            paymentStream.createStream(
+                bob.address,
+                1800,
+                token.address,
+                timestamp,
+                timestamp + 3601
+            )
+        ).to.be.revertedWith("Rate per second must be above 0");
+    });
 
-  it("Should prevent creation of a stream where start and end date are the same time", async () => {
-    await expect(
-      paymentStream.createStream(
-        bob.address,
-        1800,
-        token.address,
-        timestamp,
-        timestamp
-      )
-    ).to.be.revertedWith("Stream must last a least a second");
-  });
+    it("Should prevent creation of a stream an end date before the start date", async () => {
+        await expect(
+            paymentStream.createStream(
+                bob.address,
+                1800,
+                token.address,
+                timestamp + 3600,
+                timestamp
+            )
+        ).to.be.revertedWith("SafeMath: subtraction overflow");
+    });
+
+    it("Should prevent creation of a stream where start and end date are the same time", async () => {
+        await expect(
+            paymentStream.createStream(
+                bob.address,
+                1800,
+                token.address,
+                timestamp,
+                timestamp
+            )
+        ).to.be.revertedWith("Stream must last a least a second");
+    });
 });
