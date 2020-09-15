@@ -2,7 +2,7 @@ import chai from "chai";
 import {Stream} from "../typechain/Stream";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
-import {deployErc20, deployStream, getBlockTime, getProvider} from "./helpers/contract";
+import {deployErc20, deployStream, getBlockTime, getProvider, wait} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -20,28 +20,25 @@ describe("Payment Stream", () => {
 
         paymentStream = await deployStream(alice);
 
+        await token.mint(alice.address, 10000000);
+        await token.approve(paymentStream.address, 10000000);
+
         timestamp = (await getBlockTime()) + 10;
     });
 
     it("Should allow creation of a stream", async () => {
-        await token.mint(alice.address, 10000000);
-        await token.approve(paymentStream.address, 10000000);
-
-        let deposit = 10000;
-
         await paymentStream.createStream(
             bob.address,
-            deposit,
+            oneEther,
             token.address,
             timestamp,
             timestamp + 100
         );
 
-        // todo get the id from stream creation
         const stream = await paymentStream.getStream(1);
 
         expect(stream.recipient).to.eq(bob.address);
-        expect(stream.deposit).to.eq(deposit);
+        expect(stream.deposit).to.eq(oneEther);
         expect(stream.tokenAddress).to.eq(token.address);
         expect(stream.startTime).to.eq(timestamp);
         expect(stream.stopTime).to.eq(timestamp + 100);
@@ -87,5 +84,27 @@ describe("Payment Stream", () => {
                 timestamp
             )
         ).to.be.revertedWith("Stream must last a least a second");
+    });
+
+    describe("Balance accruing", async () => {
+        xit("Should prevent creation of a stream where start and end date are the same time", async () => {
+            await paymentStream.createStream(
+                bob.address,
+                oneEther.mul(36),
+                token.address,
+                timestamp,
+                timestamp + 3600
+            );
+        });
+
+        await wait(1800);
+
+        await paymentStream.withdraw(1, 100, bob.address);
+
+        // await paymentStream.getStream(1).then(stream => {
+        //     expect(stream.)
+        // });
+
+
     });
 });

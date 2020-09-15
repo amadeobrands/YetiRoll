@@ -63,6 +63,7 @@ contract Stream is Ownable, IStream {
         uint256 _amount,
         address _who
     ) public onlyOwner _canWithdrawFunds(_streamId, _amount, _who) {
+        // todo payout from here
         streams[_streamId].remainingBalance = streams[_streamId]
             .remainingBalance
             .sub(_amount);
@@ -178,7 +179,6 @@ contract Stream is Ownable, IStream {
         return _stopTime.sub(_startTime) > 0;
     }
 
-    // todo write test cases for this
     function _calculateDurationElapsed(uint256 _streamId)
         internal
         virtual
