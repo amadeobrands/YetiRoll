@@ -48,20 +48,28 @@ contract MultipleRecipientStream {
         return currentStreamId;
     }
 
-
-    function getStream(
-        uint256 _streamId,
-        address _address
-    ) public view returns (
-        address sender,
-        address recipient,
-        uint256 deposit,
-        address tokenAddress,
-        uint256 startTime,
-        uint256 stopTime,
-        uint256 remainingBalance,
-        uint256 ratePerSecond
-    ) {
+    function getStream(uint256 _streamId, address _address)
+        public
+        view
+        returns (
+            address sender,
+            address recipient,
+            uint256 deposit,
+            address tokenAddress,
+            uint256 startTime,
+            uint256 stopTime,
+            uint256 remainingBalance,
+            uint256 ratePerSecond
+        )
+    {
         return streamContract.getStream(streams[_streamId][_address]);
+    }
+
+    function getStreamId(uint256 _streamId, address _address)
+        public
+        view
+        returns (uint256 streamId)
+    {
+        return streams[_streamId][_address];
     }
 }

@@ -9,6 +9,7 @@ import {MockErc20} from "../typechain/MockErc20";
 
 import {oneEther, oneHour} from "./helpers/numbers";
 import {deployErc20, getBlockTime, getProvider} from "./helpers/contract";
+import {BigNumber} from "ethers";
 
 const {expect} = chai;
 
@@ -32,14 +33,8 @@ describe("Multiple Recipient Stream", () => {
         timestamp = (await getBlockTime()) + 100;
     });
 
-    it("Should accept an array of addresses and create a stream to each with splitting the deposit in an equal proportion ", async () => {
-        await multipleRecipient.createStream(
-            Array.of(bob.address, charlie.address, dennis.address, ethan.address),
-            oneEther.mul(100),
-            token.address,
-            timestamp,
-            timestamp + oneHour
-        );
+    it("Should accept an array of addresses and create a stream to each with splitting the deposit in an equal proportion", async () => {
+        await createMultipleRecipientStream();
 
         await multipleRecipient.getStream(1, charlie.address).then((stream : any) => expect(stream.recipient).to.eq(charlie.address));
         await multipleRecipient.getStream(1, dennis.address).then((stream : any) => expect(stream.recipient).to.eq(dennis.address));
@@ -50,4 +45,27 @@ describe("Multiple Recipient Stream", () => {
         expect(stream.deposit).to.eq(oneEther.mul(25));
         expect(stream.recipient).to.eq(bob.address);
     });
+
+    it("Should allow you to find the stream id using the multiple stream id & recipient address", async () => {
+        await createMultipleRecipientStream();
+
+        await multipleRecipient.getStreamId(1, bob.address)
+            .then((streamId : BigNumber) => expect(streamId.toNumber()).to.eq(1));
+        await multipleRecipient.getStreamId(1, charlie.address)
+            .then((streamId : BigNumber) => expect(streamId.toNumber()).to.eq(2));
+        await multipleRecipient.getStreamId(1, dennis.address)
+            .then((streamId : BigNumber) => expect(streamId.toNumber()).to.eq(3));
+        await multipleRecipient.getStreamId(1, ethan.address)
+            .then((streamId : BigNumber) => expect(streamId.toNumber()).to.eq(4));
+    });
+
+    async function createMultipleRecipientStream() {
+        await multipleRecipient.createStream(
+            Array.of(bob.address, charlie.address, dennis.address, ethan.address),
+            oneEther.mul(100),
+            token.address,
+            timestamp,
+            timestamp + oneHour
+        );
+    }
 });
