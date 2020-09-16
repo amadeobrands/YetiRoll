@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
 
 // This is a hack to keep the type in sync
 const TimeKeeper = (props) => {
@@ -28,14 +27,13 @@ const TimeKeeper = (props) => {
         return <h3>Loading time stamp</h3>;
     }
 
-    let now = new Date(0);
-    now.setUTCSeconds(time);
+    let now = new Date(time * 1000);
 
     return (
         <div>
           <TextField
               id="date"
-              label="Birthday"
+              label="Date"
               type="date"
               defaultValue={now.toDateString()}
               InputLabelProps={{
@@ -55,7 +53,7 @@ const TimeKeeper = (props) => {
               }}
           />
             <h3>
-                Blockchain time is: {new Date(time * 1000).toTimeString()} : {time}
+                Blockchain time is: {now.toTimeString()} : {time}
             </h3>
         </div>
     );

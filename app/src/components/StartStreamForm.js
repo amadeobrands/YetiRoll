@@ -60,6 +60,7 @@ const StartStreamForm = () => {
                                 id="datetime-local"
                                 label="Stream Stop"
                                 type="datetime-local"
+                                defaultValue={new Date()}
                                 className={classes.textField}
                                 InputLabelProps={{
                                     shrink: true,

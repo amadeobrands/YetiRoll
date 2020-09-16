@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
 import PausableStream from "./PausableStream";
-import {constants} from "ethers";
 
 const PausableStreamBuilder = (props) => {
   let {streamManager, provider, erc20, time} = props;
