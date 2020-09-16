@@ -1,18 +1,8 @@
-import React, {useState} from "react";
+import React from "react";
 import "./App.css";
-import {Contract, providers} from "ethers";
-import StreamManager from "./build/StreamManager.json";
-import MockERC20 from "./build/MockERC20.json";
-import Container from "@material-ui/core/Container";
-import { Drizzle } from '@drizzle/store'
-
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import TimeKeeper from "./components/TimeKeeper";
-import StartStreamForm from "./components/StartStreamForm";
+import {Drizzle, generateStore} from '@drizzle/store'
+import {Provider} from "react-redux";
+import { drizzleReactHooks } from 'drizzle-react';
 
 import ERC20 from './build/ERC20.json';
 
@@ -20,12 +10,34 @@ const options = {
     contracts: [
         ERC20
     ]
-}
+};
 
-const drizzle = new Drizzle(options)
+const drizzleStore = generateStore({
+    options
+});
+
+const drizzle = new Drizzle(
+    options,
+    drizzleStore
+);
 
 const App = () => {
 
+    return (
+        <drizzleReactHooks.DrizzleProvider drizzle={drizzle}>
+            <Provider store={drizzleStore}>
+                <drizzleReactHooks.Initializer
+                    error="There was an error."
+                    loadingContractsAndAccounts="Also still loading."
+                    loadingWeb3="Still loading."
+                >
+                    <div>
+                        testing
+                    </div>
+                </drizzleReactHooks.Initializer>
+            </Provider>
+        </drizzleReactHooks.DrizzleProvider>
+    )
 
 };
 
