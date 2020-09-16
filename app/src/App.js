@@ -2,14 +2,18 @@ import React from "react";
 import "./App.css";
 import {Drizzle, generateStore} from '@drizzle/store'
 import {Provider} from "react-redux";
-import { drizzleReactHooks } from 'drizzle-react';
+import {drizzleReactHooks} from '@drizzle/react-plugin'
+import {ethers} from "ethers";
 
 import ERC20 from './build/ERC20.json';
 
 const options = {
     contracts: [
         ERC20
-    ]
+    ],
+    web3: {
+        customProvider: ethers.getDefaultProvider()
+    }
 };
 
 const drizzleStore = generateStore({
@@ -22,7 +26,6 @@ const drizzle = new Drizzle(
 );
 
 const App = () => {
-
     return (
         <drizzleReactHooks.DrizzleProvider drizzle={drizzle}>
             <Provider store={drizzleStore}>
