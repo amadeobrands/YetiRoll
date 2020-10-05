@@ -147,11 +147,7 @@ contract PausableStream is IPausableStream, Stream {
         );
     }
 
-    function isStreamActive(uint256 _streamId)
-        public
-        pure
-        returns (bool)
-    {
+    function isStreamActive(uint256 _streamId) public pure returns (bool) {
         return false;
     }
 

@@ -3,13 +3,13 @@ pragma solidity ^0.6.0;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./lib/Types.sol";
 import "./interface/IStream.sol";
 
-contract Stream is Ownable, IStream, AccessControl {
+contract Stream is IStream, AccessControl {
     using SafeMath for uint256;
 
+    bytes32 public constant STREAM_CONTROLLER = keccak256("STREAM_CONTROLLER");
     bytes32 public constant STREAM_MANAGER = keccak256("STREAM_MANAGER");
 
     mapping(uint256 => Types.Stream) internal streams;
@@ -17,8 +17,16 @@ contract Stream is Ownable, IStream, AccessControl {
 
     constructor() public {
         nextStreamId = 1;
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setRoleAdmin(STREAM_MANAGER, STREAM_CONTROLLER);
+        _setupRole(STREAM_CONTROLLER, msg.sender);
         _setupRole(STREAM_MANAGER, msg.sender);
+    }
+
+    function grantStreamManager(address _streamManager)
+        public
+        _onlyStreamController
+    {
+        grantRole(STREAM_MANAGER, _streamManager);
     }
 
     function createStream(
@@ -73,10 +81,10 @@ contract Stream is Ownable, IStream, AccessControl {
             .sub(_amount);
     }
 
-    function getStream(uint256 streamId)
+    function getStream(uint256 _streamId)
         external
         view
-        _streamExists(streamId)
+        _streamExists(_streamId)
         returns (
             address sender,
             address recipient,
@@ -88,14 +96,14 @@ contract Stream is Ownable, IStream, AccessControl {
             uint256 ratePerSecond
         )
     {
-        sender = streams[streamId].sender;
-        recipient = streams[streamId].recipient;
-        deposit = streams[streamId].deposit;
-        tokenAddress = streams[streamId].tokenAddress;
-        startTime = streams[streamId].startTime;
-        stopTime = streams[streamId].stopTime;
-        remainingBalance = streams[streamId].remainingBalance;
-        ratePerSecond = streams[streamId].ratePerSecond;
+        sender = streams[_streamId].sender;
+        recipient = streams[_streamId].recipient;
+        deposit = streams[_streamId].deposit;
+        tokenAddress = streams[_streamId].tokenAddress;
+        startTime = streams[_streamId].startTime;
+        stopTime = streams[_streamId].stopTime;
+        remainingBalance = streams[_streamId].remainingBalance;
+        ratePerSecond = streams[_streamId].ratePerSecond;
     }
 
     function getStreamTokenAddress(uint256 _streamId)
@@ -145,19 +153,6 @@ contract Stream is Ownable, IStream, AccessControl {
         returns (bool)
     {
         return block.timestamp >= streams[_streamId].stopTime;
-    }
-
-    modifier _canWithdrawFunds(
-        uint256 _streamId,
-        uint256 _amount,
-        address _who
-    ) virtual {
-        require(_who == streams[_streamId].recipient, "Not the stream owner");
-        require(
-            streams[_streamId].remainingBalance >= _amount,
-            "Not enough balance to withdraw"
-        );
-        _;
     }
 
     function _ratePerSecond(uint256 _deposit, uint256 _duration)
@@ -212,6 +207,26 @@ contract Stream is Ownable, IStream, AccessControl {
 
     modifier _onlyStreamManager() {
         require(hasRole(STREAM_MANAGER, msg.sender), "Not the Stream Manager");
+        _;
+    }
+    modifier _onlyStreamController() {
+        require(
+            hasRole(STREAM_CONTROLLER, msg.sender),
+            "Not the Stream Controller"
+        );
+        _;
+    }
+
+    modifier _canWithdrawFunds(
+        uint256 _streamId,
+        uint256 _amount,
+        address _who
+    ) virtual {
+        require(_who == streams[_streamId].recipient, "Not the stream owner");
+        require(
+            streams[_streamId].remainingBalance >= _amount,
+            "Not enough balance to withdraw"
+        );
         _;
     }
 }

@@ -42,10 +42,11 @@ export async function deployMultipleRecipientStream(signer: Signer) {
   return await deployContract(signer, MultipleRecipientStreamArtifact) as MultipleRecipientStream;
 }
 
-export async function deployStreamManager(signer: Signer) {
+export async function deployStreamManager(signer: Signer, stream: Stream) {
     return (await deployContract(
         signer,
-        StreamManagerArtifact
+        StreamManagerArtifact,
+        [stream.address]
     )) as StreamManager;
 }
 

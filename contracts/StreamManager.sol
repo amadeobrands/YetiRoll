@@ -2,19 +2,58 @@ pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./PausableStream.sol";
 import "./Stream.sol";
 import "./lib/Types.sol";
 
-contract StreamManager is ReentrancyGuard {
+contract StreamManager is ReentrancyGuard, Ownable {
     Stream fixedDurationStream;
     PausableStream pausableStream;
 
-    // todo inject streams
-    constructor() public {
-        pausableStream = new PausableStream();
-        fixedDurationStream = new Stream();
+    constructor(address _stream) public {
+        fixedDurationStream = Stream(_stream);
+    }
+
+    function setStream(address _stream) public onlyOwner {
+        fixedDurationStream = Stream(_stream);
+    }
+
+    function createStream(
+        address _recipient,
+        uint256 _deposit,
+        address _tokenAddress,
+        uint256 _startTime,
+        uint256 _stopTime
+    ) public returns (uint256) {
+        IERC20(_tokenAddress).transferFrom(msg.sender, address(this), _deposit);
+
+        return
+            fixedDurationStream.createStream(
+                _recipient,
+                _deposit,
+                _tokenAddress,
+                _startTime,
+                _stopTime
+            );
+    }
+
+    function getStream(uint256 _streamId)
+        external
+        view
+        returns (
+            address sender,
+            address recipient,
+            uint256 deposit,
+            address tokenAddress,
+            uint256 startTime,
+            uint256 stopTime,
+            uint256 remainingBalance,
+            uint256 ratePerSecond
+        )
+    {
+        return fixedDurationStream.getStream(_streamId);
     }
 
     function createPausableStream(
@@ -80,9 +119,5 @@ contract StreamManager is ReentrancyGuard {
         )
     {
         return pausableStream.getPausableStream(_streamId);
-    }
-
-    function now() public view returns (uint256 time) {
-        return block.timestamp;
     }
 }

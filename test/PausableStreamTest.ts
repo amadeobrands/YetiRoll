@@ -10,7 +10,7 @@ const {expect} = chai;
 
 const [alice, bob] = getProvider().getWallets();
 
-describe("Pausable Stream", () => {
+xdescribe("Pausable Stream", () => {
   let pausableStream: PausableStream;
   let token: MockErc20;
   let timestamp: number;

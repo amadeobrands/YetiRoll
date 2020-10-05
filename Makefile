@@ -12,7 +12,7 @@ compile-clean:
 	make compile
 
 test:
-	npm run-script test
+	npm run-script test test/StreamManagerTest.ts
 
 run-node:
 	@npx buidler node

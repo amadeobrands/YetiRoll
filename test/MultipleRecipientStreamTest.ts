@@ -4,21 +4,14 @@ import {MultipleRecipientStream} from "../typechain/MultipleRecipientStream";
 import {MockErc20} from "../typechain/MockErc20";
 
 import {oneEther, oneHour} from "./helpers/numbers";
-import {
-    deployErc20,
-    deployMultipleRecipientStream,
-    deployPausableStream,
-    getBlockTime,
-    getProvider
-} from "./helpers/contract";
+import {deployErc20, deployMultipleRecipientStream, getBlockTime, getProvider} from "./helpers/contract";
 import {BigNumber} from "ethers";
-import {Stream} from "../typechain/Stream";
 
 const {expect} = chai;
 
 const [alice, bob, charlie, dennis, ethan] = getProvider().getWallets();
 
-describe("Multiple Recipient Stream", () => {
+xdescribe("Multiple Recipient Stream", () => {
     let multipleRecipient: MultipleRecipientStream;
     let token: MockErc20;
     let timestamp: number;
