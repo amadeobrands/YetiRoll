@@ -2,18 +2,23 @@ pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./lib/Types.sol";
 import "./interface/IStream.sol";
 
-contract Stream is Ownable, IStream {
+contract Stream is Ownable, IStream, AccessControl {
     using SafeMath for uint256;
+
+    bytes32 public constant STREAM_MANAGER = keccak256("STREAM_MANAGER");
 
     mapping(uint256 => Types.Stream) internal streams;
     uint256 public nextStreamId;
 
     constructor() public {
         nextStreamId = 1;
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(STREAM_MANAGER, msg.sender);
     }
 
     function createStream(
@@ -26,7 +31,7 @@ contract Stream is Ownable, IStream {
         public
         virtual
         payable
-        onlyOwner
+        _onlyStreamManager
         _baseStreamRequirements(_recipient, _deposit, _startTime)
         returns (uint256)
     {
@@ -62,8 +67,7 @@ contract Stream is Ownable, IStream {
         uint256 _streamId,
         uint256 _amount,
         address _who
-    ) public onlyOwner _canWithdrawFunds(_streamId, _amount, _who) {
-        // todo payout from here
+    ) public _onlyStreamManager _canWithdrawFunds(_streamId, _amount, _who) {
         streams[_streamId].remainingBalance = streams[_streamId]
             .remainingBalance
             .sub(_amount);
@@ -121,11 +125,6 @@ contract Stream is Ownable, IStream {
             streams[_streamId].deposit.sub(_calculateBalanceAccrued(_streamId));
     }
 
-    modifier _streamExists(uint256 _streamId) {
-        require(streams[_streamId].isEntity, "Stream does not exist");
-        _;
-    }
-
     function _isStreamRunning(uint256 _streamId) internal view returns (bool) {
         return _hasStreamStarted(_streamId) && !_hasStreamFinished(_streamId);
     }
@@ -148,7 +147,6 @@ contract Stream is Ownable, IStream {
         return block.timestamp >= streams[_streamId].stopTime;
     }
 
-    // todo more specific cases when streams can be withdrawn from
     modifier _canWithdrawFunds(
         uint256 _streamId,
         uint256 _amount,
@@ -205,5 +203,15 @@ contract Stream is Ownable, IStream {
             return streams[_streamId].stopTime.sub(block.timestamp);
         }
         return 0;
+    }
+
+    modifier _streamExists(uint256 _streamId) {
+        require(streams[_streamId].isEntity, "Stream does not exist");
+        _;
+    }
+
+    modifier _onlyStreamManager() {
+        require(hasRole(STREAM_MANAGER, msg.sender), "Not the Stream Manager");
+        _;
     }
 }
