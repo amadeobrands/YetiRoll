@@ -35,7 +35,7 @@ contract Stream is IStream {
         );
 
         uint256 duration = _stopTime.sub(_startTime);
-        uint256 ratePerSecond = _ratePerSecond(_deposit, duration);
+        uint256 ratePerSecond = _calculateRatePerSecond(_deposit, duration);
         require(ratePerSecond > 0, "Rate per second must be above 0");
 
         uint256 streamId = nextStreamId;
@@ -142,7 +142,7 @@ contract Stream is IStream {
         return block.timestamp >= streams[_streamId].stopTime;
     }
 
-    function _ratePerSecond(uint256 _deposit, uint256 _duration)
+    function _calculateRatePerSecond(uint256 _deposit, uint256 _duration)
         internal
         virtual
         view

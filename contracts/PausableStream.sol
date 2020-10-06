@@ -11,7 +11,6 @@ contract PausableStream is IPausableStream, Stream {
     mapping(uint256 => Types.PausableStream) private pausableStreams;
 
     // todo toggle if stream starts active or not
-    // todo only Stream Manager
     // todo add test case for multiple streams being created
     function createStream(
         address _recipient,
@@ -29,7 +28,7 @@ contract PausableStream is IPausableStream, Stream {
         uint256 streamId = nextStreamId;
         nextStreamId = nextStreamId.add(1);
         // todo ensure over 0
-        uint256 ratePerSecond = _ratePerSecond(_deposit, _duration);
+        uint256 ratePerSecond = _calculateRatePerSecond(_deposit, _duration);
         uint256 stopTime = _startTime.add(_duration);
 
         streams[streamId] = Types.Stream({
