@@ -6,27 +6,14 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./lib/Types.sol";
 import "./interface/IStream.sol";
 
-contract Stream is IStream, AccessControl {
+contract Stream is IStream {
     using SafeMath for uint256;
-
-    bytes32 public constant STREAM_CONTROLLER = keccak256("STREAM_CONTROLLER");
-    bytes32 public constant STREAM_MANAGER = keccak256("STREAM_MANAGER");
 
     mapping(uint256 => Types.Stream) internal streams;
     uint256 public nextStreamId;
 
     constructor() public {
         nextStreamId = 1;
-        _setRoleAdmin(STREAM_MANAGER, STREAM_CONTROLLER);
-        _setupRole(STREAM_CONTROLLER, msg.sender);
-        _setupRole(STREAM_MANAGER, msg.sender);
-    }
-
-    function grantStreamManager(address _streamManager)
-        public
-        _onlyStreamController
-    {
-        grantRole(STREAM_MANAGER, _streamManager);
     }
 
     function createStream(
@@ -39,7 +26,6 @@ contract Stream is IStream, AccessControl {
         public
         virtual
         payable
-        _onlyStreamManager
         _baseStreamRequirements(_recipient, _deposit, _startTime)
         returns (uint256)
     {
@@ -75,7 +61,7 @@ contract Stream is IStream, AccessControl {
         uint256 _streamId,
         uint256 _amount,
         address _who
-    ) public _onlyStreamManager _canWithdrawFunds(_streamId, _amount, _who) {
+    ) public _canWithdrawFunds(_streamId, _amount, _who) {
         streams[_streamId].remainingBalance = streams[_streamId]
             .remainingBalance
             .sub(_amount);
@@ -108,6 +94,7 @@ contract Stream is IStream, AccessControl {
 
     function getStreamTokenAddress(uint256 _streamId)
         public
+        view
         returns (address token)
     {
         return streams[_streamId].tokenAddress;
@@ -202,18 +189,6 @@ contract Stream is IStream, AccessControl {
 
     modifier _streamExists(uint256 _streamId) {
         require(streams[_streamId].isEntity, "Stream does not exist");
-        _;
-    }
-
-    modifier _onlyStreamManager() {
-        require(hasRole(STREAM_MANAGER, msg.sender), "Not the Stream Manager");
-        _;
-    }
-    modifier _onlyStreamController() {
-        require(
-            hasRole(STREAM_CONTROLLER, msg.sender),
-            "Not the Stream Controller"
-        );
         _;
     }
 

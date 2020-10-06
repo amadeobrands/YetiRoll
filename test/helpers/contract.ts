@@ -6,8 +6,6 @@ import StreamArtifact from "../../artifacts/Stream.json";
 import {Stream} from "../../typechain/Stream";
 import PausableStreamArtifact from "../../artifacts/PausableStream.json";
 import {PausableStream} from "../../typechain/PausableStream";
-import StreamManagerArtifact from "../../artifacts/StreamManager.json";
-import {StreamManager} from "../../typechain/StreamManager";
 import MultipleRecipientStreamArtifact from "../../artifacts/MultipleRecipientStream.json";
 import {MultipleRecipientStream} from "../../typechain/MultipleRecipientStream";
 
@@ -40,14 +38,6 @@ export async function deployPausableStream(signer: Signer) {
 
 export async function deployMultipleRecipientStream(signer: Signer) {
   return await deployContract(signer, MultipleRecipientStreamArtifact) as MultipleRecipientStream;
-}
-
-export async function deployStreamManager(signer: Signer, stream: Stream) {
-    return (await deployContract(
-        signer,
-        StreamManagerArtifact,
-        [stream.address]
-    )) as StreamManager;
 }
 
 export async function wait(amountOfTimeToWait: number) {
