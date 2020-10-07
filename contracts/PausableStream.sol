@@ -27,8 +27,13 @@ contract PausableStream is IPausableStream, Stream {
     {
         uint256 streamId = nextStreamId;
         nextStreamId = nextStreamId.add(1);
-        // todo ensure over 0
+
         uint256 ratePerSecond = _calculateRatePerSecond(_deposit, _duration);
+
+        if (ratePerSecond == 0) {
+            revert("Rate per second is less than 1");
+        }
+
         uint256 stopTime = _startTime.add(_duration);
 
         streams[streamId] = Types.Stream({
@@ -159,6 +164,7 @@ contract PausableStream is IPausableStream, Stream {
         require(false == _isStreamActive(_streamId), "Stream is running");
         _;
     }
+
     modifier _canWithdrawFunds(
         uint256 _streamId,
         uint256 _amount,

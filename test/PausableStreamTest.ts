@@ -10,7 +10,7 @@ const {expect} = chai;
 
 const [alice, bob] = getProvider().getWallets();
 
-xdescribe("Pausable Stream", () => {
+describe("Pausable Stream", () => {
   let pausableStream: PausableStream;
   let token: MockErc20;
   let timestamp: number;
@@ -115,15 +115,6 @@ xdescribe("Pausable Stream", () => {
       expect(
         stream.balanceAccrued.div(oneEther).toNumber()
       ).to.be.approximately(18, 1);
-    });
-
-    it("Should disallow calling of the withdraw function unless called by the stream manager", async () => {
-      await createStream(deposit, token, timestamp);
-
-      const bobStream = await pausableStream.connect(bob);
-
-      // todo have a message
-      await expect(bobStream.withdraw(1, 800, bob.address)).to.be.reverted;
     });
 
     it("Should not allow withdrawal unless balance has accrued", async () => {
