@@ -67,16 +67,6 @@ contract PausableStream is IPausableStream, Stream {
         return streamId;
     }
 
-    // todo make generic and override see _canWithdrawFunds
-    function canWithdrawFunds(
-        uint256 _streamId,
-        uint256 _amount,
-        address _who
-    ) public returns (bool) {
-        return (_who == streams[_streamId].recipient &&
-            _calculateBalanceAccrued(_streamId) >= _amount);
-    }
-
     function pauseStream(uint256 _streamId) public _streamIsActive(_streamId) {
         Types.Stream memory stream = streams[_streamId];
         Types.PausableStream memory pausableStream = pausableStreams[_streamId];
@@ -170,7 +160,9 @@ contract PausableStream is IPausableStream, Stream {
         uint256 _amount,
         address _who
     ) override {
-        require(canWithdrawFunds(_streamId, _amount, _who));
+        require(streams[_streamId].recipient == _who, "Not the stream owner");
+        require(_calculateBalanceAccrued(_streamId) >= _amount, "Trying to withdraw more than balance accrued");
+
         _;
     }
 

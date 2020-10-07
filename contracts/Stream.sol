@@ -197,7 +197,7 @@ contract Stream is IStream {
         uint256 _amount,
         address _who
     ) virtual {
-        require(_who == streams[_streamId].recipient, "Not the stream owner");
+        require(streams[_streamId].recipient == _who, "Not the stream owner");
         require(
             streams[_streamId].remainingBalance >= _amount,
             "Not enough balance to withdraw"
