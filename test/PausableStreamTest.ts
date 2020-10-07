@@ -119,6 +119,14 @@ describe("Pausable Stream", () => {
         expect(stream.durationElapsed.toNumber()).to.be.approximately(30, 1);
         expect(stream.durationRemaining.toNumber()).to.be.approximately(3570, 1);
       });
+
+      await pausableStream.startStream(1);
+
+      const time = await getBlockTime();
+      await pausableStream.getStream(1).then(stream => {
+          expect(stream.startTime.toNumber()).to.be.approximately(time, 1);
+          expect(stream.stopTime.toNumber()).to.be.approximately( time+3570, 1);
+      });
     });
   });
 
