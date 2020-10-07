@@ -75,12 +75,9 @@ contract PausableStream is IPausableStream, Stream {
             revert("Stream has finished");
         }
 
-        if (_hasStreamStarted(_streamId)) {
-            // add any previous time accrued to the total duration of the stream
-            pausableStream.durationElapsed = _calculateDurationElapsed(
-                _streamId
-            );
-        }
+        pausableStreams[_streamId].durationElapsed = _calculateDurationElapsed(
+            _streamId
+        );
 
         // Reset start and stop points
         streams[_streamId].startTime = 0;
@@ -110,13 +107,6 @@ contract PausableStream is IPausableStream, Stream {
         pausableStreams[_streamId].isActive = true;
     }
 
-    //  __      ___
-    //  \ \    / (_)
-    //   \ \  / / _  _____      __
-    //    \ \/ / | |/ _ \ \ /\ / /
-    //     \  /  | |  __/\ V  V /
-    //      \/   |_|\___| \_/\_/
-
     function getPausableStream(uint256 _streamId)
         external
         view
@@ -141,10 +131,6 @@ contract PausableStream is IPausableStream, Stream {
         );
     }
 
-    function isStreamActive(uint256 _streamId) public pure returns (bool) {
-        return false;
-    }
-
     modifier _streamIsActive(uint256 _streamId) {
         require(_isStreamActive(_streamId), "Stream is not running");
         _;
@@ -161,17 +147,13 @@ contract PausableStream is IPausableStream, Stream {
         address _who
     ) override {
         require(streams[_streamId].recipient == _who, "Not the stream owner");
-        require(_calculateBalanceAccrued(_streamId) >= _amount, "Trying to withdraw more than balance accrued");
-
+        require(
+            _calculateBalanceAccrued(_streamId) >= _amount,
+            "Trying to withdraw more than balance accrued"
+        );
         _;
     }
 
-    //  _____       _                        _  __      ___
-    // |_   _|     | |                      | | \ \    / (_)
-    //   | |  _ __ | |_ ___ _ __ _ __   __ _| |  \ \  / / _  _____      _____
-    //   | | | '_ \| __/ _ \ '__| '_ \ / _` | |   \ \/ / | |/ _ \ \ /\ / / __|
-    //  _| |_| | | | ||  __/ |  | | | | (_| | |    \  /  | |  __/\ V  V /\__ \
-    // |_____|_| |_|\__\___|_|  |_| |_|\__,_|_|     \/   |_|\___| \_/\_/ |___/
     function _calculateDurationElapsed(uint256 _streamId)
         internal
         override

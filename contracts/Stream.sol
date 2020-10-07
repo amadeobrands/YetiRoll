@@ -163,7 +163,7 @@ contract Stream is IStream {
         internal
         virtual
         view
-        returns (uint256)
+        returns (uint256 durationElapsed)
     {
         if (_isStreamRunning(_streamId)) {
             return block.timestamp.sub(streams[_streamId].startTime);

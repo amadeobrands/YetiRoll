@@ -4,7 +4,7 @@ import {PausableStream} from "../typechain/PausableStream";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, deployPausableStream, getBlockTime, getProvider, wait} from "./helpers/contract";
+import {deployErc20, deployPausableStream, getBlockTime, getProvider, wait, mineBlock} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -27,6 +27,30 @@ describe("Pausable Stream", () => {
 
     timestamp = (await getBlockTime()) + 1;
   });
+
+  it("End to end flow", async () => {
+    // await createStream(deposit, token, timestamp);
+    // await wait(600);
+    //
+    // let time = await getBlockTime();
+    //
+    // await pausableStream.getPausableStream(1).then(stream => {
+    //   expect(stream.isRunning).to.eq(true);
+    //   expect(stream.startTime).to.be.eq(time);
+    //   expect(stream.duration).to.be.eq(600);
+    //   expect(stream.durationRemaining).to.be.eq(3000);
+    // });
+
+
+
+    // await pausableStream.pauseStream(1);
+    // await pausableStream.startStream(1);
+    // await mineBlock();
+    // const time = await getBlockTime();
+
+
+  });
+
 
   describe("Start and stop assertions", () => {
     it("Should create a pausable stream", async () => {
@@ -75,15 +99,26 @@ describe("Pausable Stream", () => {
 
     it("Should set the correct start and stop times to a paused stream which is restarted", async () => {
       await createStream(deposit, token, timestamp);
+
+      await wait(30);
+
+      await pausableStream.getPausableStream(1).then(stream => {
+        expect(stream.isRunning).to.eq(true);
+        expect(stream.startTime).to.be.eq(timestamp);
+        expect(stream.duration).to.be.eq(3600);
+        expect(stream.durationElapsed.toNumber()).to.be.approximately(30, 1);
+        expect(stream.durationRemaining.toNumber()).to.be.approximately(3570, 1);
+      });
+
       await pausableStream.pauseStream(1);
-      await pausableStream.startStream(1);
 
-      let stream = await pausableStream.getPausableStream(1);
-
-      expect(stream.isRunning).to.eq(true);
-
-      // todo maybe we can check what the actual start time should be
-      expect(stream.startTime.toNumber()).to.not.be.eq(0);
+      await pausableStream.getPausableStream(1).then(stream => {
+        expect(stream.isRunning).to.eq(false);
+        expect(stream.startTime).to.be.eq(0);
+        expect(stream.duration).to.be.eq(3600);
+        expect(stream.durationElapsed.toNumber()).to.be.approximately(30, 1);
+        expect(stream.durationRemaining.toNumber()).to.be.approximately(3570, 1);
+      });
     });
   });
 

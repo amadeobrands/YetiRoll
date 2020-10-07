@@ -40,12 +40,16 @@ export async function deployMultipleRecipientStream(signer: Signer) {
   return await deployContract(signer, MultipleRecipientStreamArtifact) as MultipleRecipientStream;
 }
 
-export async function wait(amountOfTimeToWait: number) {
+export async function mineBlock() {
+  await getProvider().send("evm_mine", []);
+}
+
+export async function wait(secondsToWait: number) {
   // Update the clock
-  await getProvider().send("evm_increaseTime", [amountOfTimeToWait]);
+  await getProvider().send("evm_increaseTime", [secondsToWait]);
 
   // Process the block
-  await getProvider().send("evm_mine", []);
+  await mineBlock();
 }
 
 // Get time and add 1 to prevent timestamp issues
