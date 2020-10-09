@@ -18,7 +18,7 @@ run-node:
 	@npx buidler node
 
 deploy:
-	npx buidler run deployTest.ts
+	npx buidler run deployMigrate.ts
 
 integration:
 	npx buidler run integration/MultipleRecipientIntegration.ts

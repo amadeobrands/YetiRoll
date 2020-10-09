@@ -1,85 +1,42 @@
 import React from "react";
 import "./App.css";
-import {Drizzle, generateStore} from '@drizzle/store'
-import {Provider} from "react-redux";
-import {drizzleReactHooks} from '@drizzle/react-plugin'
-import {ethers} from "ethers";
+import {Contract, providers} from "ethers";
 
-import ERC20 from './build/ERC20.json';
+import MockERC20 from "./build/MockERC20.json";
+import Container from "@material-ui/core/Container";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import StartStreamForm from "./components/StartStreamForm";
 
-const options = {
-    contracts: [
-        ERC20
-    ],
-    web3: {
-        customProvider: ethers.getDefaultProvider()
-    }
-};
-
-const drizzleStore = generateStore({
-    options
-});
-
-const drizzle = new Drizzle(
-    options,
-    drizzleStore
-);
+const {useState} = require("react");
 
 const App = () => {
-    return (
-        <drizzleReactHooks.DrizzleProvider drizzle={drizzle}>
-            <Provider store={drizzleStore}>
-                <drizzleReactHooks.Initializer
-                    error="There was an error."
-                    loadingContractsAndAccounts="Also still loading."
-                    loadingWeb3="Still loading."
-                >
-                    <div>
-                        testing
-                    </div>
-                </drizzleReactHooks.Initializer>
-            </Provider>
-        </drizzleReactHooks.DrizzleProvider>
-    )
+  const provider = new providers.JsonRpcProvider(
+    // "https://ropsten.infura.io/v3/73bd0ea4c5d64e248551358ec2f1a8c3"
+    "http://127.0.0.1:8545/"
+  );
 
+  let erc20Address = "0x7c2C195CD6D34B8F845992d380aADB2730bB9C6F";
+
+  let erc20 = new Contract(erc20Address, MockERC20.abi, provider);
+
+  return (
+    <Container maxWidth="xl">
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6">Streams</Typography>
+        </Toolbar>
+      </AppBar>
+      <Box my={2}>
+        <StartStreamForm provider={provider} erc20={erc20} />
+        <Box>
+          <Typography variant="h6">Erc20 address: {erc20Address}</Typography>
+        </Box>
+      </Box>
+    </Container>
+  );
 };
-
-// const App = () => {
-//     const provider = new providers.JsonRpcProvider("http://127.0.0.1:8545/");
-//     const [time, setTime] = useState(undefined);
-//
-//     let streamManagerAddress = "0x7c2C195CD6D34B8F845992d380aADB2730bB9C6F";
-//     let erc20Address = "0x8858eeB3DfffA017D4BCE9801D340D36Cf895CCf";
-//
-//     let streamManager = new Contract(
-//         streamManagerAddress,
-//         StreamManager.abi,
-//         provider
-//     );
-//
-//     let erc20 = new Contract(erc20Address, MockERC20.abi, provider);
-//
-//     return (
-//         <Container maxWidth="xl">
-//             <AppBar position="static">
-//                 <Toolbar>
-//                     <Typography variant="h6">Streams</Typography>
-//                 </Toolbar>
-//             </AppBar>
-//             <Box my={2}>
-//                 <StartStreamForm />
-//                 <Box>
-//                     <TimeKeeper
-//                         provider={provider}
-//                         streamManager={streamManager}
-//                         time={time}
-//                         setTime={setTime}
-//                     />
-//                     <Typography variant="h6">Erc20 address: {erc20Address}</Typography>
-//                 </Box>
-//             </Box>
-//         </Container>
-//     );
-// };
 
 export default App;
