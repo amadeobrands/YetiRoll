@@ -32,64 +32,72 @@ describe("Payment Stream", () => {
     timestamp = (await getBlockTime()) + 10;
   });
 
-  it("Should allow creation of a stream", async () => {
-    await paymentStream.createStream(
-      bob.address,
-      oneEther,
-      token.address,
-      timestamp,
-      timestamp + 100
-    );
-
-    const stream = await paymentStream.getStream(1);
-
-    expect(stream.recipient).to.eq(bob.address);
-    expect(stream.deposit).to.eq(oneEther);
-    expect(stream.tokenAddress).to.eq(token.address);
-    expect(stream.startTime).to.eq(timestamp);
-    expect(stream.stopTime).to.eq(timestamp + 100);
-  });
-
-  it("Should prevent creation of a stream with a start time in the past", async () => {
-    await expect(
-      paymentStream.createStream(bob.address, oneEther, token.address, 100, 200)
-    ).to.be.revertedWith("Cannot start a stream in the past");
-  });
-
-  it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
-    await expect(
-      paymentStream.createStream(
+  describe("Stream creation", async () => {
+    it("Should allow creation of a stream", async () => {
+      await paymentStream.createStream(
         bob.address,
-        1800,
+        oneEther,
         token.address,
         timestamp,
-        timestamp + 3601
-      )
-    ).to.be.revertedWith("Rate per second must be above 0");
-  });
+        timestamp + 100
+      );
 
-  it("Should prevent creation of a stream an end date before the start date", async () => {
-    await expect(
-      paymentStream.createStream(
-        bob.address,
-        1800,
-        token.address,
-        timestamp + 3600,
-        timestamp
-      )
-    ).to.be.revertedWith("SafeMath: subtraction overflow");
-  });
+      const stream = await paymentStream.getStream(1);
 
-  it("Should prevent creation of a stream where start and end date are the same time", async () => {
-    await expect(
-      paymentStream.createStream(
-        bob.address,
-        1800,
-        token.address,
-        timestamp,
-        timestamp
-      )
-    ).to.be.revertedWith("Stream must last a least a second");
+      expect(stream.recipient).to.eq(bob.address);
+      expect(stream.deposit).to.eq(oneEther);
+      expect(stream.tokenAddress).to.eq(token.address);
+      expect(stream.startTime).to.eq(timestamp);
+      expect(stream.stopTime).to.eq(timestamp + 100);
+    });
+
+    it("Should prevent creation of a stream with a start time in the past", async () => {
+      await expect(
+        paymentStream.createStream(
+          bob.address,
+          oneEther,
+          token.address,
+          100,
+          200
+        )
+      ).to.be.revertedWith("Cannot start a stream in the past");
+    });
+
+    it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
+      await expect(
+        paymentStream.createStream(
+          bob.address,
+          1800,
+          token.address,
+          timestamp,
+          timestamp + 3601
+        )
+      ).to.be.revertedWith("Rate per second must be above 0");
+    });
+
+    it("Should prevent creation of a stream an end date before the start date", async () => {
+      await expect(
+        paymentStream.createStream(
+          bob.address,
+          1800,
+          token.address,
+          timestamp + 3600,
+          timestamp
+        )
+      ).to.be.revertedWith("SafeMath: subtraction overflow");
+    });
+
+    it("Should prevent creation of a stream where start and end date are the same time", async () => {
+      await expect(
+        paymentStream.createStream(
+          bob.address,
+          1800,
+          token.address,
+          timestamp,
+          timestamp
+        )
+      ).to.be.revertedWith("Stream must last a least a second");
+    });
   });
 
   describe("Balance accruing", async () => {
