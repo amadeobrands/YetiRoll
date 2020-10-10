@@ -97,7 +97,7 @@ describe("Treasury", () => {
     });
   });
 
-  describe("Withdrawal", async () => {
+  describe("Withdrawal functionality", async () => {
     it("Should allow deposits and withdrawals", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
@@ -105,6 +105,13 @@ describe("Treasury", () => {
 
       await validateErc20Balance(USDT, alice.address, oneEther.mul(900));
       await validateErc20Balance(USDT, treasury.address, oneEther.mul(100));
+
+      await treasury
+        .viewUserTokenBalance(alice.address, USDT.address)
+        .then((balances: any) => {
+          expect(balances.totalBalance).to.eq(oneEther.mul(100));
+          expect(balances.availableBalance).to.eq(oneEther.mul(100));
+        });
     });
   });
 });
