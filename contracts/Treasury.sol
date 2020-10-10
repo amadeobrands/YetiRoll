@@ -46,7 +46,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         nonReentrant
         hasSufficientAvailableBalance(_from, _token, _amount)
     {
-        decreaseInternalBalance(_token, _from, _amount);
+        decreaseTotalBalance(_token, _from, _amount);
 
         IERC20(_token).transfer(_to, _amount);
     }
@@ -65,7 +65,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         nonReentrant
         hasSufficientAvailableBalance(_from, _tokenSell, _amountToSell)
     {
-        decreaseInternalBalance(_tokenSell, _from, _amountToSell);
+        decreaseTotalBalance(_tokenSell, _from, _amountToSell);
 
         IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
 
@@ -79,14 +79,23 @@ contract Treasury is AccessControl, ReentrancyGuard {
         );
     }
 
+    // @dev once a stream is started, funds are allocated and locked from being withdrawn
+    // by the account which started the stream
+    function allocatedFunds(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) public {
+        userBalances[_who][_token].availableBalance -= _amount;
+    }
+
     // @dev decreases the total & available balance
-    function decreaseInternalBalance(
+    function decreaseTotalBalance(
         address _token,
         address _who,
         uint256 _amount
     ) internal {
         userBalances[_who][_token].totalBalance -= _amount;
-        userBalances[_who][_token].availableBalance -= _amount;
     }
 
     // @dev increases the total & available balance

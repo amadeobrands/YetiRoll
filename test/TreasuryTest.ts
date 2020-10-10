@@ -13,7 +13,7 @@ import ExchangeAdaptorArtifact from "../artifacts/ExchangeAdaptor.json";
 
 import {oneEther} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";
-import {BigNumber, Contract} from "ethers";
+import {BigNumber} from "ethers";
 
 const {expect} = chai;
 
@@ -116,7 +116,7 @@ describe("Treasury", () => {
         .viewUserTokenBalance(USDT.address, alice.address)
         .then((balances: any) => {
           expect(balances.totalBalance).to.eq(oneEther.mul(100));
-          expect(balances.availableBalance).to.eq(oneEther.mul(100));
+          expect(balances.availableBalance).to.eq(oneEther.mul(200));
         });
     });
 
@@ -156,6 +156,25 @@ describe("Treasury", () => {
         alice.address,
         bob.address
       );
+    });
+  });
+
+  describe("Fund allocation", async () => {
+    it("Should allow funds to be allocated and prevent withdrawal", async () => {
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      await treasury.allocatedFunds(
+        USDT.address,
+        alice.address,
+        oneEther.mul(100)
+      );
+
+      await treasury
+        .viewUserTokenBalance(USDT.address, alice.address)
+        .then((balances: any) => {
+          expect(balances.totalBalance).to.eq(oneEther.mul(200));
+          expect(balances.availableBalance).to.eq(oneEther.mul(100));
+        });
     });
   });
 });
