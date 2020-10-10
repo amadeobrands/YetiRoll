@@ -38,12 +38,11 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _from,
         address _to,
         uint256 _amount
-    ) public nonReentrant {
-        require(
-            userBalances[_from][_token].availableBalance > _amount,
-            "Insufficient balance to withdraw"
-        );
-
+    )
+        public
+        nonReentrant
+        hasSufficientAvailableBalance(_from, _token, _amount)
+    {
         decreaseInternalBalance(_token, _from, _amount);
 
         IERC20(_token).transfer(_to, _amount);
@@ -93,5 +92,17 @@ contract Treasury is AccessControl, ReentrancyGuard {
             userBalances[_who][_token].totalBalance,
             userBalances[_who][_token].availableBalance
         );
+    }
+
+    modifier hasSufficientAvailableBalance(
+        address _from,
+        address _token,
+        uint256 _amount
+    ) {
+        require(
+            userBalances[_from][_token].availableBalance > _amount,
+            "Insufficient balance to withdraw"
+        );
+        _;
     }
 }
