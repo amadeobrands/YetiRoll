@@ -61,12 +61,17 @@ contract Treasury is AccessControl, ReentrancyGuard {
         nonReentrant
         hasSufficientAvailableBalance(_from, _tokenSell, _amountToSell)
     {
+        decreaseInternalBalance(_tokenSell, _from, _amountToSell);
+
+        IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
+
         exchangeAdaptor.exchange(
             _tokenSell,
             _tokenBuy,
             _amountToSell,
             _minAmountToBuy,
-            _distribution
+            _distribution,
+            _to
         );
     }
 

@@ -16,16 +16,20 @@ contract ExchangeAdaptor is Ownable {
         address _tokenBuy,
         uint256 _amountToSell,
         uint256 _minAmountToBuy,
-        uint256[] memory _distribution
-    ) public onlyOwner returns (uint256) {
-        return
-            oneInchExchange.swap(
-                IERC20(_tokenSell),
-                IERC20(_tokenBuy),
-                _amountToSell,
-                _minAmountToBuy,
-                _distribution,
-                0
-            );
+        uint256[] memory _distribution,
+        address _to
+    ) public onlyOwner returns (bool) {
+        uint256 amountPurchased = oneInchExchange.swap(
+            IERC20(_tokenSell),
+            IERC20(_tokenBuy),
+            _amountToSell,
+            _minAmountToBuy,
+            _distribution,
+            0
+        );
+
+        IERC20(_tokenBuy).transfer(_to, amountPurchased);
+
+        return true;
     }
 }

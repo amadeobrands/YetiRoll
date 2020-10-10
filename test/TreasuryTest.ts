@@ -136,7 +136,16 @@ describe("Treasury", () => {
     it("Should allow withdrawal while converting the deposited token into another", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
-      await exchangeAdaptor.mock.exchange.returns(oneEther.mul(95));
+      await exchangeAdaptor.mock.exchange
+        .withArgs(
+          USDT.address,
+          DAI.address,
+          oneEther.mul(100),
+          oneEther.mul(90),
+          [10],
+          bob.address
+        )
+        .returns(true);
 
       await treasury.withdrawAs(
         USDT.address,

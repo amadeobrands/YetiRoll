@@ -11,11 +11,10 @@ import ExchangeAdaptorArtifact from "../artifacts/ExchangeAdaptor.json";
 import {ExchangeAdaptor} from "../typechain/ExchangeAdaptor";
 import {oneEther} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";
-import {BigNumber} from "ethers";
 
 const {expect} = chai;
 
-const [alice, bob, charlie, dennis, ethan] = getProvider().getWallets();
+const [alice] = getProvider().getWallets();
 
 describe("Exchange Adaptor", () => {
   let oneInch: MockContract;
@@ -34,6 +33,7 @@ describe("Exchange Adaptor", () => {
     DAI = await deployErc20(alice);
 
     await USDT.mint(alice.address, oneEther.mul(99999999));
+    await DAI.mint(exchangeAdaptor.address, oneEther.mul(99999999));
 
     await exchangeAdaptor.setOneInch(oneInch.address);
   });
@@ -47,10 +47,11 @@ describe("Exchange Adaptor", () => {
         DAI.address,
         oneEther.mul(200),
         oneEther.mul(195),
-        [10]
+        [10],
+        alice.address
       )
-      .then((amountReceived: BigNumber) => {
-        expect(amountReceived).to.eq(oneEther.mul(195));
+      .then((isSuccessful) => {
+        expect(isSuccessful).to.be.true;
       });
   });
 });
