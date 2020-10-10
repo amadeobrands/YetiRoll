@@ -27,8 +27,7 @@ contract Treasury is Ownable {
         address _who,
         uint256 _amount
     ) public {
-        userBalances[_who][_token].totalBalance += _amount;
-        userBalances[_who][_token].availableBalance += _amount;
+        increaseInternalBalance(_token, _who, _amount);
 
         IERC20(_token).transferFrom(_who, address(this), _amount);
     }
@@ -38,8 +37,7 @@ contract Treasury is Ownable {
         address _who,
         uint256 _amount
     ) public {
-        userBalances[_who][_token].totalBalance -= _amount;
-        userBalances[_who][_token].availableBalance -= _amount;
+        decreaseInternalBalance(_token, _who, _amount);
 
         IERC20(_token).transfer(_who, _amount);
     }
@@ -61,7 +59,7 @@ contract Treasury is Ownable {
         );
     }
 
-    function viewUserTokenBalance(address _who, address _token)
+    function viewUserTokenBalance(address _token, address _who)
         public
         view
         returns (uint256 totalBalance, uint256 availableBalance)
@@ -70,5 +68,23 @@ contract Treasury is Ownable {
             userBalances[_who][_token].totalBalance,
             userBalances[_who][_token].availableBalance
         );
+    }
+
+    function decreaseInternalBalance(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) internal {
+        userBalances[_who][_token].totalBalance -= _amount;
+        userBalances[_who][_token].availableBalance -= _amount;
+    }
+
+    function increaseInternalBalance(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) internal {
+        userBalances[_who][_token].totalBalance += _amount;
+        userBalances[_who][_token].availableBalance += _amount;
     }
 }

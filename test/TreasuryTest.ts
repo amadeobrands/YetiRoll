@@ -51,7 +51,7 @@ describe("Treasury", () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
       await treasury
-        .viewUserTokenBalance(alice.address, USDT.address)
+        .viewUserTokenBalance(USDT.address, alice.address)
         .then((balances: any) => {
           expect(balances.totalBalance).to.eq(oneEther.mul(200));
           expect(balances.availableBalance).to.eq(oneEther.mul(200));
@@ -65,14 +65,14 @@ describe("Treasury", () => {
       await treasury.deposit(DAI.address, alice.address, oneEther.mul(420));
 
       await treasury
-        .viewUserTokenBalance(alice.address, USDT.address)
+        .viewUserTokenBalance(USDT.address, alice.address)
         .then((balances: any) => {
           expect(balances.totalBalance).to.eq(oneEther.mul(200));
           expect(balances.availableBalance).to.eq(oneEther.mul(200));
         });
 
       await treasury
-        .viewUserTokenBalance(alice.address, DAI.address)
+        .viewUserTokenBalance(DAI.address, alice.address)
         .then((balances: any) => {
           expect(balances.totalBalance).to.eq(oneEther.mul(420));
           expect(balances.availableBalance).to.eq(oneEther.mul(420));
@@ -87,7 +87,7 @@ describe("Treasury", () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(420));
 
       await treasury
-        .viewUserTokenBalance(alice.address, USDT.address)
+        .viewUserTokenBalance(USDT.address, alice.address)
         .then((balances: any) => {
           expect(balances.totalBalance).to.eq(oneEther.mul(620));
           expect(balances.availableBalance).to.eq(oneEther.mul(620));
@@ -107,7 +107,7 @@ describe("Treasury", () => {
       await validateErc20Balance(USDT, treasury.address, oneEther.mul(100));
 
       await treasury
-        .viewUserTokenBalance(alice.address, USDT.address)
+        .viewUserTokenBalance(USDT.address, alice.address)
         .then((balances: any) => {
           expect(balances.totalBalance).to.eq(oneEther.mul(100));
           expect(balances.availableBalance).to.eq(oneEther.mul(100));
