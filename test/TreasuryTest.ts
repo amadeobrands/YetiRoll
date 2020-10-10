@@ -101,10 +101,16 @@ describe("Treasury", () => {
     it("Should allow deposits and withdrawals", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
-      await treasury.withdraw(USDT.address, alice.address, oneEther.mul(100));
+      await treasury.withdraw(
+        USDT.address,
+        alice.address,
+        bob.address,
+        oneEther.mul(100)
+      );
 
-      await validateErc20Balance(USDT, alice.address, oneEther.mul(900));
+      await validateErc20Balance(USDT, alice.address, oneEther.mul(800));
       await validateErc20Balance(USDT, treasury.address, oneEther.mul(100));
+      await validateErc20Balance(USDT, bob.address, oneEther.mul(100));
 
       await treasury
         .viewUserTokenBalance(USDT.address, alice.address)
@@ -118,7 +124,12 @@ describe("Treasury", () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
       await expect(
-        treasury.withdraw(USDT.address, alice.address, oneEther.mul(300))
+        treasury.withdraw(
+          USDT.address,
+          alice.address,
+          bob.address,
+          oneEther.mul(300)
+        )
       ).to.be.revertedWith("Insufficient balance to withdraw");
     });
   });

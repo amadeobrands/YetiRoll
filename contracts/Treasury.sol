@@ -35,17 +35,18 @@ contract Treasury is AccessControl, ReentrancyGuard {
 
     function withdraw(
         address _token,
-        address _who,
+        address _from,
+        address _to,
         uint256 _amount
     ) public nonReentrant {
         require(
-            userBalances[_who][_token].availableBalance > _amount,
+            userBalances[_from][_token].availableBalance > _amount,
             "Insufficient balance to withdraw"
         );
 
-        decreaseInternalBalance(_token, _who, _amount);
+        decreaseInternalBalance(_token, _from, _amount);
 
-        IERC20(_token).transfer(_who, _amount);
+        IERC20(_token).transfer(_to, _amount);
     }
 
     function withdrawAs(
