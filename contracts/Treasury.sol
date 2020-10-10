@@ -33,7 +33,13 @@ contract Treasury is Ownable {
         IERC20(_token).transferFrom(_who, address(this), _amount);
     }
 
-    function withdraw(address _who, uint256 _amount) public {}
+    function withdraw(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) public {
+        IERC20(_token).transfer(_who, _amount);
+    }
 
     function withdrawAs(
         address _tokenSell,

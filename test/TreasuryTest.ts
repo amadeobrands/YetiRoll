@@ -30,20 +30,20 @@ describe("Treasury", () => {
       alice,
       ExchangeAdaptorArtifact.abi
     );
-
-    USDT = await deployErc20(alice);
-    DAI = await deployErc20(alice);
-
-    await DAI.mint(alice.address, oneEther.mul(99999999));
-    await USDT.mint(alice.address, oneEther.mul(99999999));
   });
 
   beforeEach(async () => {
     treasury = (await deployContract(alice, TreasuryArtifact)) as Treasury;
     await treasury.setExchangeAdaptor(exchangeAdaptor.address);
 
-    await DAI.approve(treasury.address, oneEther.mul(9999999));
-    await USDT.approve(treasury.address, oneEther.mul(9999999));
+    USDT = await deployErc20(alice);
+    DAI = await deployErc20(alice);
+
+    await DAI.mint(alice.address, oneEther.mul(1000));
+    await USDT.mint(alice.address, oneEther.mul(1000));
+
+    await DAI.approve(treasury.address, oneEther.mul(1000));
+    await USDT.approve(treasury.address, oneEther.mul(1000));
   });
 
   describe("Deposit functionality", () => {
@@ -57,7 +57,7 @@ describe("Treasury", () => {
           expect(balances.availableBalance).to.eq(oneEther.mul(200));
         });
 
-      await validateErc20Balance(USDT, treasury, oneEther.mul(200));
+      await validateErc20Balance(USDT, treasury.address, oneEther.mul(200));
     });
 
     it("Should allow multiple deposits of different assets", async () => {
@@ -78,8 +78,8 @@ describe("Treasury", () => {
           expect(balances.availableBalance).to.eq(oneEther.mul(420));
         });
 
-      await validateErc20Balance(USDT, treasury, oneEther.mul(200));
-      await validateErc20Balance(DAI, treasury, oneEther.mul(420));
+      await validateErc20Balance(USDT, treasury.address, oneEther.mul(200));
+      await validateErc20Balance(DAI, treasury.address, oneEther.mul(420));
     });
 
     it("Should allow multiple deposits of the same asset", async () => {
@@ -93,15 +93,26 @@ describe("Treasury", () => {
           expect(balances.availableBalance).to.eq(oneEther.mul(620));
         });
 
-      await validateErc20Balance(USDT, treasury, oneEther.mul(620));
+      await validateErc20Balance(USDT, treasury.address, oneEther.mul(620));
+    });
+  });
+
+  describe("Withdrawal", async () => {
+    it("Should allow deposits and withdrawals", async () => {
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      await treasury.withdraw(USDT.address, alice.address, oneEther.mul(100));
+
+      await validateErc20Balance(USDT, alice.address, oneEther.mul(900));
+      await validateErc20Balance(USDT, treasury.address, oneEther.mul(100));
     });
   });
 });
 
 async function validateErc20Balance(
   Erc20: MockErc20,
-  who: Contract,
+  who: string,
   amount: BigNumber
 ) {
-  Erc20.balanceOf(who.address).then((balance) => expect(balance).to.eq(amount));
+  Erc20.balanceOf(who).then((balance) => expect(balance).to.eq(amount));
 }
