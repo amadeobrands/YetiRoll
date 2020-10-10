@@ -19,10 +19,12 @@ contract Treasury is AccessControl, ReentrancyGuard {
         uint256 availableBalance;
     }
 
+    // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
     function setExchangeAdaptor(address _exchangeAdaptor) public {
         exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
     }
 
+    // @dev allow deposits of specific tokens which can then be streamed out
     function deposit(
         address _token,
         address _who,
@@ -33,6 +35,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         IERC20(_token).transferFrom(_who, address(this), _amount);
     }
 
+    // @dev allows withdrawal from the treasury, can be called by the depositor or by the stream manager
     function withdraw(
         address _token,
         address _from,
@@ -48,6 +51,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         IERC20(_token).transfer(_to, _amount);
     }
 
+    // @dev performs a swap allowing users to withdraw a different token to the deposited one
     function withdrawAs(
         address _tokenSell,
         address _tokenBuy,
@@ -75,6 +79,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         );
     }
 
+    // @dev decreases the total & available balance
     function decreaseInternalBalance(
         address _token,
         address _who,
@@ -84,6 +89,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         userBalances[_who][_token].availableBalance -= _amount;
     }
 
+    // @dev increases the total & available balance
     function increaseInternalBalance(
         address _token,
         address _who,
@@ -93,6 +99,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         userBalances[_who][_token].availableBalance += _amount;
     }
 
+    // @dev See the total available tokens for client
     function viewUserTokenBalance(address _token, address _who)
         public
         view
@@ -104,6 +111,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         );
     }
 
+    // @dev ensure there is enough balance to perform withdrawal
     modifier hasSufficientAvailableBalance(
         address _from,
         address _token,
