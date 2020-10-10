@@ -29,6 +29,8 @@ contract Treasury is Ownable {
     ) public {
         userBalances[_who][_token].totalBalance += _amount;
         userBalances[_who][_token].availableBalance += _amount;
+
+        IERC20(_token).transferFrom(_who, address(this), _amount);
     }
 
     function withdraw(address _who, uint256 _amount) public {}
