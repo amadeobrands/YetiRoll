@@ -54,7 +54,7 @@ describe("Treasury", () => {
         });
     });
 
-    it("Should allow multiple different deposits deposits of assets", async () => {
+    it("Should allow multiple deposits of different assets", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
       await treasury.deposit(DAI.address, alice.address, oneEther.mul(420));
 
@@ -70,6 +70,18 @@ describe("Treasury", () => {
         .then((balances: any) => {
           expect(balances.totalBalance).to.eq(oneEther.mul(420));
           expect(balances.availableBalance).to.eq(oneEther.mul(420));
+        });
+    });
+
+    it("Should allow multiple deposits of the same asset", async () => {
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(420));
+
+      await treasury
+        .viewUserTokenBalance(alice.address, USDT.address)
+        .then((balances: any) => {
+          expect(balances.totalBalance).to.eq(oneEther.mul(620));
+          expect(balances.availableBalance).to.eq(oneEther.mul(620));
         });
     });
   });
