@@ -98,7 +98,7 @@ describe("Treasury", () => {
   });
 
   describe("Withdrawal functionality", async () => {
-    it("Should allow deposits and withdrawals", async () => {
+    it("Should allow deposits and withdrawals from one account to another", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
       await treasury.withdraw(
@@ -131,6 +131,22 @@ describe("Treasury", () => {
           oneEther.mul(300)
         )
       ).to.be.revertedWith("Insufficient balance to withdraw");
+    });
+
+    it("Should allow withdrawal while converting the deposited token into another", async () => {
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      await exchangeAdaptor.mock.exchange.returns(oneEther.mul(95));
+
+      await treasury.withdrawAs(
+        USDT.address,
+        DAI.address,
+        oneEther.mul(100),
+        oneEther.mul(90),
+        [10],
+        alice.address,
+        bob.address
+      );
     });
   });
 });

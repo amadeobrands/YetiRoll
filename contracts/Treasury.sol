@@ -54,8 +54,13 @@ contract Treasury is AccessControl, ReentrancyGuard {
         uint256 _amountToSell,
         uint256 _minAmountToBuy,
         uint256[] memory _distribution,
-        address _who
-    ) public {
+        address _from,
+        address _to
+    )
+        public
+        nonReentrant
+        hasSufficientAvailableBalance(_from, _tokenSell, _amountToSell)
+    {
         exchangeAdaptor.exchange(
             _tokenSell,
             _tokenBuy,
