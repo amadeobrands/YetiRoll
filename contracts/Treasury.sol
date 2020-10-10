@@ -3,10 +3,10 @@
 pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./ExchangeAdaptor.sol";
 
-contract Treasury is Ownable {
+contract Treasury is AccessControl {
     ExchangeAdaptor exchangeAdaptor;
 
     // @dev mapping from User address to ERC20 address then to Balances
@@ -18,7 +18,7 @@ contract Treasury is Ownable {
         uint256 availableBalance;
     }
 
-    function setExchangeAdaptor(address _exchangeAdaptor) public onlyOwner {
+    function setExchangeAdaptor(address _exchangeAdaptor) public {
         exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
     }
 
@@ -37,6 +37,11 @@ contract Treasury is Ownable {
         address _who,
         uint256 _amount
     ) public {
+        require(
+            userBalances[_who][_token].availableBalance > _amount,
+            "Insufficient balance to withdraw"
+        );
+
         decreaseInternalBalance(_token, _who, _amount);
 
         IERC20(_token).transfer(_who, _amount);
@@ -59,17 +64,6 @@ contract Treasury is Ownable {
         );
     }
 
-    function viewUserTokenBalance(address _token, address _who)
-        public
-        view
-        returns (uint256 totalBalance, uint256 availableBalance)
-    {
-        return (
-            userBalances[_who][_token].totalBalance,
-            userBalances[_who][_token].availableBalance
-        );
-    }
-
     function decreaseInternalBalance(
         address _token,
         address _who,
@@ -86,5 +80,16 @@ contract Treasury is Ownable {
     ) internal {
         userBalances[_who][_token].totalBalance += _amount;
         userBalances[_who][_token].availableBalance += _amount;
+    }
+
+    function viewUserTokenBalance(address _token, address _who)
+        public
+        view
+        returns (uint256 totalBalance, uint256 availableBalance)
+    {
+        return (
+            userBalances[_who][_token].totalBalance,
+            userBalances[_who][_token].availableBalance
+        );
     }
 }

@@ -113,6 +113,14 @@ describe("Treasury", () => {
           expect(balances.availableBalance).to.eq(oneEther.mul(100));
         });
     });
+
+    it("Should prevent withdrawals if there is not enough available balance", async () => {
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      await expect(
+        treasury.withdraw(USDT.address, alice.address, oneEther.mul(300))
+      ).to.be.revertedWith("Insufficient balance to withdraw");
+    });
   });
 });
 
