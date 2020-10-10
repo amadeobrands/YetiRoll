@@ -13,7 +13,7 @@ import ExchangeAdaptorArtifact from "../artifacts/ExchangeAdaptor.json";
 
 import {oneEther} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";
-import {BigNumber} from "ethers";
+import {BigNumber, Contract} from "ethers";
 
 const {expect} = chai;
 
@@ -57,9 +57,7 @@ describe("Treasury", () => {
           expect(balances.availableBalance).to.eq(oneEther.mul(200));
         });
 
-      USDT.balanceOf(treasury.address).then((balance) =>
-        expect(balance).to.eq(oneEther.mul(200))
-      );
+      await validateErc20Balance(USDT, treasury, oneEther.mul(200));
     });
 
     it("Should allow multiple deposits of different assets", async () => {
@@ -80,13 +78,8 @@ describe("Treasury", () => {
           expect(balances.availableBalance).to.eq(oneEther.mul(420));
         });
 
-      USDT.balanceOf(treasury.address).then((balance) =>
-        expect(balance).to.eq(oneEther.mul(200))
-      );
-
-      DAI.balanceOf(treasury.address).then((balance) =>
-        expect(balance).to.eq(oneEther.mul(420))
-      );
+      await validateErc20Balance(USDT, treasury, oneEther.mul(200));
+      await validateErc20Balance(DAI, treasury, oneEther.mul(420));
     });
 
     it("Should allow multiple deposits of the same asset", async () => {
@@ -100,9 +93,15 @@ describe("Treasury", () => {
           expect(balances.availableBalance).to.eq(oneEther.mul(620));
         });
 
-      USDT.balanceOf(treasury.address).then((balance) =>
-        expect(balance).to.eq(oneEther.mul(620))
-      );
+      await validateErc20Balance(USDT, treasury, oneEther.mul(620));
     });
   });
 });
+
+async function validateErc20Balance(
+  Erc20: MockErc20,
+  who: Contract,
+  amount: BigNumber
+) {
+  Erc20.balanceOf(who.address).then((balance) => expect(balance).to.eq(amount));
+}
