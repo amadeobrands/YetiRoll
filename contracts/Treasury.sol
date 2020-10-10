@@ -1,10 +1,10 @@
+// SPDX-License-Identifier: UNLICENSED
+
 pragma solidity ^0.6.0;
 
-import "./ExchangeAdaptor.sol";
-
+import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-
-//import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./ExchangeAdaptor.sol";
 
 contract Treasury is Ownable {
     ExchangeAdaptor exchangeAdaptor;
