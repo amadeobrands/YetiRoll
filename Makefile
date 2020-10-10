@@ -6,13 +6,15 @@ typechain:
 compile:
 	npx buidler compile
 	cp -R artifacts/** app/src/build
+	make typechain
 
 compile-clean:
 	npx buidler clean
+	rm -r ./typechain/*
 	make compile
 
 test:
-	npm run-script test
+	npm run-script test test/TreasuryTest.ts
 
 run-node:
 	@npx buidler node

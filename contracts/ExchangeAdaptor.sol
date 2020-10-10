@@ -11,18 +11,18 @@ contract ExchangeAdaptor is Ownable {
     }
 
     function exchange(
-        address _sell,
-        address _buy,
-        uint256 _amount,
-        uint256 _minReturn,
+        address _tokenSell,
+        address _tokenBuy,
+        uint256 _amountToSell,
+        uint256 _minAmountToBuy,
         uint256[] memory _distribution
     ) public onlyOwner returns (uint256) {
         return
             oneInchExchange.swap(
-                IERC20(_sell),
-                IERC20(_buy),
-                _amount,
-                _minReturn,
+                IERC20(_tokenSell),
+                IERC20(_tokenBuy),
+                _amountToSell,
+                _minAmountToBuy,
                 _distribution,
                 0
             );
