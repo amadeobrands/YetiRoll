@@ -4,9 +4,10 @@ pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./ExchangeAdaptor.sol";
 
-contract Treasury is AccessControl {
+contract Treasury is AccessControl, ReentrancyGuard {
     ExchangeAdaptor exchangeAdaptor;
 
     // @dev mapping from User address to ERC20 address then to Balances
@@ -36,7 +37,7 @@ contract Treasury is AccessControl {
         address _token,
         address _who,
         uint256 _amount
-    ) public {
+    ) public nonReentrant {
         require(
             userBalances[_who][_token].availableBalance > _amount,
             "Insufficient balance to withdraw"
