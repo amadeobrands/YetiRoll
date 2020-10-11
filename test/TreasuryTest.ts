@@ -46,7 +46,7 @@ describe("Treasury", () => {
     await USDT.approve(treasury.address, oneEther.mul(1000));
   });
 
-  describe("Deposit functionality", () => {
+  describe("Deposit functionality", async () => {
     it("Should allow deposits of a single asset", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
@@ -172,6 +172,58 @@ describe("Treasury", () => {
         .then((balances: any) => {
           expect(balances.deposited).to.eq(oneEther.mul(200));
           expect(balances.allocated).to.eq(oneEther.mul(100));
+        });
+    });
+
+    it("Should prevent withdrawal of funds which have been allocated", async () => {
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      await treasury.allocateFunds(
+        USDT.address,
+        alice.address,
+        oneEther.mul(100)
+      );
+
+      await expect(
+        treasury.withdraw(
+          USDT.address,
+          alice.address,
+          alice.address,
+          oneEther.mul(200)
+        )
+      ).to.be.reverted;
+    });
+  });
+
+  describe("Fund transfer", async () => {
+    it("Should allow transferring of allocated funds from one account to another", async () => {
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      await treasury.allocateFunds(
+        USDT.address,
+        alice.address,
+        oneEther.mul(100)
+      );
+
+      await treasury.transferFunds(
+        USDT.address,
+        alice.address,
+        bob.address,
+        oneEther.mul(100)
+      );
+
+      await treasury
+        .viewUserTokenBalance(USDT.address, alice.address)
+        .then((balances: any) => {
+          expect(balances.deposited).to.eq(oneEther.mul(100));
+          expect(balances.allocated).to.eq(oneEther.mul(0));
+        });
+
+      await treasury
+        .viewUserTokenBalance(USDT.address, alice.address)
+        .then((balances: any) => {
+          expect(balances.deposited).to.eq(oneEther.mul(100));
+          expect(balances.allocated).to.eq(oneEther.mul(0));
         });
     });
 

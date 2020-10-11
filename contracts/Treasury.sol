@@ -38,6 +38,18 @@ contract Treasury is AccessControl, ReentrancyGuard {
         IERC20(_token).transferFrom(_who, address(this), _amount);
     }
 
+    // @dev during lifetime of a stream a user may wish to transfer funds from the stream into their available balance
+    function transferFunds(
+        address _token,
+        address _who,
+        address _to,
+        uint256 _amount
+    ) public {
+        withdrawFunds(_token, _who, _amount);
+        depositFunds(_token, _to, _amount);
+        deallocateFunds(_token, _who, _amount);
+    }
+
     // @dev allows withdrawal from the treasury, can be called by the depositor or by the stream manager
     function withdraw(
         address _token,
@@ -92,6 +104,18 @@ contract Treasury is AccessControl, ReentrancyGuard {
         userBalances[_who][_token].allocated = userBalances[_who][_token]
             .allocated
             .add(_amount);
+    }
+
+    // @dev once a stream is started, funds are allocated and locked from being withdrawn
+    // by the account which started the stream
+    function deallocateFunds(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) public {
+        userBalances[_who][_token].allocated = userBalances[_who][_token]
+            .allocated
+            .sub(_amount);
     }
 
     // @dev called when funds are deposited, increase the deposited balance
