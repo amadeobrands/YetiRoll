@@ -4,10 +4,13 @@ pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/Erc20/IErc20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./ExchangeAdaptor.sol";
 
 contract Treasury is AccessControl, ReentrancyGuard {
+    using SafeMath for uint256;
+
     ExchangeAdaptor exchangeAdaptor;
 
     // @dev mapping from User address to ERC20 address then to Balances
@@ -30,7 +33,9 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _who,
         uint256 _amount
     ) public {
-        userBalances[_who][_token].deposited += _amount;
+        userBalances[_who][_token].deposited = userBalances[_who][_token]
+            .deposited
+            .add(_amount);
 
         IERC20(_token).transferFrom(_who, address(this), _amount);
     }
@@ -46,7 +51,9 @@ contract Treasury is AccessControl, ReentrancyGuard {
         nonReentrant
         hasSufficientAvailableBalance(_from, _token, _amount)
     {
-        decreaseTotalBalance(_token, _from, _amount);
+        userBalances[_from][_token].deposited = userBalances[_from][_token]
+            .deposited
+            .sub(_amount);
 
         IERC20(_token).transfer(_to, _amount);
     }
@@ -65,7 +72,10 @@ contract Treasury is AccessControl, ReentrancyGuard {
         nonReentrant
         hasSufficientAvailableBalance(_from, _tokenSell, _amountToSell)
     {
-        decreaseTotalBalance(_tokenSell, _from, _amountToSell);
+        userBalances[_from][_tokenSell]
+            .deposited = userBalances[_from][_tokenSell].deposited.sub(
+            _amountToSell
+        );
 
         IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
 
@@ -86,16 +96,9 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _who,
         uint256 _amount
     ) public {
-        userBalances[_who][_token].allocated += _amount;
-    }
-
-    // @dev decreases the total & available balance
-    function decreaseTotalBalance(
-        address _token,
-        address _who,
-        uint256 _amount
-    ) internal {
-        userBalances[_who][_token].deposited -= _amount;
+        userBalances[_who][_token].allocated = userBalances[_who][_token]
+            .allocated
+            .add(_amount);
     }
 
     // @dev See the total available tokens for client
@@ -117,8 +120,9 @@ contract Treasury is AccessControl, ReentrancyGuard {
         returns (uint256)
     {
         return
-            userBalances[_from][_token].deposited -
-            userBalances[_from][_token].allocated;
+            userBalances[_from][_token].deposited.sub(
+                userBalances[_from][_token].allocated
+            );
     }
 
     // @dev ensure there is enough balance to perform withdrawal
