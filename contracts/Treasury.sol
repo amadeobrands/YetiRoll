@@ -13,10 +13,10 @@ contract Treasury is AccessControl, ReentrancyGuard {
     // @dev mapping from User address to ERC20 address then to Balances
     mapping(address => mapping(address => Balance)) userBalances;
 
-    // @dev clients deposited balance along with unallocated balance
+    // @dev clients deposited balance along with allocated balance
     struct Balance {
-        uint256 totalBalance;
-        uint256 availableBalance;
+        uint256 deposited;
+        uint256 allocated;
     }
 
     // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
@@ -30,7 +30,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _who,
         uint256 _amount
     ) public {
-        increaseInternalBalance(_token, _who, _amount);
+        userBalances[_who][_token].deposited += _amount;
 
         IERC20(_token).transferFrom(_who, address(this), _amount);
     }
@@ -81,12 +81,12 @@ contract Treasury is AccessControl, ReentrancyGuard {
 
     // @dev once a stream is started, funds are allocated and locked from being withdrawn
     // by the account which started the stream
-    function allocatedFunds(
+    function allocateFunds(
         address _token,
         address _who,
         uint256 _amount
     ) public {
-        userBalances[_who][_token].availableBalance -= _amount;
+        userBalances[_who][_token].allocated += _amount;
     }
 
     // @dev decreases the total & available balance
@@ -95,29 +95,30 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _who,
         uint256 _amount
     ) internal {
-        userBalances[_who][_token].totalBalance -= _amount;
-    }
-
-    // @dev increases the total & available balance
-    function increaseInternalBalance(
-        address _token,
-        address _who,
-        uint256 _amount
-    ) internal {
-        userBalances[_who][_token].totalBalance += _amount;
-        userBalances[_who][_token].availableBalance += _amount;
+        userBalances[_who][_token].deposited -= _amount;
     }
 
     // @dev See the total available tokens for client
     function viewUserTokenBalance(address _token, address _who)
         public
         view
-        returns (uint256 totalBalance, uint256 availableBalance)
+        returns (uint256 deposited, uint256 allocated)
     {
         return (
-            userBalances[_who][_token].totalBalance,
-            userBalances[_who][_token].availableBalance
+            userBalances[_who][_token].deposited,
+            userBalances[_who][_token].allocated
         );
+    }
+
+    // @dev subtract the allocated balance from the deposit to see the available funds
+    function viewAvailableBalance(address _from, address _token)
+        public
+        view
+        returns (uint256)
+    {
+        return
+            userBalances[_from][_token].deposited -
+            userBalances[_from][_token].allocated;
     }
 
     // @dev ensure there is enough balance to perform withdrawal
@@ -127,7 +128,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         uint256 _amount
     ) {
         require(
-            userBalances[_from][_token].availableBalance > _amount,
+            viewAvailableBalance(_from, _token) >= _amount,
             "Insufficient balance to withdraw"
         );
         _;
