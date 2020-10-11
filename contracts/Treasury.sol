@@ -33,9 +33,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _who,
         uint256 _amount
     ) public {
-        userBalances[_who][_token].deposited = userBalances[_who][_token]
-            .deposited
-            .add(_amount);
+        depositFunds(_token, _who, _amount);
 
         IERC20(_token).transferFrom(_who, address(this), _amount);
     }
@@ -51,9 +49,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         nonReentrant
         hasSufficientAvailableBalance(_from, _token, _amount)
     {
-        userBalances[_from][_token].deposited = userBalances[_from][_token]
-            .deposited
-            .sub(_amount);
+        withdrawFunds(_token, _from, _amount);
 
         IERC20(_token).transfer(_to, _amount);
     }
@@ -72,10 +68,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         nonReentrant
         hasSufficientAvailableBalance(_from, _tokenSell, _amountToSell)
     {
-        userBalances[_from][_tokenSell]
-            .deposited = userBalances[_from][_tokenSell].deposited.sub(
-            _amountToSell
-        );
+        withdrawFunds(_tokenSell, _from, _amountToSell);
 
         IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
 
@@ -99,6 +92,28 @@ contract Treasury is AccessControl, ReentrancyGuard {
         userBalances[_who][_token].allocated = userBalances[_who][_token]
             .allocated
             .add(_amount);
+    }
+
+    // @dev called when funds are deposited, increase the deposited balance
+    function depositFunds(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) public {
+        userBalances[_who][_token].deposited = userBalances[_who][_token]
+            .deposited
+            .add(_amount);
+    }
+
+    // @dev called when funds are withdrawn, decrease the deposited balance
+    function withdrawFunds(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) public {
+        userBalances[_who][_token].deposited = userBalances[_who][_token]
+            .deposited
+            .sub(_amount);
     }
 
     // @dev See the total available tokens for client
