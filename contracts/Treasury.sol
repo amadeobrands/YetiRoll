@@ -8,6 +8,9 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./ExchangeAdaptor.sol";
 
+// Notes for improvement - allocating funds does not relate to an address nor to a stream, would be beneficial
+// to know where the funds are allocated to. This can be handled by the stream manager but needs strong coordination
+// between the 2 services
 contract Treasury is AccessControl, ReentrancyGuard {
     using SafeMath for uint256;
 
@@ -41,13 +44,13 @@ contract Treasury is AccessControl, ReentrancyGuard {
     // @dev during lifetime of a stream a user may wish to transfer funds from the stream into their available balance
     function transferFunds(
         address _token,
-        address _who,
+        address _from,
         address _to,
         uint256 _amount
-    ) public {
-        withdrawFunds(_token, _who, _amount);
+    ) public hasSufficientAllocatedFunds(_token, _from, _amount) {
+        withdrawFunds(_token, _from, _amount);
         depositFunds(_token, _to, _amount);
-        deallocateFunds(_token, _who, _amount);
+        deallocateFunds(_token, _from, _amount);
     }
 
     // @dev allows withdrawal from the treasury, can be called by the depositor or by the stream manager
@@ -173,6 +176,19 @@ contract Treasury is AccessControl, ReentrancyGuard {
         require(
             viewAvailableBalance(_from, _token) >= _amount,
             "Insufficient balance to withdraw"
+        );
+        _;
+    }
+
+    // @dev ensure that funds have been allocated
+    modifier hasSufficientAllocatedFunds(
+        address _token,
+        address _from,
+        uint256 _amount
+    ) {
+        require(
+            userBalances[_from][_token].allocated >= _amount,
+            "Insufficient allocated balance"
         );
         _;
     }

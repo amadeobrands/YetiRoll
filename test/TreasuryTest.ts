@@ -226,6 +226,23 @@ describe("Treasury", () => {
           expect(balances.allocated).to.eq(oneEther.mul(0));
         });
     });
+
+    it("Should prevent transferring of funds which have not been allocated", async () => {
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      await treasury.allocateFunds(
+        USDT.address,
+        alice.address,
+        oneEther.mul(100)
+      );
+
+      await expect(treasury.transferFunds(
+        USDT.address,
+        alice.address,
+        bob.address,
+        oneEther.mul(200)
+      )).to.be.revertedWith("Insufficient allocated balance");
+    });
   });
 });
 

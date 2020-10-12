@@ -27,3 +27,8 @@ integration:
 
 prettier:
 	npm run prettier
+
+commit:
+	git add .
+	git commit -m "quick commit"
+	git push
