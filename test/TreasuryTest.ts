@@ -226,25 +226,6 @@ describe("Treasury", () => {
           expect(balances.allocated).to.eq(oneEther.mul(0));
         });
     });
-
-    it("Should prevent withdrawal of funds which have been allocated", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
-
-      await treasury.allocateFunds(
-        USDT.address,
-        alice.address,
-        oneEther.mul(100)
-      );
-
-      await expect(
-        treasury.withdraw(
-          USDT.address,
-          alice.address,
-          alice.address,
-          oneEther.mul(200)
-        )
-      ).to.be.reverted;
-    });
   });
 });
 
