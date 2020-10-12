@@ -4,6 +4,7 @@ import {deployErc20, getProvider} from "./helpers/contract";
 import {deployContract, deployMockContract, MockContract,} from "ethereum-waffle";
 
 import TreasuryArtifact from "../artifacts/Treasury.json";
+import StreamArtifact from "../artifacts/Stream.json";
 import StreamManagerArtifact from "../artifacts/StreamManager.json";
 import {StreamManager} from "../typechain/StreamManager";
 
@@ -17,27 +18,33 @@ const [alice, bob, charlie, dennis, ethan] = getProvider().getWallets();
 describe("Stream Manager", () => {
   let streamManager: StreamManager;
   let treasury: MockContract;
+  let stream: MockContract;
   let USDT: MockErc20;
   let DAI: MockErc20;
 
-  before(async () => {
-    treasury = await deployMockContract(
-      alice,
-      TreasuryArtifact.abi
-    );
-  });
-
   beforeEach(async () => {
+    treasury = await deployMockContract(
+        alice,
+        TreasuryArtifact.abi
+    );
+
+    stream = await deployMockContract(
+        alice,
+        StreamArtifact.abi
+    );
+
     streamManager = (await deployContract(alice, StreamManagerArtifact)) as StreamManager;
+    await streamManager.setTreasury(treasury.address);
+    await streamManager.setStream(stream.address);
 
-    USDT = await deployErc20(alice);
     DAI = await deployErc20(alice);
+    USDT = await deployErc20(alice);
 
-    await DAI.mint(alice.address, oneEther.mul(1000));
     await USDT.mint(alice.address, oneEther.mul(1000));
+    await DAI.mint(alice.address, oneEther.mul(1000));
 
-    await DAI.approve(treasury.address, oneEther.mul(1000));
     await USDT.approve(treasury.address, oneEther.mul(1000));
+    await DAI.approve(treasury.address, oneEther.mul(1000));
   });
 
   describe("Stream creation", async () => {
