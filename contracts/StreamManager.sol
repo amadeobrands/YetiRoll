@@ -16,7 +16,11 @@ contract StreamManager is Ownable {
         stream = Stream(_stream);
     }
 
-    function startStream(address _token, uint256 _amount) public {
+    function startStream(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) public {
         uint256 balance = treasury.viewAvailableBalance(msg.sender, _token);
 
         require(balance >= _amount, "Not enough balance to start stream");

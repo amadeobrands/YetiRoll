@@ -48,7 +48,10 @@ describe("Stream Manager", () => {
   });
 
   describe("Stream creation", async () => {
-      it("Should allow creation of a stream if there is enough balance available", async () => {
+      it("Should revert if there is not enough available balance", async () => {
+        await treasury.mock.viewAvailableBalance.returns(oneEther.mul(200));
+
+        await expect(streamManager.startStream(DAI.address, bob.address, oneEther.mul(300))).to.be.revertedWith("Not enough balance to start stream");
       });
     });
 });
