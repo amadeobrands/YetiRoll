@@ -91,5 +91,55 @@ describe("Stream Manager", () => {
         timestamp + oneHour
       );
     });
+
+    it("Should allow withdrawal of funds from a stream", async () => {
+      const amount = oneEther.mul(200);
+      await treasury.mock.viewAvailableBalance.returns(amount);
+
+      await treasury.mock.allocateFunds
+        .withArgs(DAI.address, alice.address, amount)
+        .returns();
+
+      await stream.mock.createStream
+        .withArgs(
+          bob.address,
+          amount,
+          DAI.address,
+          timestamp,
+          timestamp + oneHour
+        )
+        .returns(1);
+
+      await streamManager.startStream(
+        DAI.address,
+        bob.address,
+        amount,
+        timestamp,
+        timestamp + oneHour
+      );
+
+      await stream.mock.withdraw
+        .withArgs(1, oneEther.mul(100), alice.address)
+        .returns();
+
+      await stream.mock.getStream
+        .withArgs(1)
+        .returns(
+          alice.address,
+          bob.address,
+          oneEther.mul(100),
+          DAI.address,
+          timestamp,
+          timestamp + oneHour,
+          oneEther.mul(100),
+          oneEther.mul(1)
+        );
+
+      await treasury.mock.transferFunds
+        .withArgs(DAI.address, alice.address, bob.address, oneEther.mul(100))
+        .returns();
+
+      await streamManager.claimFromStream(1, oneEther.mul(100));
+    });
   });
 });
