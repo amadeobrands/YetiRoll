@@ -1,14 +1,18 @@
 import chai from "chai";
-import {deployErc20, getProvider} from "./helpers/contract";
+import {deployErc20, getBlockTime, getProvider} from "./helpers/contract";
 
-import {deployContract, deployMockContract, MockContract,} from "ethereum-waffle";
+import {
+  deployContract,
+  deployMockContract,
+  MockContract,
+} from "ethereum-waffle";
 
 import TreasuryArtifact from "../artifacts/Treasury.json";
 import StreamArtifact from "../artifacts/Stream.json";
 import StreamManagerArtifact from "../artifacts/StreamManager.json";
 import {StreamManager} from "../typechain/StreamManager";
 
-import {oneEther} from "./helpers/numbers";
+import {oneEther, oneHour} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";
 
 const {expect} = chai;
@@ -21,19 +25,18 @@ describe("Stream Manager", () => {
   let stream: MockContract;
   let USDT: MockErc20;
   let DAI: MockErc20;
+  let timestamp: number;
 
   beforeEach(async () => {
-    treasury = await deployMockContract(
-        alice,
-        TreasuryArtifact.abi
-    );
+    timestamp = (await getBlockTime()) + 10;
 
-    stream = await deployMockContract(
-        alice,
-        StreamArtifact.abi
-    );
+    treasury = await deployMockContract(alice, TreasuryArtifact.abi);
+    stream = await deployMockContract(alice, StreamArtifact.abi);
 
-    streamManager = (await deployContract(alice, StreamManagerArtifact)) as StreamManager;
+    streamManager = (await deployContract(
+      alice,
+      StreamManagerArtifact
+    )) as StreamManager;
     await streamManager.setTreasury(treasury.address);
     await streamManager.setStream(stream.address);
 
@@ -48,10 +51,45 @@ describe("Stream Manager", () => {
   });
 
   describe("Stream creation", async () => {
-      it("Should revert if there is not enough available balance", async () => {
-        await treasury.mock.viewAvailableBalance.returns(oneEther.mul(200));
+    it("Should revert if there is not enough available balance", async () => {
+      await treasury.mock.viewAvailableBalance.returns(oneEther.mul(200));
 
-        await expect(streamManager.startStream(DAI.address, bob.address, oneEther.mul(300))).to.be.revertedWith("Not enough balance to start stream");
-      });
+      await expect(
+        streamManager.startStream(
+          DAI.address,
+          bob.address,
+          oneEther.mul(300),
+          timestamp,
+          timestamp + oneHour
+        )
+      ).to.be.revertedWith("Not enough balance to start stream");
     });
+
+    it("Should allocate funds and start a stream", async () => {
+      const amount = oneEther.mul(200);
+      await treasury.mock.viewAvailableBalance.returns(amount);
+
+      await treasury.mock.allocateFunds
+        .withArgs(DAI.address, alice.address, amount)
+        .returns();
+
+      await stream.mock.createStream
+        .withArgs(
+          bob.address,
+          amount,
+          DAI.address,
+          timestamp,
+          timestamp + oneHour
+        )
+        .returns(1);
+
+      await streamManager.startStream(
+        DAI.address,
+        bob.address,
+        amount,
+        timestamp,
+        timestamp + oneHour
+      );
+    });
+  });
 });
