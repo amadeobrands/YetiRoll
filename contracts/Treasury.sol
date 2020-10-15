@@ -16,6 +16,8 @@ contract Treasury is AccessControl, ReentrancyGuard {
 
     ExchangeAdaptor exchangeAdaptor;
 
+    bytes32 public constant TREASURY_OPERATOR = keccak256("TREASURY_OPERATOR");
+
     // @dev mapping from User address to ERC20 address then to Balances
     mapping(address => mapping(address => Balance)) userBalances;
 
@@ -23,6 +25,10 @@ contract Treasury is AccessControl, ReentrancyGuard {
     struct Balance {
         uint256 deposited;
         uint256 allocated;
+    }
+
+    constructor() public {
+
     }
 
     // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
