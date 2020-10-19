@@ -34,15 +34,15 @@ contract Treasury is AccessControl, ReentrancyGuard {
     }
 
     // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
-    function setExchangeAdaptor(address _exchangeAdaptor) onlyTreasuryAdmin public {
+    function setExchangeAdaptor(address _exchangeAdaptor)
+        public
+        onlyTreasuryAdmin
+    {
         exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
     }
 
     // @dev set address as treasury operator, likely to be a stream manager but perhaps different use cases later on
-    function setTreasuryOperator(address _who)
-        public
-        onlyTreasuryAdmin
-    {
+    function setTreasuryOperator(address _who) public onlyTreasuryAdmin {
         grantRole(TREASURY_OPERATOR, _who);
     }
 
@@ -191,7 +191,10 @@ contract Treasury is AccessControl, ReentrancyGuard {
 
     // @dev check if the address has the role Treasury Operator
     modifier onlyTreasuryOperator() {
-        require(hasRole(TREASURY_OPERATOR, msg.sender), "Not Treasury Operator");
+        require(
+            hasRole(TREASURY_OPERATOR, msg.sender),
+            "Not Treasury Operator"
+        );
         _;
     }
 
