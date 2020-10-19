@@ -15,6 +15,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
 
     ExchangeAdaptor exchangeAdaptor;
 
+    bytes32 public constant TREASURY_ADMIN = keccak256("TREASURY_ADMIN");
     bytes32 public constant TREASURY_OPERATOR = keccak256("TREASURY_OPERATOR");
 
     // @dev mapping from User address to ERC20 address then to Balances
@@ -29,6 +30,15 @@ contract Treasury is AccessControl, ReentrancyGuard {
     // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
     function setExchangeAdaptor(address _exchangeAdaptor) public {
         exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
+    }
+
+    constructor() public {
+        _setupRole(TREASURY_ADMIN, msg.sender);
+        _setRoleAdmin(TREASURY_OPERATOR, TREASURY_ADMIN);
+    }
+
+    function setTreasuryOperator(address _who) onlyTreasuryAdmin(msg.sender) public {
+        grantRole(TREASURY_OPERATOR, _who);
     }
 
     // @dev allow deposits of specific tokens which can then be streamed out
@@ -104,22 +114,10 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _who,
         uint256 _amount
-    ) public {
+    ) onlyTreasuryOperator(msg.sender)  public {
         userBalances[_who][_token].allocated = userBalances[_who][_token]
             .allocated
             .add(_amount);
-    }
-
-    // @dev once a stream is started, funds are allocated and locked from being withdrawn
-    // by the account which started the stream
-    function deallocateFunds(
-        address _token,
-        address _who,
-        uint256 _amount
-    ) public {
-        userBalances[_who][_token].allocated = userBalances[_who][_token]
-            .allocated
-            .sub(_amount);
     }
 
     // @dev called when funds are deposited, increase the deposited balance
@@ -144,6 +142,18 @@ contract Treasury is AccessControl, ReentrancyGuard {
             .sub(_amount);
     }
 
+    // @dev once a stream is started, funds are allocated and locked from being withdrawn
+    // by the account which started the stream
+    function deallocateFunds(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) onlyTreasuryOperator(msg.sender) internal {
+        userBalances[_who][_token].allocated = userBalances[_who][_token]
+        .allocated
+        .sub(_amount);
+    }
+
     // @dev See the total available tokens for client
     function viewUserTokenBalance(address _token, address _who)
         public
@@ -166,6 +176,18 @@ contract Treasury is AccessControl, ReentrancyGuard {
             userBalances[_from][_token].deposited.sub(
                 userBalances[_from][_token].allocated
             );
+    }
+
+    // @dev check if the address has the role Treasury Admin
+    modifier onlyTreasuryAdmin(address _address) {
+        require(hasRole(TREASURY_ADMIN, _address), "Not Treasury Admin");
+        _;
+    }
+
+    // @dev check if the address has the role Treasury Operator
+    modifier onlyTreasuryOperator(address _address) {
+        require(hasRole(TREASURY_OPERATOR, _address), "Not Treasury Operator");
+        _;
     }
 
     // @dev ensure there is enough balance to perform withdrawal

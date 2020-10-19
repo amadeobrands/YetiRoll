@@ -13,7 +13,7 @@ import ExchangeAdaptorArtifact from "../artifacts/ExchangeAdaptor.json";
 
 import {oneEther} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";
-import {BigNumber} from "ethers";
+import {BigNumber, Contract} from "ethers";
 
 const {expect} = chai;
 
@@ -143,7 +143,7 @@ describe("Treasury", () => {
           [10],
           bob.address
         )
-        .returns(true);
+        .returns(oneEther.mul(90));
 
       await treasury.withdrawAs(
         USDT.address,
@@ -158,6 +158,10 @@ describe("Treasury", () => {
   });
 
   describe("Fund allocation", async () => {
+    beforeEach(async () => {
+      await treasury.setTreasuryOperator(alice.address);
+    });
+
     it("Should allow funds to be allocated", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
@@ -196,6 +200,10 @@ describe("Treasury", () => {
   });
 
   describe("Fund transfer", async () => {
+    beforeEach(async () => {
+      await treasury.setTreasuryOperator(alice.address);
+    });
+
     it("Should allow transferring of allocated funds from one account to another", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
@@ -244,7 +252,26 @@ describe("Treasury", () => {
       )).to.be.revertedWith("Insufficient allocated balance");
     });
   });
+
+  describe("Access control" , async() => {
+    let bobConnectedTreasury: Contract;
+
+    before( async () => {
+      bobConnectedTreasury = await treasury.connect(bob);
+    });
+
+    it("Should prevent allocation of funds from addresses without the Treasury Operator role", async () =>{
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      await expect(bobConnectedTreasury.allocateFunds(
+          USDT.address,
+          alice.address,
+          oneEther.mul(100)
+      )).to.be.revertedWith("Not Treasury Operator");
+    });
+  });
 });
+
 
 async function validateErc20Balance(
   Erc20: MockErc20,

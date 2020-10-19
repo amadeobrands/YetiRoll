@@ -67,7 +67,7 @@ describe("Exchange Adaptor", () => {
     describe("Access control", () => {
         it("Only the owner should be able to set the 1inch ", async () => {
             const bobConnectedExchangeAdaptor = exchangeAdaptor.connect(bob);
-            await expect(bobConnectedExchangeAdaptor.setOneInch(oneInch.address)).to.be.revertedWith(" Ownable: caller is not the owner");
+            await expect(bobConnectedExchangeAdaptor.setOneInch(oneInch.address)).to.be.revertedWith("Ownable: caller is not the owner");
 
         });
     });
