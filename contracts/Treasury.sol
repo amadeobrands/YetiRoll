@@ -34,14 +34,14 @@ contract Treasury is AccessControl, ReentrancyGuard {
     }
 
     // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
-    function setExchangeAdaptor(address _exchangeAdaptor) public {
+    function setExchangeAdaptor(address _exchangeAdaptor) onlyTreasuryAdmin public {
         exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
     }
 
     // @dev set address as treasury operator, likely to be a stream manager but perhaps different use cases later on
     function setTreasuryOperator(address _who)
         public
-        onlyTreasuryAdmin(msg.sender)
+        onlyTreasuryAdmin
     {
         grantRole(TREASURY_OPERATOR, _who);
     }
@@ -119,7 +119,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _who,
         uint256 _amount
-    ) public onlyTreasuryOperator(msg.sender) {
+    ) public onlyTreasuryOperator() {
         userBalances[_who][_token].allocated = userBalances[_who][_token]
             .allocated
             .add(_amount);
@@ -153,7 +153,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _who,
         uint256 _amount
-    ) internal onlyTreasuryOperator(msg.sender) {
+    ) internal onlyTreasuryOperator() {
         userBalances[_who][_token].allocated = userBalances[_who][_token]
             .allocated
             .sub(_amount);
@@ -184,14 +184,14 @@ contract Treasury is AccessControl, ReentrancyGuard {
     }
 
     // @dev check if the address has the role Treasury Admin
-    modifier onlyTreasuryAdmin(address _address) {
-        require(hasRole(TREASURY_ADMIN, _address), "Not Treasury Admin");
+    modifier onlyTreasuryAdmin() {
+        require(hasRole(TREASURY_ADMIN, msg.sender), "Not Treasury Admin");
         _;
     }
 
     // @dev check if the address has the role Treasury Operator
-    modifier onlyTreasuryOperator(address _address) {
-        require(hasRole(TREASURY_OPERATOR, _address), "Not Treasury Operator");
+    modifier onlyTreasuryOperator() {
+        require(hasRole(TREASURY_OPERATOR, msg.sender), "Not Treasury Operator");
         _;
     }
 

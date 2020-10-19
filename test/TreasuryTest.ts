@@ -269,6 +269,11 @@ describe("Treasury", () => {
           oneEther.mul(100)
       )).to.be.revertedWith("Not Treasury Operator");
     });
+
+    it("Should prevent setting the Exchange Adaptor unless role is Treasury Admin", async () =>{
+      await treasury.setExchangeAdaptor(exchangeAdaptor.address);
+      await expect(bobConnectedTreasury.setExchangeAdaptor(exchangeAdaptor.address)).to.be.revertedWith("Not Treasury Admin");
+    });
   });
 });
 
