@@ -16,8 +16,6 @@ const DAI_ADDRESS = "0x6b175474e89094c44da98b954eedeac495271d0f";
 const AUSDC_ADDRESS = "0x9bA00D6856a4eDF4665BcA2C2309936572473B7E";
 
 const ONE_INCH_ADDRESS = "0xC586BeF4a0992C495Cf22e1aeEE4E446CECDee0E";
-const ONE_INCH_TOKEN_TAKER_ADDRESS =
-  "0xe4c9194962532feb467dce8b3d42419641c6ed2e";
 
 let dai;
 let ausdc;
@@ -28,10 +26,7 @@ async function main() {
   const oneInch = new Contract(ONE_INCH_ADDRESS, ONE_INCH, alice);
   const exchangeAdaptor = await deployExchangeAdaptor();
 
-  await exchangeAdaptor.setOneInch(
-    ONE_INCH_ADDRESS,
-    ONE_INCH_TOKEN_TAKER_ADDRESS
-  );
+  await exchangeAdaptor.setOneInch(ONE_INCH_ADDRESS);
 
   let daiOwner = provider.getSigner(DAI_OWNER);
 
@@ -60,7 +55,7 @@ async function main() {
       console.log("Swapping DAI for USDC");
 
       await exchangeAdaptor.callStatic
-        .swap(
+        .exchange(
           DAI_ADDRESS,
           AUSDC_ADDRESS,
           oneEther.mul(1000),
@@ -95,12 +90,6 @@ async function main() {
     .then((balance: BigNumber) =>
       console.log("Alice's AUSDC balance " + balance.toString())
     );
-
-  await dai
-    .allowance(exchangeAdaptor.address, ONE_INCH_TOKEN_TAKER_ADDRESS)
-    .then((balance: BigNumber) => {
-      console.log("ExchangeAdaptor allowance " + balance.toString());
-    });
 
   await dai
     .balanceOf(exchangeAdaptor.address)

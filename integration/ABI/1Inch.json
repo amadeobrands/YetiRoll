@@ -2,7 +2,7 @@
   {
     "inputs": [
       {
-        "internalType": "contract IOneSplit",
+        "internalType": "contract IOneSplitMulti",
         "name": "impl",
         "type": "address"
       }
@@ -44,6 +44,67 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "contract IERC20",
+        "name": "fromToken",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IERC20",
+        "name": "destToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "fromTokenAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "destTokenAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "minReturn",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "distribution",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "flags",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "referral",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "feePercent",
+        "type": "uint256"
+      }
+    ],
+    "name": "Swapped",
+    "type": "event"
+  },
+  {
     "payable": true,
     "stateMutability": "payable",
     "type": "fallback"
@@ -51,357 +112,12 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "FLAG_DISABLE_AAVE",
+    "name": "chi",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract IFreeFromUpTo",
         "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_BANCOR",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_BDAI",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_CHAI",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_COMPOUND",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_CURVE_BINANCE",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_CURVE_COMPOUND",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_CURVE_SYNTHETIX",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_CURVE_USDT",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_CURVE_Y",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_FULCRUM",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_IEARN",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_KYBER",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_OASIS",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_SMART_TOKEN",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_UNISWAP",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_DISABLE_WETH",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_ENABLE_KYBER_BANCOR_RESERVE",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_ENABLE_KYBER_OASIS_RESERVE",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_ENABLE_KYBER_UNISWAP_RESERVE",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_ENABLE_MULTI_PATH_DAI",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_ENABLE_MULTI_PATH_ETH",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_ENABLE_MULTI_PATH_USDC",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "FLAG_ENABLE_UNISWAP_COMPOUND",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "payable": false,
@@ -438,7 +154,7 @@
       },
       {
         "internalType": "contract IERC20",
-        "name": "toToken",
+        "name": "destToken",
         "type": "address"
       },
       {
@@ -453,7 +169,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "featureFlags",
+        "name": "flags",
         "type": "uint256"
       }
     ],
@@ -462,6 +178,113 @@
       {
         "internalType": "uint256",
         "name": "returnAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "distribution",
+        "type": "uint256[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "fromToken",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "destToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "parts",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "flags",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "destTokenEthPriceTimesGasPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "getExpectedReturnWithGas",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "returnAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "estimateGasAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "distribution",
+        "type": "uint256[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "contract IERC20[]",
+        "name": "tokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "parts",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "flags",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "destTokenEthPriceTimesGasPrices",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "getExpectedReturnWithGasMulti",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "returnAmounts",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "estimateGasAmount",
         "type": "uint256"
       },
       {
@@ -495,7 +318,7 @@
     "name": "oneSplitImpl",
     "outputs": [
       {
-        "internalType": "contract IOneSplit",
+        "internalType": "contract IOneSplitMulti",
         "name": "",
         "type": "address"
       }
@@ -532,7 +355,7 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "contract IOneSplit",
+        "internalType": "contract IOneSplitMulti",
         "name": "impl",
         "type": "address"
       }
@@ -553,7 +376,7 @@
       },
       {
         "internalType": "contract IERC20",
-        "name": "toToken",
+        "name": "destToken",
         "type": "address"
       },
       {
@@ -573,12 +396,166 @@
       },
       {
         "internalType": "uint256",
-        "name": "featureFlags",
+        "name": "flags",
         "type": "uint256"
       }
     ],
     "name": "swap",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "contract IERC20[]",
+        "name": "tokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minReturn",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "distribution",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "flags",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "swapMulti",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "fromToken",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "destToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minReturn",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "distribution",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "flags",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "referral",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "feePercent",
+        "type": "uint256"
+      }
+    ],
+    "name": "swapWithReferral",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "contract IERC20[]",
+        "name": "tokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minReturn",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "distribution",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "flags",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "address",
+        "name": "referral",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "feePercent",
+        "type": "uint256"
+      }
+    ],
+    "name": "swapWithReferralMulti",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "returnAmount",
+        "type": "uint256"
+      }
+    ],
     "payable": true,
     "stateMutability": "payable",
     "type": "function"

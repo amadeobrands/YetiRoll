@@ -26,10 +26,6 @@ contract Treasury is AccessControl, ReentrancyGuard {
         uint256 allocated;
     }
 
-    constructor() public {
-
-    }
-
     // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
     function setExchangeAdaptor(address _exchangeAdaptor) public {
         exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
