@@ -27,17 +27,22 @@ contract Treasury is AccessControl, ReentrancyGuard {
         uint256 allocated;
     }
 
-    // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
-    function setExchangeAdaptor(address _exchangeAdaptor) public {
-        exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
-    }
-
+    // @dev set contract creator as the admin & initiate the Treasury Operator role
     constructor() public {
         _setupRole(TREASURY_ADMIN, msg.sender);
         _setRoleAdmin(TREASURY_OPERATOR, TREASURY_ADMIN);
     }
 
-    function setTreasuryOperator(address _who) onlyTreasuryAdmin(msg.sender) public {
+    // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
+    function setExchangeAdaptor(address _exchangeAdaptor) public {
+        exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
+    }
+
+    // @dev set address as treasury operator, likely to be a stream manager but perhaps different use cases later on
+    function setTreasuryOperator(address _who)
+        public
+        onlyTreasuryAdmin(msg.sender)
+    {
         grantRole(TREASURY_OPERATOR, _who);
     }
 
@@ -114,7 +119,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _who,
         uint256 _amount
-    ) onlyTreasuryOperator(msg.sender)  public {
+    ) public onlyTreasuryOperator(msg.sender) {
         userBalances[_who][_token].allocated = userBalances[_who][_token]
             .allocated
             .add(_amount);
@@ -125,7 +130,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _who,
         uint256 _amount
-    ) public {
+    ) internal {
         userBalances[_who][_token].deposited = userBalances[_who][_token]
             .deposited
             .add(_amount);
@@ -136,7 +141,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _who,
         uint256 _amount
-    ) public {
+    ) internal {
         userBalances[_who][_token].deposited = userBalances[_who][_token]
             .deposited
             .sub(_amount);
@@ -148,10 +153,10 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _who,
         uint256 _amount
-    ) onlyTreasuryOperator(msg.sender) internal {
+    ) internal onlyTreasuryOperator(msg.sender) {
         userBalances[_who][_token].allocated = userBalances[_who][_token]
-        .allocated
-        .sub(_amount);
+            .allocated
+            .sub(_amount);
     }
 
     // @dev See the total available tokens for client
