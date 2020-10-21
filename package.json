@@ -32,7 +32,9 @@
     "typechain": "^2.0.0",
     "typescript": "^4.0.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "buidler-deploy": "^0.6.0-beta.34"
+  },
   "husky": {
     "hooks": {
       "pre-push": "npm run prettier"
