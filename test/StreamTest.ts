@@ -6,7 +6,8 @@ import {
   deployErc20,
   deployStream,
   getBlockTime,
-  getProvider, wait,
+  getProvider,
+  wait,
 } from "./helpers/contract";
 import {id, keccak256} from "ethers/lib/utils";
 
@@ -120,9 +121,11 @@ describe("Payment Stream", () => {
 
       await wait(1800);
 
-      await paymentStream.getStream(1).then(stream => {
+      await paymentStream.getStream(1).then((stream) => {
         expect(stream.startTime).to.be.eq(timestamp);
-        expect(stream.balanceAccrued.div(oneEther).toNumber()).to.be.approximately(18, 1);
+        expect(
+          stream.balanceAccrued.div(oneEther).toNumber()
+        ).to.be.approximately(18, 1);
       });
     });
   });
@@ -137,23 +140,27 @@ describe("Payment Stream", () => {
     it("Should allow stream admins to set a stream operator", async () => {
       await paymentStream.setStreamOperator(bob.address);
 
-      await paymentStream.callStatic.hasRole(id("STREAM_OPERATOR"), bob.address).then(
-          hasRole => expect(hasRole).to.be.true
-      )
+      await paymentStream.callStatic
+        .hasRole(id("STREAM_OPERATOR"), bob.address)
+        .then((hasRole) => expect(hasRole).to.be.true);
     });
 
     it("Should prevent non stream admins from setting a stream operator", async () => {
-      await expect(bobConnectedStream.setStreamOperator(bob.address)).to.be.revertedWith("Not Stream Admin");
+      await expect(
+        bobConnectedStream.setStreamOperator(bob.address)
+      ).to.be.revertedWith("Not Stream Admin");
     });
 
     it("Should prevent creation of streams by non stream operators", async () => {
-      await expect(bobConnectedStream.createStream(
+      await expect(
+        bobConnectedStream.createStream(
           bob.address,
           1800,
           token.address,
           timestamp,
           timestamp
-      )).to.be.revertedWith("Not Stream Operator");
+        )
+      ).to.be.revertedWith("Not Stream Operator");
     });
   });
 });

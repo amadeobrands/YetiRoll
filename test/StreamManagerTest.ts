@@ -133,7 +133,7 @@ describe("Stream Manager", () => {
           timestamp + oneHour,
           oneEther.mul(100),
           oneEther.mul(1),
-            oneEther.mul(50)
+          oneEther.mul(50)
         );
 
       await treasury.mock.transferFunds

@@ -4,7 +4,14 @@ import {PausableStream} from "../typechain/PausableStream";
 import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "./helpers/numbers";
-import {deployErc20, deployPausableStream, getBlockTime, getProvider, wait, mineBlock} from "./helpers/contract";
+import {
+  deployErc20,
+  deployPausableStream,
+  getBlockTime,
+  getProvider,
+  wait,
+  mineBlock,
+} from "./helpers/contract";
 
 const {expect} = chai;
 
@@ -40,15 +47,10 @@ describe("Pausable Stream", () => {
     //   expect(stream.duration).to.be.eq(600);
     //   expect(stream.durationRemaining).to.be.eq(3000);
     // });
-
-
-
     // await pausableStream.pauseStream(1);
     // await pausableStream.startStream(1);
     // await mineBlock();
     // const time = await getBlockTime();
-
-
   });
 
   describe("Start and stop assertions", () => {
@@ -91,7 +93,7 @@ describe("Pausable Stream", () => {
       await pausableStream.pauseStream(1);
 
       let stream = await pausableStream.getStream(1);
-       pausedStream = await pausableStream.getPausableStream(1);
+      pausedStream = await pausableStream.getPausableStream(1);
 
       expect(pausedStream.isRunning).to.eq(false);
       expect(stream.startTime.toNumber()).to.be.eq(0);
@@ -102,27 +104,33 @@ describe("Pausable Stream", () => {
 
       await wait(30);
 
-      await pausableStream.getPausableStream(1).then(stream => {
+      await pausableStream.getPausableStream(1).then((stream) => {
         expect(stream.isRunning).to.eq(true);
         expect(stream.duration).to.be.eq(3600);
         expect(stream.durationElapsed.toNumber()).to.be.approximately(30, 1);
-        expect(stream.durationRemaining.toNumber()).to.be.approximately(3570, 1);
+        expect(stream.durationRemaining.toNumber()).to.be.approximately(
+          3570,
+          1
+        );
       });
 
-      await pausableStream.getStream(1).then(stream => {
+      await pausableStream.getStream(1).then((stream) => {
         expect(stream.startTime).to.be.eq(timestamp);
       });
 
       await pausableStream.pauseStream(1);
 
-      await pausableStream.getPausableStream(1).then(stream => {
+      await pausableStream.getPausableStream(1).then((stream) => {
         expect(stream.isRunning).to.eq(false);
         expect(stream.duration).to.be.eq(3600);
         expect(stream.durationElapsed.toNumber()).to.be.approximately(30, 1);
-        expect(stream.durationRemaining.toNumber()).to.be.approximately(3570, 1);
+        expect(stream.durationRemaining.toNumber()).to.be.approximately(
+          3570,
+          1
+        );
       });
 
-      await pausableStream.getStream(1).then(stream => {
+      await pausableStream.getStream(1).then((stream) => {
         expect(stream.startTime).to.be.eq(0);
       });
 
@@ -130,9 +138,9 @@ describe("Pausable Stream", () => {
 
       const time = await getBlockTime();
 
-      await pausableStream.getStream(1).then(stream => {
-          expect(stream.startTime.toNumber()).to.be.approximately(time, 1);
-          expect(stream.stopTime.toNumber()).to.be.approximately( time+3570, 1);
+      await pausableStream.getStream(1).then((stream) => {
+        expect(stream.startTime.toNumber()).to.be.approximately(time, 1);
+        expect(stream.stopTime.toNumber()).to.be.approximately(time + 3570, 1);
       });
     });
   });
@@ -145,30 +153,32 @@ describe("Pausable Stream", () => {
       //   .getPausableStream(1)
       //   .then((stream) => );
 
-      await pausableStream
-          .getStream(1)
-          .then((stream) => {
-            expect(stream.deposit).to.eq(oneEther.mul(36));
-            expect(stream.balanceAccrued).to.eq(0);
-          });
+      await pausableStream.getStream(1).then((stream) => {
+        expect(stream.deposit).to.eq(oneEther.mul(36));
+        expect(stream.balanceAccrued).to.eq(0);
+      });
 
       // +1 to offset the later timestamp
       await wait(1801);
 
-      await pausableStream.getPausableStream(1).then(stream => {
+      await pausableStream.getPausableStream(1).then((stream) => {
         expect(stream.duration).to.eq(
-            stream.durationElapsed.add(stream.durationRemaining)
+          stream.durationElapsed.add(stream.durationRemaining)
         );
 
         // Not great assumptions - todo look at how to fix blocktime
         expect(stream.durationElapsed.toNumber()).to.be.approximately(1800, 1);
-        expect(stream.durationRemaining.toNumber()).to.be.approximately(1800, 1);
+        expect(stream.durationRemaining.toNumber()).to.be.approximately(
+          1800,
+          1
+        );
       });
 
-      await pausableStream.getStream(1).then(stream => {
-        expect(stream.balanceAccrued.div(oneEther).toNumber()
+      await pausableStream.getStream(1).then((stream) => {
+        expect(
+          stream.balanceAccrued.div(oneEther).toNumber()
         ).to.be.approximately(18, 1);
-      })
+      });
     });
 
     it("Should not allow withdrawal unless balance has accrued", async () => {

@@ -50,14 +50,20 @@ async function main() {
 
   console.log("Checking distribution for DAI to AUSDC");
   await oneInch.callStatic
-    .getExpectedReturn(DAI_ADDRESS, AUSDC_ADDRESS, oneEther.mul(1000), 10, 0)
+    .getExpectedReturn(
+      AUSDC_ADDRESS,
+      DAI_ADDRESS,
+      oneEther.mul(1000),
+      10,
+      0x100000000000
+    )
     .then(async (quote) => {
       console.log("Swapping DAI for USDC");
 
       await exchangeAdaptor.callStatic
         .exchange(
-          DAI_ADDRESS,
           AUSDC_ADDRESS,
+          DAI_ADDRESS,
           oneEther.mul(1000),
           1,
           quote.distribution,

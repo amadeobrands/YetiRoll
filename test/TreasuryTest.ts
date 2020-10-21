@@ -244,39 +244,44 @@ describe("Treasury", () => {
         oneEther.mul(100)
       );
 
-      await expect(treasury.transferFunds(
-        USDT.address,
-        alice.address,
-        bob.address,
-        oneEther.mul(200)
-      )).to.be.revertedWith("Insufficient allocated balance");
+      await expect(
+        treasury.transferFunds(
+          USDT.address,
+          alice.address,
+          bob.address,
+          oneEther.mul(200)
+        )
+      ).to.be.revertedWith("Insufficient allocated balance");
     });
   });
 
-  describe("Access control" , async() => {
+  describe("Access control", async () => {
     let bobConnectedTreasury: Contract;
 
-    before( async () => {
+    before(async () => {
       bobConnectedTreasury = await treasury.connect(bob);
     });
 
-    it("Should prevent allocation of funds from addresses without the Treasury Operator role", async () =>{
+    it("Should prevent allocation of funds from addresses without the Treasury Operator role", async () => {
       await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
 
-      await expect(bobConnectedTreasury.allocateFunds(
+      await expect(
+        bobConnectedTreasury.allocateFunds(
           USDT.address,
           alice.address,
           oneEther.mul(100)
-      )).to.be.revertedWith("Not Treasury Operator");
+        )
+      ).to.be.revertedWith("Not Treasury Operator");
     });
 
-    it("Should prevent setting the Exchange Adaptor unless role is Treasury Admin", async () =>{
+    it("Should prevent setting the Exchange Adaptor unless role is Treasury Admin", async () => {
       await treasury.setExchangeAdaptor(exchangeAdaptor.address);
-      await expect(bobConnectedTreasury.setExchangeAdaptor(exchangeAdaptor.address)).to.be.revertedWith("Not Treasury Admin");
+      await expect(
+        bobConnectedTreasury.setExchangeAdaptor(exchangeAdaptor.address)
+      ).to.be.revertedWith("Not Treasury Admin");
     });
   });
 });
-
 
 async function validateErc20Balance(
   Erc20: MockErc20,
