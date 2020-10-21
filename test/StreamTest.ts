@@ -8,6 +8,7 @@ import {
   getBlockTime,
   getProvider, wait,
 } from "./helpers/contract";
+import {id, keccak256} from "ethers/lib/utils";
 
 const {expect} = chai;
 
@@ -131,6 +132,18 @@ describe("Payment Stream", () => {
 
     beforeEach(async () => {
       bobConnectedStream = await paymentStream.connect(bob);
+    });
+
+    it("Should allow stream admins to set a stream operator", async () => {
+      await paymentStream.setStreamOperator(bob.address);
+
+      await paymentStream.callStatic.hasRole(id("STREAM_OPERATOR"), bob.address).then(
+          hasRole => expect(hasRole).to.be.true
+      )
+    });
+
+    it("Should prevent non stream admins from setting a stream operator", async () => {
+      await expect(bobConnectedStream.setStreamOperator(bob.address)).to.be.revertedWith("Not Stream Admin");
     });
 
     it("Should prevent creation of streams by non stream operators", async () => {
