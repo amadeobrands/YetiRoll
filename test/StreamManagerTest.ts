@@ -17,7 +17,7 @@ import {MockErc20} from "../typechain/MockErc20";
 
 const {expect} = chai;
 
-const [alice, bob, charlie, dennis, ethan] = getProvider().getWallets();
+const [alice, bob] = getProvider().getWallets();
 
 describe("Stream Manager", () => {
   let streamManager: StreamManager;

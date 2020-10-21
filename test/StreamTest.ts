@@ -1,7 +1,7 @@
 import chai from "chai";
 import {Stream} from "../typechain/Stream";
 import {MockErc20} from "../typechain/MockErc20";
-import {BigNumber} from "ethers";
+import {BigNumber, Contract} from "ethers";
 import {
   deployErc20,
   deployStream,
@@ -123,6 +123,24 @@ describe("Payment Stream", () => {
         expect(stream.startTime).to.be.eq(timestamp);
         expect(stream.balanceAccrued.div(oneEther).toNumber()).to.be.approximately(18, 1);
       });
+    });
+  });
+
+  describe("Access control", async () => {
+    let bobConnectedStream: Stream;
+
+    beforeEach(async () => {
+      bobConnectedStream = await paymentStream.connect(bob);
+    });
+
+    it("Should prevent creation of streams by non stream operators", async () => {
+      await expect(bobConnectedStream.createStream(
+          bob.address,
+          1800,
+          token.address,
+          timestamp,
+          timestamp
+      )).to.be.revertedWith("Not Stream Operator");
     });
   });
 });

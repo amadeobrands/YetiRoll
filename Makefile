@@ -14,7 +14,7 @@ compile-clean:
 	make compile
 
 test:
-	npm run-script test
+	npm run-script test test/StreamTest.ts
 
 run-node:
 	@npx buidler node
