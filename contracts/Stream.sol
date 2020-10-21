@@ -8,14 +8,25 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./lib/Types.sol";
 import "./interface/IStream.sol";
 
-contract Stream is IStream {
+contract Stream is IStream, AccessControl {
     using SafeMath for uint256;
+
+    bytes32 public constant STREAM_ADMIN = keccak256("STREAM_ADMIN");
+    bytes32 public constant STREAM_OPERATOR = keccak256("STREAM_OPERATOR");
 
     mapping(uint256 => Types.Stream) internal streams;
     uint256 public nextStreamId;
 
+    // @dev construct Stream and set Admin to creator
     constructor() public {
+        _setupRole(STREAM_ADMIN, msg.sender);
+        _setRoleAdmin(STREAM_OPERATOR, STREAM_ADMIN);
         nextStreamId = 1;
+    }
+
+    // @dev set address as treasury operator, likely to be a stream manager but perhaps different use cases later on
+    function setStreamOperator(address _who) public onlyStreamAdmin {
+        grantRole(STREAM_OPERATOR, _who);
     }
 
     function createStream(
@@ -27,7 +38,7 @@ contract Stream is IStream {
     )
         public
         virtual
-        payable
+        onlyStreamOperator
         _baseStreamRequirements(_recipient, _deposit, _startTime)
         returns (uint256)
     {
@@ -63,7 +74,7 @@ contract Stream is IStream {
         uint256 _streamId,
         uint256 _amount,
         address _who
-    ) public _canWithdrawFunds(_streamId, _amount, _who) {
+    ) public onlyStreamOperator _canWithdrawFunds(_streamId, _amount, _who) {
         streams[_streamId].remainingBalance = streams[_streamId]
             .remainingBalance
             .sub(_amount);
@@ -81,7 +92,8 @@ contract Stream is IStream {
             uint256 startTime,
             uint256 stopTime,
             uint256 remainingBalance,
-            uint256 ratePerSecond
+            uint256 ratePerSecond,
+            uint256 balanceAccrued
         )
     {
         sender = streams[_streamId].sender;
@@ -92,6 +104,7 @@ contract Stream is IStream {
         stopTime = streams[_streamId].stopTime;
         remainingBalance = streams[_streamId].remainingBalance;
         ratePerSecond = streams[_streamId].ratePerSecond;
+        balanceAccrued = _calculateBalanceAccrued(_streamId);
     }
 
     function getStreamTokenAddress(uint256 _streamId)
@@ -204,6 +217,18 @@ contract Stream is IStream {
             streams[_streamId].remainingBalance >= _amount,
             "Not enough balance to withdraw"
         );
+        _;
+    }
+
+    // @dev check if the address has the role Treasury Admin
+    modifier onlyStreamAdmin() {
+        require(hasRole(STREAM_ADMIN, msg.sender), "Not Stream Admin");
+        _;
+    }
+
+    // @dev check if the address has the role Treasury Operator
+    modifier onlyStreamOperator() {
+        require(hasRole(STREAM_OPERATOR, msg.sender), "Not Stream Operator");
         _;
     }
 }

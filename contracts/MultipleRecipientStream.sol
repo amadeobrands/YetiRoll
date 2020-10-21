@@ -61,7 +61,8 @@ contract MultipleRecipientStream {
             uint256 startTime,
             uint256 stopTime,
             uint256 remainingBalance,
-            uint256 ratePerSecond
+            uint256 ratePerSecond,
+            uint256 balanceAccrued
         )
     {
         return streamContract.getStream(streams[_streamId][_address]);

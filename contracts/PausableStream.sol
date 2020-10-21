@@ -23,7 +23,6 @@ contract PausableStream is IPausableStream, Stream {
     )
         public
         override
-        payable
         _baseStreamRequirements(_recipient, _deposit, _startTime)
         returns (uint256 _streamId)
     {
@@ -116,9 +115,6 @@ contract PausableStream is IPausableStream, Stream {
             uint256 duration,
             uint256 durationElapsed,
             uint256 durationRemaining,
-            uint256 deposit,
-            uint256 balanceAccrued,
-            uint256 startTime,
             bool isRunning
         )
     {
@@ -126,9 +122,6 @@ contract PausableStream is IPausableStream, Stream {
             pausableStreams[_streamId].duration,
             _calculateDurationElapsed(_streamId),
             _calculateDurationRemaining(_streamId),
-            streams[_streamId].deposit,
-            _calculateBalanceAccrued(_streamId),
-            streams[_streamId].startTime,
             _isStreamRunning(_streamId)
         );
     }

@@ -6,8 +6,7 @@ import {
   deployErc20,
   deployStream,
   getBlockTime,
-  getProvider,
-  wait,
+  getProvider, wait,
 } from "./helpers/contract";
 
 const {expect} = chai;
@@ -33,6 +32,10 @@ describe("Payment Stream", () => {
   });
 
   describe("Stream creation", async () => {
+    beforeEach(async () => {
+      await paymentStream.setStreamOperator(alice.address);
+    });
+
     it("Should allow creation of a stream", async () => {
       await paymentStream.createStream(
         bob.address,
@@ -101,7 +104,11 @@ describe("Payment Stream", () => {
   });
 
   describe("Balance accruing", async () => {
-    it("Should prevent creation of a stream where start and end date are the same time", async () => {
+    beforeEach(async () => {
+      await paymentStream.setStreamOperator(alice.address);
+    });
+
+    it("Should accrue a funds over time", async () => {
       await paymentStream.createStream(
         bob.address,
         oneEther.mul(36),
@@ -109,6 +116,13 @@ describe("Payment Stream", () => {
         timestamp,
         timestamp + 3600
       );
+
+      await wait(1800);
+
+      await paymentStream.getStream(1).then(stream => {
+        expect(stream.startTime).to.be.eq(timestamp);
+        expect(stream.balanceAccrued.div(oneEther).toNumber()).to.be.approximately(18, 1);
+      });
     });
   });
 });

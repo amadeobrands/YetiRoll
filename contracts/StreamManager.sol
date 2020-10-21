@@ -35,7 +35,7 @@ contract StreamManager is Ownable {
     // @dev allows withdrawal from the stream, if there is not sufficient balance accrued, the Stream contract
     // will automatically revert
     function claimFromStream(uint256 _streamId, uint256 _amount) public {
-        (, address recipient, , address tokenAddress, , , , ) = stream
+        (, address recipient, , address tokenAddress, , , , , ) = stream
             .getStream(_streamId);
 
         stream.withdraw(_streamId, _amount, msg.sender);

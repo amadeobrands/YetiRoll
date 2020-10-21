@@ -13,10 +13,10 @@ import "./ExchangeAdaptor.sol";
 contract Treasury is AccessControl, ReentrancyGuard {
     using SafeMath for uint256;
 
-    ExchangeAdaptor exchangeAdaptor;
-
     bytes32 public constant TREASURY_ADMIN = keccak256("TREASURY_ADMIN");
     bytes32 public constant TREASURY_OPERATOR = keccak256("TREASURY_OPERATOR");
+
+    ExchangeAdaptor exchangeAdaptor;
 
     // @dev mapping from User address to ERC20 address then to Balances
     mapping(address => mapping(address => Balance)) userBalances;
@@ -153,7 +153,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _who,
         uint256 _amount
-    ) internal onlyTreasuryOperator() {
+    ) internal onlyTreasuryOperator {
         userBalances[_who][_token].allocated = userBalances[_who][_token]
             .allocated
             .sub(_amount);
