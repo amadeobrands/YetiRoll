@@ -5,34 +5,16 @@ import {
 
 const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
     const { deployments, getNamedAccounts } = bre;
-    const { deploy, execute, read, log } = deployments;
+    const { deploy } = deployments;
 
     const { deployer } = await getNamedAccounts();
 
-    await deploy("Greeter", {
+    await deploy("Stream", {
         from: deployer,
-        args: [deployer, "hello world"],
         log: true,
-        deterministicDeployment: true,
     });
-
-    const copyResult = await deploy("Greeter", {
-        from: deployer,
-        args: [deployer, "hello world"],
-        log: true,
-        deterministicDeployment: true,
-    });
-
-    const currentGreeting = await read("Greeter", "greet");
-    log({ currentGreeting });
-
-    if (!bre.network.live) {
-        await execute(
-            "Greeter",
-            { from: deployer, log: true },
-            "setGreetingThatWorks",
-            "hi"
-        );
-    }
 };
+
 export default func;
+
+func.tags = ["Stream"];
