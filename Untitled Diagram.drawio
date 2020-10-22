@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-10-22T12:23:32.969Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36" etag="Jgh-csdglzJw6ZJjcu0O" version="13.8.1" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2020-10-22T12:30:36.835Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36" etag="OLaUhGUlmlaMEswisnL3" version="13.8.1" type="github" pages="3">
   <diagram id="RQpPOk5gB5-XfgSWKMVH" name="Structural Overview">
     <mxGraphModel dx="946" dy="518" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -48,7 +48,7 @@
         <mxCell id="aZCYF7ROSy9W5zalCKX1-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-2" target="aZCYF7ROSy9W5zalCKX1-3" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="aZCYF7ROSy9W5zalCKX1-2" value="Deposit" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
+        <mxCell id="aZCYF7ROSy9W5zalCKX1-2" value="Deposit&lt;br&gt;(Action)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
           <mxGeometry x="80" y="40" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="aZCYF7ROSy9W5zalCKX1-3" value="Increase token balance for address" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
@@ -57,7 +57,7 @@
         <mxCell id="aZCYF7ROSy9W5zalCKX1-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-6" target="aZCYF7ROSy9W5zalCKX1-8" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="aZCYF7ROSy9W5zalCKX1-6" value="Withdraw" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
+        <mxCell id="aZCYF7ROSy9W5zalCKX1-6" value="Withdraw&lt;br&gt;(Action)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
           <mxGeometry x="430" y="40" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="aZCYF7ROSy9W5zalCKX1-11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-8" target="aZCYF7ROSy9W5zalCKX1-10" edge="1">
@@ -83,7 +83,12 @@
         <mxCell id="aZCYF7ROSy9W5zalCKX1-17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-15" target="aZCYF7ROSy9W5zalCKX1-16" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="aZCYF7ROSy9W5zalCKX1-15" value="Allocate Funds" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
+        <mxCell id="GG0hBFgsfGuYvtM_4p9K-4" value="Only Stream Operator" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="aZCYF7ROSy9W5zalCKX1-17">
+          <mxGeometry x="0.15" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZCYF7ROSy9W5zalCKX1-15" value="Allocate Funds&lt;br&gt;(Action)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
           <mxGeometry x="80" y="410" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="aZCYF7ROSy9W5zalCKX1-21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-16" target="aZCYF7ROSy9W5zalCKX1-20" edge="1">
@@ -114,7 +119,12 @@
         <mxCell id="aZCYF7ROSy9W5zalCKX1-26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-27" target="aZCYF7ROSy9W5zalCKX1-32" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="aZCYF7ROSy9W5zalCKX1-27" value="Deallocate Funds" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
+        <mxCell id="GG0hBFgsfGuYvtM_4p9K-1" value="Only Stream Operator" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="aZCYF7ROSy9W5zalCKX1-26">
+          <mxGeometry x="-0.35" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZCYF7ROSy9W5zalCKX1-27" value="Deallocate Funds&lt;br&gt;(Action)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
           <mxGeometry x="430" y="410" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="aZCYF7ROSy9W5zalCKX1-28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-32" target="aZCYF7ROSy9W5zalCKX1-33" edge="1">
@@ -145,7 +155,12 @@
         <mxCell id="aZCYF7ROSy9W5zalCKX1-35" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-36" target="aZCYF7ROSy9W5zalCKX1-41" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="aZCYF7ROSy9W5zalCKX1-36" value="Transfer Funds" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
+        <mxCell id="GG0hBFgsfGuYvtM_4p9K-2" value="Only Stream Operator" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="aZCYF7ROSy9W5zalCKX1-35">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZCYF7ROSy9W5zalCKX1-36" value="Transfer Funds&lt;br&gt;(Action)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
           <mxGeometry x="80" y="800" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="aZCYF7ROSy9W5zalCKX1-37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-41" target="aZCYF7ROSy9W5zalCKX1-42" edge="1">
@@ -176,7 +191,12 @@
         <mxCell id="aZCYF7ROSy9W5zalCKX1-52" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-53" target="aZCYF7ROSy9W5zalCKX1-58" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="aZCYF7ROSy9W5zalCKX1-53" value="WithdrawAs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
+        <mxCell id="GG0hBFgsfGuYvtM_4p9K-3" value="Only Stream Operator" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="aZCYF7ROSy9W5zalCKX1-52">
+          <mxGeometry x="-0.15" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZCYF7ROSy9W5zalCKX1-53" value="WithdrawAs&lt;br&gt;(Action)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="aZCYF7ROSy9W5zalCKX1-1" vertex="1">
           <mxGeometry x="430" y="800" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="aZCYF7ROSy9W5zalCKX1-54" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="aZCYF7ROSy9W5zalCKX1-1" source="aZCYF7ROSy9W5zalCKX1-58" target="aZCYF7ROSy9W5zalCKX1-59" edge="1">
@@ -218,7 +238,12 @@
         <mxCell id="XP3KQUoHiulQaQNEzh06-0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-1" target="XP3KQUoHiulQaQNEzh06-5">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="XP3KQUoHiulQaQNEzh06-1" value="Create Stream" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
+        <mxCell id="XP3KQUoHiulQaQNEzh06-37" value="Only Stream Operator" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="XP3KQUoHiulQaQNEzh06-0">
+          <mxGeometry x="0.15" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-1" value="Create Stream&lt;br&gt;(Action)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
           <mxGeometry x="40" y="40" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="XP3KQUoHiulQaQNEzh06-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-5" target="XP3KQUoHiulQaQNEzh06-6">
@@ -250,7 +275,12 @@
         <mxCell id="XP3KQUoHiulQaQNEzh06-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-11" target="XP3KQUoHiulQaQNEzh06-15">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="XP3KQUoHiulQaQNEzh06-11" value="Withdraw" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
+        <mxCell id="XP3KQUoHiulQaQNEzh06-38" value="Only Stream Operator" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="XP3KQUoHiulQaQNEzh06-10">
+          <mxGeometry x="-0.15" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-11" value="Withdraw&lt;br&gt;(Action)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
           <mxGeometry x="390" y="40" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="XP3KQUoHiulQaQNEzh06-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-15" target="XP3KQUoHiulQaQNEzh06-16">
@@ -278,6 +308,51 @@
         </mxCell>
         <mxCell id="XP3KQUoHiulQaQNEzh06-19" value="Decrease available funds in stream" style="whiteSpace=wrap;html=1;rounded=0;strokeColor=#82b366;fillColor=#d5e8d4;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
           <mxGeometry x="570" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-21" target="XP3KQUoHiulQaQNEzh06-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-21" value="Balance accrual&lt;br&gt;(View)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
+          <mxGeometry x="50" y="380" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-25" target="XP3KQUoHiulQaQNEzh06-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-23" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="XP3KQUoHiulQaQNEzh06-22">
+          <mxGeometry x="0.1429" y="4" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-24" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-25">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-25" value="&lt;font size=&quot;1&quot;&gt;Has stream started?&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;rounded=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
+          <mxGeometry x="60" y="480" width="100" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-26" value="Balance: 0" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
+          <mxGeometry x="230" y="500" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-33" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-31" target="XP3KQUoHiulQaQNEzh06-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-34" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="XP3KQUoHiulQaQNEzh06-33">
+          <mxGeometry x="-0.4286" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-36" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="6e4VLR58HWhX286N4Tfz-1" source="XP3KQUoHiulQaQNEzh06-31" target="XP3KQUoHiulQaQNEzh06-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-31" value="&lt;font size=&quot;1&quot;&gt;Has stream finished&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;rounded=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
+          <mxGeometry x="60" y="620" width="100" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-32" value="Balance: Deposited - already withdrawn" style="whiteSpace=wrap;html=1;rounded=0;strokeColor=#82b366;fillColor=#d5e8d4;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
+          <mxGeometry x="230" y="640" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XP3KQUoHiulQaQNEzh06-35" value="Calculate accrued based on time elapsed" style="whiteSpace=wrap;html=1;rounded=0;strokeColor=#82b366;fillColor=#d5e8d4;" vertex="1" parent="6e4VLR58HWhX286N4Tfz-1">
+          <mxGeometry x="50" y="760" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
