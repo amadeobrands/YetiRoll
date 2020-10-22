@@ -15,13 +15,12 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
             async (treasury) => {
                 console.log("Setting Stream Manager as Treasury Operator: " + streamManager.address);
                 await treasury.setTreasuryOperator(streamManager.address);
+
                 console.log("Setting Exchange Adaptor: " + exchangeAdaptor.address);
                 await treasury.setExchangeAdaptor(exchangeAdaptor.address);
             }
         )
     });
-
-
 };
 
 export default func;
