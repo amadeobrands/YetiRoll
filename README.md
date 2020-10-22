@@ -1,5 +1,5 @@
 # YetiRoll
-![GitHub Logo](https://drive.google.com/file/d/1QAlLUyIdHuQk07T5zG8JCwcC6ErgEeE7/view?usp=sharing)
+![YetoRoll Logo](https://i.imgur.com/QpYl9Xq.png)
 
 ##Concept
 A decentralized online payrolling platform for seamless processing of payments for people connected to centralized and decentralized organizations.
