@@ -1,3 +1,8 @@
+# YetiRoll
+![GitHub Logo](/images/logo.png)
+Format: ![Alt Text](url)
+
+
 An application inspired by ERC1620 (payment stream) tokens
 
 This extends on the idea of a payment stream and strives to implement different types of stream:
@@ -24,5 +29,8 @@ https://medium.com/ethereum-grid/forking-ethereum-mainnet-mint-your-own-dai-d8b6
 
 Configuring code formatting
 https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
 
 
