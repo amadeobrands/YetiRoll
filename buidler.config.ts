@@ -1,4 +1,5 @@
 import {BuidlerConfig, usePlugin} from "@nomiclabs/buidler/config";
+import environment from "./config";
 
 usePlugin("@nomiclabs/buidler-ethers");
 usePlugin("@nomiclabs/buidler-waffle");
@@ -6,8 +7,7 @@ usePlugin("@openzeppelin/buidler-upgrades");
 usePlugin("buidler-deploy");
 usePlugin("solidity-coverage");
 usePlugin("buidler-ethers-v5");
-
-const PRIVATE_KEY  = "0x02474913c1cfc37413f6bb69541176a696becf60e58f2a44ec668fd8fcd6fdf0";
+usePlugin("@nomiclabs/buidler-etherscan");
 
 const config: BuidlerConfig = {
   solc: {
@@ -24,20 +24,23 @@ const config: BuidlerConfig = {
   networks: {
     buidlerevm: {},
     ropsten: {
-      url: "https://ropsten.infura.io/v3/73bd0ea4c5d64e248551358ec2f1a8c3",
-      accounts: [PRIVATE_KEY],
+      url: "https://ropsten.infura.io/v3/" + environment.infuraKey,
+      accounts: [environment.privateKey],
     },
   },
   namedAccounts: {
     deployer: {
       default: 0,
-      ropsten :"0x40aB75676527ec9830fEAc40e525764405453914"
+      ropsten: "0x40aB75676527ec9830fEAc40e525764405453914",
     },
     admin: {
       default: 0,
       ropsten: "0x40aB75676527ec9830fEAc40e525764405453914",
     },
     proxyOwner: 1,
+  },
+  etherscan: {
+    apiKey: environment.etherScanKey,
   },
 };
 
