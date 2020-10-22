@@ -1,11 +1,11 @@
 import {BuidlerConfig, usePlugin} from "@nomiclabs/buidler/config";
 
-usePlugin("buidler-ethers-v5");
 usePlugin("@nomiclabs/buidler-ethers");
 usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("@openzeppelin/buidler-upgrades");
 usePlugin("buidler-deploy");
 usePlugin("solidity-coverage");
+usePlugin("buidler-ethers-v5");
 
 const PRIVATE_KEY  = "0x02474913c1cfc37413f6bb69541176a696becf60e58f2a44ec668fd8fcd6fdf0";
 

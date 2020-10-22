@@ -3,28 +3,27 @@ import {
     DeployFunction,
 } from "@nomiclabs/buidler/types";
 
+import {Stream} from "../typechain/Stream";
+
 const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
     const {deployments, getNamedAccounts, ethers} = bre;
-    const {deploy, get, execute} = deployments;
+    const {deploy} = deployments;
+    const {getSigner} = ethers;
 
     const {deployer} = await getNamedAccounts();
-    // console.log(deployer)
-console.log(ethers)
-    await ethers.getContract("Stream", deployer).then(console.log);
 
-    // await ethers.getSigners()[deployer].then(console.log);
+    const deployedStream = await getSigner(deployer).then(async signer => {
+        return (await ethers.getContract("Stream", signer)) as Stream;
+    });
 
-    // await deploy("StreamManager", {
-    //     from: deployer,
-    //     log: true,
-    // });
+    await deploy("StreamManager", {
+        from: deployer,
+        log: true,
+    });
 
-    // const deployedStreamManager = await get("StreamManager");
-    // const deployedStream = await get("Stream");
-    //
-    // const stream = await ethers.getContract(deployedStream.address, deployer);
-    // console.log(stream);
+    const streamManager = await ethers.getContract("StreamManager");
 
+    await deployedStream.setStreamOperator(streamManager.address);
 };
 
 export default func;
