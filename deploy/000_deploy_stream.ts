@@ -2,6 +2,7 @@ import {
     BuidlerRuntimeEnvironment,
     DeployFunction,
 } from "@nomiclabs/buidler/types";
+import {STREAM} from "./constants";
 
 const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
     const { deployments, getNamedAccounts } = bre;
@@ -9,7 +10,7 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
 
     const { deployer } = await getNamedAccounts();
 
-    await deploy("Stream", {
+    await deploy(STREAM, {
         from: deployer,
         log: true,
     });
@@ -17,4 +18,4 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
 
 export default func;
 
-func.tags = ["Stream"];
+func.tags = [STREAM];
