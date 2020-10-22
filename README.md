@@ -1,10 +1,10 @@
 # YetiRoll
 ![YetoRoll Logo](https://i.imgur.com/QpYl9Xq.png)
-##Concept
+## Concept
 A decentralized online payrolling platform for seamless processing of payments for people connected to centralized and decentralized organizations.
 The distribution of value has a lot of costs by implementing blockchain technology costs can be reduced and new innovative ways of distributing value can be invented. Not only the distribution but also the stable storage of value for corporations and individuals can be significantly improved.
 
-##Technical
+## Technical
 An application inspired by ERC1620 (payment stream) tokens
 This extends on the idea of a payment stream and strives to implement different types of stream:
 
