@@ -4,6 +4,7 @@ usePlugin("@nomiclabs/buidler-ethers");
 usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("@openzeppelin/buidler-upgrades");
 usePlugin("buidler-deploy");
+usePlugin("solidity-coverage");
 
 const config: BuidlerConfig = {
   solc: {
@@ -16,7 +17,7 @@ const config: BuidlerConfig = {
     cache: "./cache",
     artifacts: "./artifacts",
   },
-  defaultNetwork: "rinkeby",
+  // defaultNetwork: "rinkeby",
   networks: {
     buidlerevm: {},
     ropsten: {
