@@ -113,16 +113,15 @@ contract Treasury is AccessControl, ReentrancyGuard {
         );
     }
 
-    // @dev once a stream is started, funds are allocated and locked from being withdrawn
-    // by the account which started the stream
-    function allocateFunds(
+    // @dev called when funds are withdrawn, decrease the deposited balance
+    function withdrawFunds(
         address _token,
         address _who,
         uint256 _amount
-    ) public onlyTreasuryOperator() {
-        userBalances[_who][_token].allocated = userBalances[_who][_token]
-            .allocated
-            .add(_amount);
+    ) internal {
+        userBalances[_who][_token].deposited = userBalances[_who][_token]
+            .deposited
+            .sub(_amount);
     }
 
     // @dev called when funds are deposited, increase the deposited balance
@@ -136,15 +135,16 @@ contract Treasury is AccessControl, ReentrancyGuard {
             .add(_amount);
     }
 
-    // @dev called when funds are withdrawn, decrease the deposited balance
-    function withdrawFunds(
+    // @dev once a stream is started, funds are allocated and locked from being withdrawn
+    // by the account which started the stream
+    function allocateFunds(
         address _token,
         address _who,
         uint256 _amount
-    ) internal {
-        userBalances[_who][_token].deposited = userBalances[_who][_token]
-            .deposited
-            .sub(_amount);
+    ) public onlyTreasuryOperator() {
+        userBalances[_who][_token].allocated = userBalances[_who][_token]
+            .allocated
+            .add(_amount);
     }
 
     // @dev once a stream is started, funds are allocated and locked from being withdrawn
