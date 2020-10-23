@@ -7,9 +7,9 @@ import {
   StreamManagerFactory,
   TreasuryFactory,
   MockErc20Factory,
-} from "./typechain";
-import {oneEther, oneHour} from "./test/helpers/numbers";
-import {getBlockTime, wait} from "./test/helpers/contract";
+} from "../typechain";
+import {oneEther, oneHour} from "../test/helpers/numbers";
+import {getBlockTime, wait} from "../test/helpers/contract";
 
 const provider = new providers.JsonRpcProvider("http://127.0.0.1:8545/");
 const alice = provider.getSigner(0);
