@@ -8,6 +8,8 @@ import PausableStreamArtifact from "../../artifacts/PausableStream.json";
 import {PausableStream} from "../../typechain/PausableStream";
 import MultipleRecipientStreamArtifact from "../../artifacts/MultipleRecipientStream.json";
 import {MultipleRecipientStream} from "../../typechain/MultipleRecipientStream";
+import FundManagerArtifact from "../../artifacts/FundManager.json";
+import {FundManager} from "../../typechain/FundManager";
 
 let provider: MockProvider;
 
@@ -23,6 +25,10 @@ export async function deployErc20(signer: Signer) {
     "MOCK",
     "MOCK",
   ])) as MockErc20;
+}
+
+export async function deployFundManager(signer: Signer) {
+  return (await deployContract(signer, FundManagerArtifact)) as FundManager;
 }
 
 export async function deployStream(signer: Signer) {

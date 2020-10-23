@@ -1,6 +1,6 @@
 pragma solidity ^0.6.0;
 
-import "./Treasury.sol";
+import "../Treasury.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Stream.sol";
 
