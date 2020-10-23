@@ -46,7 +46,7 @@ async function main() {
   await erc20.approve(treasury.address, oneEther.mul(40000));
 
   console.log("Alice depositing 40,000 erc20");
-  await treasury.deposit(erc20.address, aliceAddress, oneEther.mul(40000));
+  await treasury.deposit(erc20.address, oneEther.mul(40000));
 
   const timestamp = await getBlockTime();
 

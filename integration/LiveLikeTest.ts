@@ -56,7 +56,7 @@ async function main() {
   await aliceDai.approve(treasury.address, oneEther.mul(1000));
 
   console.log("Alice depositing 1 DAI to treasury");
-  await treasury.deposit(dai.address, aliceAddress, oneEther.mul(1));
+  await treasury.deposit(dai.address, oneEther.mul(1));
 
   await dai
     .balanceOf(treasury.address)

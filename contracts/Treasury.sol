@@ -47,15 +47,10 @@ contract Treasury is AccessControl, ReentrancyGuard {
     }
 
     // @dev allow deposits of specific tokens which can then be streamed out
-    function deposit(
-        address _token,
-        address _who,
-        uint256 _amount
-    ) public {
-        // todo msg sender
-        depositFunds(_token, _who, _amount);
+    function deposit(address _token, uint256 _amount) public {
+        depositFunds(_token, msg.sender, _amount);
 
-        IERC20(_token).transferFrom(_who, address(this), _amount);
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
     }
 
     // @dev during lifetime of a stream a user may wish to transfer funds from the stream into their available balance

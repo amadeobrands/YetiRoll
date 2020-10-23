@@ -13,11 +13,11 @@ import ExchangeAdaptorArtifact from "../artifacts/ExchangeAdaptor.json";
 
 import {oneEther} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";
-import {BigNumber, Contract} from "ethers";
+import {BigNumber} from "ethers";
 
 const {expect} = chai;
 
-const [alice, bob, charlie, dennis, ethan] = getProvider().getWallets();
+const [alice, bob] = getProvider().getWallets();
 
 describe("Treasury", () => {
   let exchangeAdaptor: MockContract;
@@ -50,7 +50,7 @@ describe("Treasury", () => {
 
   describe("Deposit functionality", async () => {
     it("Should allow deposits of a single asset", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await treasury
         .viewUserTokenBalance(USDT.address, alice.address)
@@ -63,8 +63,8 @@ describe("Treasury", () => {
     });
 
     it("Should allow multiple deposits of different assets", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
-      await treasury.deposit(DAI.address, alice.address, oneEther.mul(420));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
+      await treasury.deposit(DAI.address, oneEther.mul(420));
 
       await treasury
         .viewUserTokenBalance(USDT.address, alice.address)
@@ -83,8 +83,8 @@ describe("Treasury", () => {
     });
 
     it("Should allow multiple deposits of the same asset", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(420));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(420));
 
       await treasury
         .viewUserTokenBalance(USDT.address, alice.address)
@@ -99,7 +99,7 @@ describe("Treasury", () => {
 
   describe("Withdrawal functionality", async () => {
     it("Should allow deposits and withdrawals from one account to another", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await treasury.withdraw(
         USDT.address,
@@ -121,7 +121,7 @@ describe("Treasury", () => {
     });
 
     it("Should prevent withdrawals if there is not enough available balance", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await expect(
         treasury.withdraw(
@@ -134,7 +134,7 @@ describe("Treasury", () => {
     });
 
     it("Should allow withdrawal while converting the deposited token into another", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await exchangeAdaptor.mock.exchange
         .withArgs(
@@ -161,7 +161,7 @@ describe("Treasury", () => {
     it("Should prevent withdrawal of funds which do not belong to the owner", async () => {
       const bobConnectedStream = await treasury.connect(bob);
 
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       expect(
         bobConnectedStream.withdraw(
@@ -176,7 +176,7 @@ describe("Treasury", () => {
 
   describe("Fund allocation", async () => {
     it("Should allow funds to be allocated", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await treasury.allocateFunds(
         USDT.address,
@@ -193,7 +193,7 @@ describe("Treasury", () => {
     });
 
     it("Should prevent withdrawal of funds which have been allocated", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await treasury.allocateFunds(
         USDT.address,
@@ -213,8 +213,8 @@ describe("Treasury", () => {
   });
 
   describe("Fund transfer", async () => {
-    xit("Should allow transferring of allocated funds from one account to another", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+    it("Should allow transferring of allocated funds from one account to another", async () => {
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await treasury.allocateFunds(
         USDT.address,
@@ -245,20 +245,20 @@ describe("Treasury", () => {
     });
 
     it("Should prevent transferring of funds which have not been allocated", async () => {
-      // await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
-      // await treasury.allocateFunds(
-      //   USDT.address,
-      //   alice.address,
-      //   oneEther.mul(100)
-      // );
-      // await expect(
-      //   treasury.transferFunds(
-      //     USDT.address,
-      //     alice.address,
-      //     bob.address,
-      //     oneEther.mul(200)
-      //   )
-      // ).to.be.revertedWith("Insufficient allocated balance");
+      await treasury.deposit(USDT.address, oneEther.mul(200));
+      await treasury.allocateFunds(
+        USDT.address,
+        alice.address,
+        oneEther.mul(100)
+      );
+      await expect(
+        treasury.transferFunds(
+          USDT.address,
+          alice.address,
+          bob.address,
+          oneEther.mul(200)
+        )
+      ).to.be.revertedWith("Insufficient allocated balance");
     });
   });
 
@@ -266,11 +266,11 @@ describe("Treasury", () => {
     let bobConnectedTreasury: Treasury;
 
     beforeEach(async () => {
-      bobConnectedTreasury = await treasury.connect(ethan);
+      bobConnectedTreasury = await treasury.connect(bob);
     });
 
     it("Should prevent allocation of funds from addresses without the Treasury Operator role", async () => {
-      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+      await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await expect(
         bobConnectedTreasury.allocateFunds(
