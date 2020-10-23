@@ -1,0 +1,114 @@
+version: '3.4'
+
+x-env: &x-env
+  HOME: /data/home
+  APP_URL: "https://127.0.0.1:${DOCKER_NGINX_PORT:-8080}"
+  APP_KEY: base64:nnMl9rreOq5EfGOXtoCKqa/9SHj+AtrYxRJYN7KoFP4=
+  DB_HOST: db
+  DB_DATABASE: invoicedb
+  DB_USERNAME: invoicedb
+  DB_PASSWORD: invoicedb
+
+services:
+  # Swagger editor
+  swagger:
+    image: swaggerapi/swagger-editor
+    ports:
+      - 1773:8080
+
+  # Redis
+  redis:
+    image: redis:latest
+    networks:
+      - internal
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    networks:
+      - internal
+    ports:
+      - 15673:15672
+
+  # Database
+  db:
+    image: postgres:13
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: invoicedb
+      POSTGRES_USER: invoicedb
+      POSTGRES_PASSWORD: invoicedb
+      PGDATA: /data/db/invoicedb
+    volumes:
+      - ./.data:/data/db
+    user: ${UID:?err}
+    networks:
+      - internal
+
+  # Nginx
+  nginx:
+    image: nginx:stable-alpine
+    volumes:
+      - .:/data/app
+      - ./docker/dev/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/dev/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "${DOCKER_NGINX_PORT:-8080}:80"
+    depends_on:
+      - php
+    links:
+      - php
+    networks:
+      - internal
+
+  # Build script
+  appbuild:
+    build:
+      context: docker/dev/appbuild
+    environment:
+      <<: *x-env
+    volumes:
+      - .:/data/app
+      - ./.data:/data/home
+      - ./docker/dev/appbuild:/data/appbuild
+    working_dir: /data/app
+    user: ${UID:?err}
+    command: ['/data/appbuild/scripts/launch.sh', 'db:5432']
+    networks:
+      - internal
+
+  # PHP + PHP-FPM
+  php:
+    build:
+      context: docker/dev/php
+    environment:
+      <<: *x-env
+      XDEBUG_CONFIG: "remote_host=192.168.220.1 remote_enable=1"
+      PHP_IDE_CONFIG: "serverName=Docker"
+    volumes:
+      - ./.data:/data/home
+      - .:/data/app
+      - ./docker/dev/php/php-fpm.conf:/data/php/php-fpm.conf
+      - ./docker/dev/php/php.ini:/etc/php/7.4/fpm/conf.d/90-php.ini
+      - ./docker/dev/php/php.ini:/etc/php/7.4/cli/conf.d/90-php.ini
+      - ./docker/dev/php/php-fpm.ini:/etc/php/7.4/fpm/conf.d/95-php-fpm.ini
+      - ./docker/dev/php/php-cli.ini:/etc/php/7.4/fpm/conf.d/95-php-cli.ini
+    working_dir: /data/app
+    user: ${UID:?err}
+    command: ['/usr/sbin/php-fpm7.4', '-y', '/data/php/php-fpm.conf']
+    depends_on:
+      - db
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.220.0/28
+
+
+

@@ -1,0 +1,27 @@
+# Editors
+.idea
+.vscode
+
+# Composer
+composer.phar
+
+# Laravel
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# IDE helpers
+.phpstorm.meta.php
+_ide_helper.php
+
+# Misc
+temp.txt

@@ -1,0 +1,680 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: 'InvoiceCoreAPI'
+  description: 'Description of API endpoints'
+
+servers:
+  - url: "http://localhost:8080/api"
+    description: "Local development server"
+
+components:
+
+  schemas:
+    APIErrorResource:
+      description: Representation of request error state
+      type: object
+      properties:
+        type:
+          description: Error code
+          type: string
+        description:
+          description: Error description
+          type: string
+
+    PagedPaginationMetaResource:
+      description: Paged pagination state
+      type: object
+      properties:
+        page:
+          description: Current page number
+          type: integer
+        num_on_page:
+          description: Amount of result items per page
+          type: integer
+        total:
+          description: Total amount of result records
+          type: integer
+
+    SessionResource:
+      description: Session information
+      type: object
+      properties:
+        generated_at:
+          description: ISO datetime of the session cration date
+          type: string
+        token_type:
+          description: "Type of the token (Default: Bearer)"
+          type: string
+        access_token_expires_in:
+          description: Access token lifetime in seconds
+          type: integer
+        access_token:
+          description: Access token
+          type: string
+        refresh_token:
+          description: Refresh token
+          type: string
+
+    UserResource:
+      description: User information
+      type: object
+      properties:
+        id:
+          description: ID
+          type: integer
+        name:
+          description: Full name
+          type: string
+        email:
+          description: Email
+          type: string
+
+    CurrencyResource:
+      description: Currency information
+      type: object
+      properties:
+        id:
+          description: ID
+          type: integer
+        name:
+          description: International full name
+          type: string
+        local_name:
+          description: Local full name
+          type: string
+        symbol:
+          description: Unicode symbol, representing currency
+          type: string
+        unit_precision:
+          description: Max amount of zeroes after the period
+          type: integer
+
+    InvoiceListItemResource:
+      description: List representation of the invoice
+      type: object
+      properties:
+        id:
+          description: ID
+          type: integer
+        created_at:
+          description: Creation ISO datetime
+          type: string
+        updated_at:
+          description: Last update ISO datetime
+          type: string
+        finalized_at:
+          description: Pblication ISO datetime
+          type: string
+          nullable: true
+        title:
+          description: Title
+          type: string
+        currency:
+          $ref: '#/components/schemas/CurrencyResource'
+        local_id:
+          description: Local ID (user defined)
+          type: string
+
+    InvoiceResource:
+      description: Global invoice information
+      type: object
+      properties:
+        id:
+          description: ID
+          type: integer
+        created_at:
+          description: Creation ISO datetime
+          type: string
+        updated_at:
+          description: Last update ISO datetime
+          type: string
+        deleted_at:
+          description: Deletion ISO datetime
+          type: string
+          nullable: true
+        finalized_at:
+          description: Pblication ISO datetime
+          type: string
+          nullable: true
+        user:
+          $ref: '#/components/schemas/UserResource'
+        title:
+          description: Title
+          type: string
+        currency:
+          $ref: '#/components/schemas/CurrencyResource'
+        local_id:
+          description: Local ID (user defined)
+          type: string
+        due_date:
+          description: Due date ISO datetime
+          type: string
+          nullable: true
+        author_name:
+          description: Author name
+          type: string
+        author_address_first_line:
+          description: Author's first line of the address
+          type: string
+        author_address_second_line:
+          description: Author's second line of the address
+          type: string
+        author_country_iso_code:
+          description: "3-letter author country ISO code"
+          type: string
+        recipient_name:
+          description: Recipient name
+          type: string
+        recipient_address_first_line:
+          description: Recipient's first line of the address
+          type: string
+        recipient_address_second_line:
+          description: Recipient's second line of the address
+          type: string
+        recipient_country_iso_code:
+          description: "3-letter recipient country ISO code"
+          type: string
+        note:
+          description: Extra note
+          type: string
+        terms:
+          description: Additional terms description
+          type: string
+
+    RecipientListItemResource:
+      description: Recipient information
+      type: object
+      properties:
+        id:
+          description: ID
+          type: integer
+        created_at:
+          description: Date in ISO format
+          type: string
+        updated_at:
+          description: Update date in ISO format
+          type: string
+        name:
+          description: Full name
+          type: string
+        email:
+          description: Email
+          type: string
+
+    RecipientResource:
+      description: Recipient information
+      type: object
+      properties:
+        id:
+          description: ID
+          type: integer
+        created_at:
+          description: Date in ISO format
+          type: string
+        updated_at:
+          description: Update date in ISO format
+          type: string
+        name:
+          description: Full name
+          type: string
+        email:
+          description: Email
+          type: string
+        address_first_line:
+          description: First line of the address
+          type: string
+        address_second_line:
+          description: Second line of the address
+          type: string
+        country_iso_code:
+          description: "3-letter country ISO code"
+          type: string
+
+
+
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  # Currency list
+  /currency:
+    get:
+      tags:
+        - Currency information
+      summary: Get currency list
+      responses:
+        200:
+          description: Currency list fetched
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrencyResource'
+
+  # Session creation by email and password
+  /session:
+    post:
+      tags:
+        - Session Management
+      summary: Create session by email and password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  description: Email
+                  type: string
+                  nullable: false
+                password:
+                  description: Password
+                  type: string
+                  nullable: false
+      responses:
+        201:
+          description: Credentials are correct, new session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResource'
+
+  # Session refresh
+  /session/refresh:
+    post:
+      tags:
+        - Session Management
+      summary: Create new session, based on refresh token from previous refresh token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  description: Refresh token, received during previous session creation
+                  type: string
+      responses:
+        201:
+          description: Refresh token is correct, new session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResource'
+
+  # Current user
+  /me:
+    get:
+      tags:
+        - Personal Access
+      security:
+        - BearerAuth: []
+      summary: Fetch current user, associated with access token
+      responses:
+        200:
+          description: User fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+
+  /recipient:
+
+    # Create new recipient
+    post:
+      tags:
+        - Recipient Management
+      security:
+        - BearerAuth: []
+      summary: Create new recipient
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  description: Recipient full name
+                  type: string
+                email:
+                  description: Recipient email
+                  type: string
+                  nullable: true
+                address_first_line:
+                  description: First line of the address
+                  type: string
+                  nullable: true
+                address_second_line:
+                  description: Second line of the address
+                  type: string
+                  nullable: true
+                country_iso_code:
+                  description: "3-letter country ISO code"
+                  type: string
+                  nullable: true
+      responses:
+        201:
+          description: Recipient created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientResource'
+
+    # List recipient
+    get:
+      tags:
+        - Recipient Management
+      security:
+        - BearerAuth: []
+      summary: Fetch recipient list for currently logged in user
+      responses:
+        200:
+          description: List fetched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecipientListItemResource'
+                  pagination:
+                    $ref: '#/components/schemas/PagedPaginationMetaResource'
+
+  /recipient/{recipient_id}:
+    parameters:
+      - name: recipient_id
+        required: true
+        in: path
+        description: Recipient ID
+        schema:
+          type: integer
+
+    get:
+      tags:
+        - Single Recipient Management
+      security:
+        - BearerAuth: []
+      summary: Fetch single recipient by ID
+      responses:
+        200:
+          description: Recipient fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientResource'
+
+    # Create new recipient
+    put:
+      tags:
+        - Single Recipient Management
+      security:
+        - BearerAuth: []
+      summary: Update recipient information
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Recipient full name
+                  type: string
+                  nullable: true
+                email:
+                  description: Recipient email
+                  type: string
+                  nullable: true
+                address_first_line:
+                  description: First line of the address
+                  type: string
+                  nullable: true
+                address_second_line:
+                  description: Second line of the address
+                  type: string
+                  nullable: true
+                country_iso_code:
+                  description: "3-letter country ISO code"
+                  type: string
+                  nullable: true
+      responses:
+        201:
+          description: Recipient created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipientResource'
+
+
+  # Invoice collection
+  /invoice:
+    # Invoice list
+    get:
+      tags:
+        - Invoice Collection Management
+      security:
+        - BearerAuth: []
+      summary: Fetch invoice list
+      responses:
+        200:
+          description: List fetched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InvoiceListItemResource'
+                  pagination:
+                    $ref: '#/components/schemas/PagedPaginationMetaResource'
+
+    # Invoice creation
+    post:
+      tags:
+        - Invoice Collection Management
+      security:
+        - BearerAuth: []
+      summary: Create new invoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - currency_id
+              properties:
+                title:
+                  description: Invoice title
+                  type: integer
+                currency_id:
+                  description: ID of currency to be used within this invoice
+                  type: integer
+      responses:
+        201:
+          description: Invoice created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResource'
+
+  # Invoice single
+  /invoice/{invoice_id}:
+    parameters:
+      - name: invoice_id
+        required: true
+        in: path
+        description: Invoice ID
+        schema:
+          type: integer
+
+    # Single invoice retreival
+    get:
+      tags:
+        - Single Invoice Management
+      security:
+        - BearerAuth: []
+      summary: Fetch single invoice by ID
+      responses:
+        200:
+          description: Invoice fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResource'
+
+    # Invoice update
+    put:
+      tags:
+        - Single Invoice Management
+      security:
+        - BearerAuth: []
+      summary: Update single invoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  description: Title
+                  type: string
+                  nullable: true
+                local_id:
+                  description: Local ID (user defined)
+                  type: string
+                  nullable: true
+                due_date:
+                  description: Due date ISO datetime
+                  type: string
+                  nullable: true
+                author_name:
+                  description: Author name
+                  type: string
+                  nullable: true
+                author_address_first_line:
+                  description: Author's first line of the address
+                  type: string
+                  nullable: true
+                author_address_second_line:
+                  description: Author's second line of the address
+                  type: string
+                  nullable: true
+                author_country_iso_code:
+                  description: "3-letter author country ISO code"
+                  type: string
+                  nullable: true
+                recipient_name:
+                  description: Recipient name
+                  type: string
+                  nullable: true
+                recipient_address_first_line:
+                  description: Recipient's first line of the address
+                  type: string
+                  nullable: true
+                recipient_address_second_line:
+                  description: Recipient's second line of the address
+                  type: string
+                  nullable: true
+                recipient_country_iso_code:
+                  description: "3-letter recipient country ISO code"
+                  type: string
+                  nullable: true
+                note:
+                  description: Extra note
+                  type: string
+                  nullable: true
+                terms:
+                  description: Additional terms description
+                  type: string
+                  nullable: true
+      responses:
+        200:
+          description: Invoice updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResource'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c3de2cf6-b9c1-40be-98a0-56eb1563db57" name="Default Changelist" comment="add deployment">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/lukewatson.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="Solidity Contract" />
+        <option value="tsconfig.json" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1gWtYtLZH6zaDlNT2PamXbyWCVH" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="TEXT&#10;Solidity" />
+    <property name="javascript.nodejs.core.library.configured.version" value="12.16.3" />
+    <property name="js.last.introduce.type" value="CONST" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs.mocha.mocha_node_package_dir" value="" />
+    <property name="nodejs_interpreter_path" value="node" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="prettier.files.pattern" value="{**/*,*}.{js,ts,jsx,tsx,sol}" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
+    <property name="run.prettier.on.save" value="true" />
+    <property name="settings.editor.selected.configurable" value="settings.javascript.prettier" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/integration" />
+      <recent name="$PROJECT_DIR$/integration/ABI" />
+      <recent name="$PROJECT_DIR$/contracts" />
+      <recent name="$PROJECT_DIR$/app/src" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/integration" />
+      <recent name="$PROJECT_DIR$/test" />
+      <recent name="$PROJECT_DIR$/app/src/build" />
+      <recent name="$PROJECT_DIR$/contracts/interface" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Solidity.StreamCompany.payout">
+    <configuration name="test" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/Makefile" target="test" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <configuration name="StreamCompany.payout" type="SolidityConfigurationType" factoryName="Solidity" temporary="true" show_console_on_std_err="false" show_console_on_std_out="false">
+      <module name="stream_app" />
+      <option name="VMParameters" />
+      <option name="allowRunningInParallel" value="false" />
+      <option name="alternativeJrePath" />
+      <option name="alternativeJrePathEnabled" value="false" />
+      <option name="envs">
+        <map />
+      </option>
+      <option name="passParentEnvs" value="true" />
+      <option name="programParameters" />
+      <option name="workingDirectory" value="" />
+      <option name="contractName" value="StreamCompany" />
+      <option name="contractFile" value="$PROJECT_DIR$/contracts/StreamCompany.sol" />
+      <option name="functionName" value="payout" />
+      <option name="vmParameters" />
+      <option name="programParameters" />
+      <option name="workingDirectory" />
+      <option name="envs">
+        <map />
+      </option>
+      <option name="ajreEnabled" value="false" />
+      <option name="ajre" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Integration tests with seeded data from Fixtures" type="mocha-javascript-test-runner" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <mocha-package />
+      <working-directory>$PROJECT_DIR$</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <ui>bdd</ui>
+      <extra-mocha-options>--require ts-node/register</extra-mocha-options>
+      <test-kind>SUITE</test-kind>
+      <test-file>$PROJECT_DIR$/test/StreamCompanyTest.ts</test-file>
+      <test-names>
+        <name value="Integration tests with seeded data from Fixtures" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Solidity.StreamCompany.payout" />
+        <item itemvalue="Mocha.Integration tests with seeded data from Fixtures" />
+        <item itemvalue="Makefile.test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c3de2cf6-b9c1-40be-98a0-56eb1563db57" name="Default Changelist" comment="" />
+      <created>1598242226684</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1598242226684</updated>
+      <workItem from="1598242228514" duration="73571000" />
+      <workItem from="1598495031086" duration="214196000" />
+      <workItem from="1601621924352" duration="44000" />
+      <workItem from="1601628818189" duration="2160000" />
+      <workItem from="1601637027822" duration="2389000" />
+      <workItem from="1602211113588" duration="3580000" />
+      <workItem from="1602215424300" duration="682000" />
+      <workItem from="1602216814307" duration="42077000" />
+      <workItem from="1602389563084" duration="10564000" />
+      <workItem from="1602554953601" duration="13624000" />
+      <workItem from="1602684903173" duration="59920000" />
+      <workItem from="1602950273586" duration="3971000" />
+      <workItem from="1603201339362" duration="35313000" />
+      <workItem from="1603432289567" duration="26000" />
+    </task>
+    <task id="LOCAL-00001" summary="add deployment">
+      <created>1603291273436</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1603291273441</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add deployment" />
+    <option name="LAST_COMMIT_MESSAGE" value="add deployment" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="413" y="123" key="#Integration_tests_with_seeded_data_from_Fixtures" timestamp="1598257111848">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="413" y="123" key="#Integration_tests_with_seeded_data_from_Fixtures/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598257111848" />
+    <state x="406" y="102" key="#StreamCompany.payout" timestamp="1598420805374">
+      <screen x="0" y="23" width="1440" height="807" />
+    </state>
+    <state x="406" y="102" key="#StreamCompany.payout/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598420805374" />
+    <state x="456" y="232" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1603372217284">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state x="456" y="232" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.804@0.23.1440.804" timestamp="1603372217284" />
+    <state x="456" y="233" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.807@0.23.1440.807" timestamp="1598428794441" />
+    <state x="458" y="205" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1599488864421">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state x="458" y="204" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598867213725" />
+    <state x="458" y="205" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.1440.804/-1920.-776.1920.1057@0.23.1440.804" timestamp="1599449009210" />
+    <state x="458" y="205" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.1440.804@0.23.1440.804" timestamp="1599488864421" />
+    <state x="458" y="206" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598512557520" />
+    <state x="100" y="123" width="1240" height="604" key="DiffContextDialog" timestamp="1603371693816">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state x="100" y="123" width="1240" height="604" key="DiffContextDialog/0.23.1440.804/-1920.-776.1920.1057@0.23.1440.804" timestamp="1599556237198" />
+    <state x="100" y="123" width="1240" height="604" key="DiffContextDialog/0.23.1440.804@0.23.1440.804" timestamp="1603371693816" />
+    <state width="1398" height="204" key="GridCell.Tab.0.bottom" timestamp="1603432248187">
+      <screen x="0" y="23" width="1440" height="803" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598244863859" />
+    <state width="1398" height="204" key="GridCell.Tab.0.bottom/0.23.1440.803@0.23.1440.803" timestamp="1603432248187" />
+    <state width="1398" height="204" key="GridCell.Tab.0.bottom/0.23.1440.804@0.23.1440.804" timestamp="1603365305561" />
+    <state width="1398" height="204" key="GridCell.Tab.0.bottom/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598431318349" />
+    <state width="1398" height="204" key="GridCell.Tab.0.center" timestamp="1603432248186">
+      <screen x="0" y="23" width="1440" height="803" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598244863857" />
+    <state width="1398" height="204" key="GridCell.Tab.0.center/0.23.1440.803@0.23.1440.803" timestamp="1603432248186" />
+    <state width="1398" height="204" key="GridCell.Tab.0.center/0.23.1440.804@0.23.1440.804" timestamp="1603365305560" />
+    <state width="1398" height="204" key="GridCell.Tab.0.center/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598431318347" />
+    <state width="1398" height="204" key="GridCell.Tab.0.left" timestamp="1603432248185">
+      <screen x="0" y="23" width="1440" height="803" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598244863857" />
+    <state width="1398" height="204" key="GridCell.Tab.0.left/0.23.1440.803@0.23.1440.803" timestamp="1603432248185" />
+    <state width="1398" height="204" key="GridCell.Tab.0.left/0.23.1440.804@0.23.1440.804" timestamp="1603365305560" />
+    <state width="1398" height="204" key="GridCell.Tab.0.left/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598431318346" />
+    <state width="1398" height="204" key="GridCell.Tab.0.right" timestamp="1603432248186">
+      <screen x="0" y="23" width="1440" height="803" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598244863858" />
+    <state width="1398" height="204" key="GridCell.Tab.0.right/0.23.1440.803@0.23.1440.803" timestamp="1603432248186" />
+    <state width="1398" height="204" key="GridCell.Tab.0.right/0.23.1440.804@0.23.1440.804" timestamp="1603365305561" />
+    <state width="1398" height="204" key="GridCell.Tab.0.right/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598431318348" />
+    <state x="510" y="177" key="RollbackChangesDialog" timestamp="1598518763662">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="510" y="177" key="RollbackChangesDialog/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598518763662" />
+    <state x="221" y="63" key="SettingsEditor" timestamp="1599736124534">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state x="221" y="45" key="SettingsEditor/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598932692243" />
+    <state x="221" y="63" key="SettingsEditor/0.23.1440.804/-1920.-776.1920.1057@0.23.1440.804" timestamp="1599036109319" />
+    <state x="221" y="63" key="SettingsEditor/0.23.1440.804@0.23.1440.804" timestamp="1599736124534" />
+    <state x="221" y="63" key="SettingsEditor/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598447047673" />
+    <state x="522" y="129" key="VCS.ChangeListViewerDialog" timestamp="1603371416634">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state x="522" y="129" key="VCS.ChangeListViewerDialog/0.23.1440.804/-1920.-776.1920.1057@0.23.1440.804" timestamp="1599556179934" />
+    <state x="522" y="129" key="VCS.ChangeListViewerDialog/0.23.1440.804@0.23.1440.804" timestamp="1603371416634" />
+    <state x="-1920" y="-776" width="1920" height="1057" key="dock-window-1" timestamp="1599041299836">
+      <screen x="-1920" y="-776" width="1920" height="1057" />
+    </state>
+    <state x="-1920" y="-776" width="1920" height="1057" key="dock-window-1/0.23.1440.804/-1920.-776.1920.1057@0.23.1440.804" timestamp="1599041299836" />
+    <state x="241" y="23" width="1049" height="511" key="dock-window-1/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598351221209" />
+    <state x="243" y="173" width="1136" height="540" key="dock-window-2" timestamp="1599484925454">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state x="243" y="173" width="1136" height="540" key="dock-window-2/0.23.1440.804@0.23.1440.804" timestamp="1599484925454" />
+    <state x="421" y="206" width="598" height="548" key="find.popup" timestamp="1603420003180">
+      <screen x="0" y="23" width="1440" height="803" />
+    </state>
+    <state x="421" y="205" width="598" height="490" key="find.popup/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598519529148" />
+    <state x="421" y="206" width="598" height="490" key="find.popup/0.23.1440.803/-1920.-776.1920.1057@0.23.1440.803" timestamp="1598275941936" />
+    <state x="421" y="206" width="598" height="548" key="find.popup/0.23.1440.803@0.23.1440.803" timestamp="1603420003180" />
+    <state x="421" y="206" width="598" height="548" key="find.popup/0.23.1440.804/-1920.-776.1920.1057@0.23.1440.804" timestamp="1599558902005" />
+    <state x="421" y="206" width="598" height="548" key="find.popup/0.23.1440.804@0.23.1440.804" timestamp="1603372586270" />
+    <state x="421" y="207" width="598" height="493" key="find.popup/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598442747180" />
+    <state width="600" height="388" key="javadoc.popup" timestamp="1599479389303">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state width="600" height="388" key="javadoc.popup/0.23.1440.804@0.23.1440.804" timestamp="1599479389303" />
+    <state width="600" height="346" key="javadoc.popup/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598441398235" />
+    <state x="88" y="110" key="new project wizard" timestamp="1598423281991">
+      <screen x="0" y="23" width="1440" height="807" />
+    </state>
+    <state x="88" y="110" key="new project wizard/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598423281991" />
+    <state x="385" y="211" width="670" height="675" key="run.anything.popup" timestamp="1602910892493">
+      <screen x="0" y="23" width="1440" height="804" />
+    </state>
+    <state x="385" y="210" key="run.anything.popup/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598259395181" />
+    <state x="385" y="211" key="run.anything.popup/0.23.1440.804/-1920.-776.1920.1057@0.23.1440.804" timestamp="1599026842649" />
+    <state x="385" y="211" width="670" height="675" key="run.anything.popup/0.23.1440.804@0.23.1440.804" timestamp="1602910892493" />
+    <state x="385" y="198" width="670" height="604" key="search.everywhere.popup" timestamp="1603421943583">
+      <screen x="0" y="23" width="1440" height="803" />
+    </state>
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900/-1920.-799.1920.1080@0.0.1440.900" timestamp="1598935439549" />
+    <state x="385" y="198" width="670" height="604" key="search.everywhere.popup/0.23.1440.803/-1920.-776.1920.1057@0.23.1440.803" timestamp="1598338528956" />
+    <state x="385" y="198" width="670" height="604" key="search.everywhere.popup/0.23.1440.803@0.23.1440.803" timestamp="1603421943583" />
+    <state x="385" y="198" width="670" height="604" key="search.everywhere.popup/0.23.1440.804/-1920.-776.1920.1057@0.23.1440.804" timestamp="1599555759339" />
+    <state x="385" y="198" width="670" height="604" key="search.everywhere.popup/0.23.1440.804@0.23.1440.804" timestamp="1603383651274" />
+    <state x="385" y="199" width="670" height="608" key="search.everywhere.popup/0.23.1440.807/-1920.-776.1920.1057@0.23.1440.807" timestamp="1598448310241" />
+  </component>
+</project>

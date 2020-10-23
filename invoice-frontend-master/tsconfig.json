@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "sourceMap": true,
+    "module": "esnext",
+    "target": "ES5",
+    "jsx": "react",
+    "moduleResolution": "node",
+    "declaration": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "lib": ["es5", "es6", "dom", "es7", "es2017"],
+    "noImplicitAny": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@app/*": ["./*"],
+      "@app/types/*": ["./@types/*"],
+      "@app/shared/*": ["./shared/*"],
+      "@app/container/*": ["./container/*"],
+      "@app/component/*": ["./component/*"]
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "src/@types/*"
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
