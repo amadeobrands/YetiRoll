@@ -155,6 +155,21 @@ describe("Treasury", () => {
         bob.address
       );
     });
+
+    it("Should prevent withdrawal of funds which do not belong to the owner", async () => {
+      const bobConnectedStream = await treasury.connect(bob);
+
+      await treasury.deposit(USDT.address, alice.address, oneEther.mul(200));
+
+      expect(
+        bobConnectedStream.withdraw(
+          USDT.address,
+          alice.address,
+          bob.address,
+          oneEther.mul(200)
+        )
+      ).to.be.revertedWith("Not the fund owner");
+    });
   });
 
   describe("Fund allocation", async () => {

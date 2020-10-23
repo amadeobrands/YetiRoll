@@ -52,6 +52,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _who,
         uint256 _amount
     ) public {
+        // todo msg sender
         depositFunds(_token, _who, _amount);
 
         IERC20(_token).transferFrom(_who, address(this), _amount);
@@ -172,14 +173,15 @@ contract Treasury is AccessControl, ReentrancyGuard {
     }
 
     // @dev subtract the allocated balance from the deposit to see the available funds
-    function viewAvailableBalance(address _from, address _token)
+    // todo this does not align with view user token balance
+    function viewAvailableBalance(address _who, address _token)
         public
         view
         returns (uint256)
     {
         return
-            userBalances[_from][_token].deposited.sub(
-                userBalances[_from][_token].allocated
+            userBalances[_who][_token].deposited.sub(
+                userBalances[_who][_token].allocated
             );
     }
 
@@ -209,6 +211,17 @@ contract Treasury is AccessControl, ReentrancyGuard {
             "Insufficient balance to withdraw"
         );
         _;
+    }
+
+    function getAllocatedFunds(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) public view returns (uint256, bool) {
+        return (
+            userBalances[_who][_token].allocated,
+            userBalances[_who][_token].allocated >= _amount
+        );
     }
 
     // @dev ensure that funds have been allocated

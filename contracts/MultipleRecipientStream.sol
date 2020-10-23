@@ -21,6 +21,7 @@ contract MultipleRecipientStream {
     }
 
     function createStream(
+        address _sender,
         address[] memory _recipients,
         uint256 _deposit,
         address _tokenAddress,
@@ -35,6 +36,7 @@ contract MultipleRecipientStream {
 
         for (uint256 i = 0; i < _recipients.length; i++) {
             uint256 streamId = streamContract.createStream(
+                _sender,
                 _recipients[i],
                 depositShare,
                 _tokenAddress,

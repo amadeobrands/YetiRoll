@@ -1,24 +1,30 @@
 //https://forum.openzeppelin.com/t/openzeppelin-buidler-upgrades/3580
 
-import {providers} from "ethers";
+import {BigNumber, providers} from "ethers";
 import {
   ExchangeAdaptorFactory,
   StreamFactory,
   StreamManagerFactory,
   TreasuryFactory,
+  MockErc20Factory,
 } from "./typechain";
-
-const {ethers} = require("@nomiclabs/buidler");
-const ONE_INCH_ADDRESS = "0xC586BeF4a0992C495Cf22e1aeEE4E446CECDee0E";
+import {oneEther, oneHour} from "./test/helpers/numbers";
+import {getBlockTime, wait} from "./test/helpers/contract";
 
 const provider = new providers.JsonRpcProvider("http://127.0.0.1:8545/");
 const alice = provider.getSigner(0);
+const bob = provider.getSigner(1);
 
 async function main() {
+  const aliceAddress = await alice.getAddress();
+  const bobAddress = await bob.getAddress();
+
   const streamManager = await deployStreamManager();
   const exchangeAdaptor = await deployExchangeAdaptor();
   const treasury = await deployTreasury();
   const stream = await deployStream();
+
+  const bobConnectedStreamManager = await streamManager.connect(bob);
 
   console.log("Set treasury exchange adaptor and operator");
   await treasury.setExchangeAdaptor(exchangeAdaptor.address);
@@ -30,8 +36,49 @@ async function main() {
 
   console.log("Set stream operator");
   await stream.setStreamOperator(streamManager.address);
+
+  console.log("Deploying Erc20");
+  const erc20 = await deployMockErc();
+  console.log("Minting 40,000 Erc20");
+  await erc20.mint(aliceAddress, oneEther.mul(40000));
+
+  console.log("Approving Treasury to spend 40,000 erc20");
+  await erc20.approve(treasury.address, oneEther.mul(40000));
+
+  console.log("Alice depositing 40,000 erc20");
+  await treasury.deposit(erc20.address, aliceAddress, oneEther.mul(40000));
+
+  const timestamp = await getBlockTime();
+
+  console.log("Starting stream for 20,000 erc20 to Bob");
+  await streamManager.startStream(
+    erc20.address,
+    bobAddress,
+    oneEther.mul(20000),
+    timestamp + 60,
+    timestamp + oneHour
+  );
+
+  await wait(oneHour / 2);
+
+  console.log("Bob withdrawing from stream");
+  await bobConnectedStreamManager.claimFromStream(1, oneEther);
+  await bobConnectedStreamManager.withdrawFromStream(1, oneEther, bobAddress);
+
+  await erc20.balanceOf(bobAddress).then((balance: BigNumber) => {
+    console.log("Bobs balance is " + balance.toString());
+  });
 }
 
+async function deployMockErc() {
+  console.log("Deploying Mock Erc Contract");
+  const mockErc20Factory = new MockErc20Factory(alice);
+  const mockErc20 = await mockErc20Factory.deploy("", "");
+  await mockErc20.deployed();
+  console.log("Deployed Mock Erc at " + mockErc20.address);
+
+  return mockErc20;
+}
 async function deployTreasury() {
   console.log("Deploying Treasury Contract");
   const treasuryFactory = new TreasuryFactory(alice);

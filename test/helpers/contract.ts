@@ -31,13 +31,16 @@ export async function deployStream(signer: Signer) {
 
 export async function deployPausableStream(signer: Signer) {
   return (await deployContract(
-      signer,
-      PausableStreamArtifact
+    signer,
+    PausableStreamArtifact
   )) as PausableStream;
 }
 
 export async function deployMultipleRecipientStream(signer: Signer) {
-  return await deployContract(signer, MultipleRecipientStreamArtifact) as MultipleRecipientStream;
+  return (await deployContract(
+    signer,
+    MultipleRecipientStreamArtifact
+  )) as MultipleRecipientStream;
 }
 
 export async function mineBlock() {
@@ -52,7 +55,6 @@ export async function wait(secondsToWait: number) {
   await mineBlock();
 }
 
-// Get time and add 1 to prevent timestamp issues
 export async function getBlockTime() {
   return await getProvider()
     .getBlock(getBlockNumber())

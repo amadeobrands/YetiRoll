@@ -15,6 +15,7 @@ contract PausableStream is IPausableStream, Stream {
     // todo toggle if stream starts active or not
     // todo add test case for multiple streams being created
     function createStream(
+        address _sender,
         address _recipient,
         uint256 _deposit,
         address _tokenAddress,
@@ -42,7 +43,7 @@ contract PausableStream is IPausableStream, Stream {
             deposit: _deposit,
             ratePerSecond: ratePerSecond,
             recipient: _recipient,
-            sender: msg.sender,
+            sender: _sender,
             startTime: _startTime,
             stopTime: _startTime.add(_duration),
             tokenAddress: _tokenAddress,

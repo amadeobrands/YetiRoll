@@ -30,6 +30,7 @@ contract Stream is IStream, AccessControl {
     }
 
     function createStream(
+        address _sender,
         address _recipient,
         uint256 _deposit,
         address _tokenAddress,
@@ -59,7 +60,7 @@ contract Stream is IStream, AccessControl {
             deposit: _deposit,
             ratePerSecond: ratePerSecond,
             recipient: _recipient,
-            sender: msg.sender,
+            sender: _sender,
             startTime: _startTime,
             stopTime: _stopTime,
             tokenAddress: _tokenAddress,

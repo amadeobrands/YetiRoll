@@ -91,7 +91,9 @@ describe("Stream Manager", () => {
         timestamp + oneHour
       );
     });
+  });
 
+  describe("Fund Withdrawal", async () => {
     it("Should allow withdrawal of funds from a stream", async () => {
       const amount = oneEther.mul(200);
       await treasury.mock.viewAvailableBalance.returns(amount);
@@ -141,6 +143,32 @@ describe("Stream Manager", () => {
         .returns();
 
       await streamManager.claimFromStream(1, oneEther.mul(100));
+    });
+
+    it("Should allow withdrawal from a stream and withdrawal of funds from Treasury", async () => {
+      const amount = oneEther.mul(100);
+
+      await stream.mock.withdraw.withArgs(1, amount, alice.address).returns();
+
+      await stream.mock.getStream
+        .withArgs(1)
+        .returns(
+          alice.address,
+          bob.address,
+          amount,
+          DAI.address,
+          timestamp,
+          timestamp + oneHour,
+          amount,
+          oneEther.mul(1),
+          oneEther.mul(50)
+        );
+
+      await treasury.mock.withdraw
+        .withArgs(DAI.address, bob.address, bob.address, amount)
+        .returns();
+
+      await streamManager.withdrawFromStream(1, amount, bob.address);
     });
   });
 });
