@@ -195,6 +195,7 @@ describe("Pausable Stream", () => {
     startTime: number
   ) {
     return pausableStream.createStream(
+      alice.address,
       bob.address,
       deposit.toString(),
       token.address,

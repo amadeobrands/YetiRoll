@@ -75,7 +75,7 @@ contract StreamManager is Ownable {
 
         ) = stream.getStream(_streamId);
 
-        require(recipient == msg.sender, "Not allowed");
+        require(recipient == msg.sender, "Only Stream Recipient");
 
         stream.withdraw(_streamId, _amount, msg.sender);
 

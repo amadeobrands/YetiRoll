@@ -78,6 +78,7 @@ xdescribe("Multiple Recipient Stream", () => {
 
   async function createMultipleRecipientStream() {
     await multipleRecipient.createStream(
+      alice.address,
       Array.of(bob.address, charlie.address, dennis.address, ethan.address),
       oneEther.mul(100),
       token.address,

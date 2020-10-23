@@ -40,6 +40,7 @@ describe("Payment Stream", () => {
 
     it("Should allow creation of a stream", async () => {
       await paymentStream.createStream(
+        alice.address,
         bob.address,
         oneEther,
         token.address,
@@ -59,6 +60,7 @@ describe("Payment Stream", () => {
     it("Should prevent creation of a stream with a start time in the past", async () => {
       await expect(
         paymentStream.createStream(
+          alice.address,
           bob.address,
           oneEther,
           token.address,
@@ -71,6 +73,7 @@ describe("Payment Stream", () => {
     it("Should prevent creation of a stream with a rate per second of less than 1 wei", async () => {
       await expect(
         paymentStream.createStream(
+          alice.address,
           bob.address,
           1800,
           token.address,
@@ -83,6 +86,7 @@ describe("Payment Stream", () => {
     it("Should prevent creation of a stream an end date before the start date", async () => {
       await expect(
         paymentStream.createStream(
+          alice.address,
           bob.address,
           1800,
           token.address,
@@ -95,6 +99,7 @@ describe("Payment Stream", () => {
     it("Should prevent creation of a stream where start and end date are the same time", async () => {
       await expect(
         paymentStream.createStream(
+          alice.address,
           bob.address,
           1800,
           token.address,
@@ -112,6 +117,7 @@ describe("Payment Stream", () => {
 
     it("Should accrue a funds over time", async () => {
       await paymentStream.createStream(
+        alice.address,
         bob.address,
         oneEther.mul(36),
         token.address,
@@ -154,6 +160,7 @@ describe("Payment Stream", () => {
     it("Should prevent creation of streams by non stream operators", async () => {
       await expect(
         bobConnectedStream.createStream(
+          alice.address,
           bob.address,
           1800,
           token.address,

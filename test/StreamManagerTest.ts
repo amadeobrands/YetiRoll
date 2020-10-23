@@ -75,6 +75,7 @@ describe("Stream Manager", () => {
 
       await stream.mock.createStream
         .withArgs(
+          alice.address,
           bob.address,
           amount,
           DAI.address,
@@ -94,62 +95,41 @@ describe("Stream Manager", () => {
   });
 
   describe("Fund Withdrawal", async () => {
-    it("Should allow withdrawal of funds from a stream", async () => {
+    let bobConnectedStreamManager: StreamManager;
+
+    beforeEach(async () => {
+      bobConnectedStreamManager = await streamManager.connect(bob);
+    });
+
+    it("Should allow claiming of funds from a stream", async () => {
       const amount = oneEther.mul(200);
-      await treasury.mock.viewAvailableBalance.returns(amount);
-
-      await treasury.mock.allocateFunds
-        .withArgs(DAI.address, alice.address, amount)
-        .returns();
-
-      await stream.mock.createStream
-        .withArgs(
-          bob.address,
-          amount,
-          DAI.address,
-          timestamp,
-          timestamp + oneHour
-        )
-        .returns(1);
-
-      await streamManager.startStream(
-        DAI.address,
-        bob.address,
-        amount,
-        timestamp,
-        timestamp + oneHour
-      );
-
-      await stream.mock.withdraw
-        .withArgs(1, oneEther.mul(100), alice.address)
-        .returns();
 
       await stream.mock.getStream
         .withArgs(1)
         .returns(
           alice.address,
           bob.address,
-          oneEther.mul(100),
+          amount,
           DAI.address,
           timestamp,
           timestamp + oneHour,
-          oneEther.mul(100),
+          amount,
           oneEther.mul(1),
           oneEther.mul(50)
         );
 
+      await stream.mock.withdraw.withArgs(1, amount, bob.address).returns();
+
       await treasury.mock.transferFunds
-        .withArgs(DAI.address, alice.address, bob.address, oneEther.mul(100))
+        .withArgs(DAI.address, alice.address, bob.address, amount)
         .returns();
 
-      await streamManager.claimFromStream(1, oneEther.mul(100));
+      await bobConnectedStreamManager.claimFromStream(1, amount);
     });
 
     it("Should allow withdrawal from a stream and withdrawal of funds from Treasury", async () => {
       const amount = oneEther.mul(100);
 
-      await stream.mock.withdraw.withArgs(1, amount, alice.address).returns();
-
       await stream.mock.getStream
         .withArgs(1)
         .returns(
@@ -164,11 +144,17 @@ describe("Stream Manager", () => {
           oneEther.mul(50)
         );
 
+      await stream.mock.withdraw.withArgs(1, amount, bob.address).returns();
+
       await treasury.mock.withdraw
-        .withArgs(DAI.address, bob.address, bob.address, amount)
+        .withArgs(DAI.address, alice.address, bob.address, amount)
         .returns();
 
-      await streamManager.withdrawFromStream(1, amount, bob.address);
+      await bobConnectedStreamManager.withdrawFromStream(
+        1,
+        amount,
+        bob.address
+      );
     });
   });
 });
