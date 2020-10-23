@@ -13,10 +13,12 @@ const [alice, bob] = getProvider().getWallets();
 describe("Fund Manager", () => {
   let treasury: Treasury | MockContract;
   let fundManager: FundManager;
-  let token: MockErc20;
+  let dai: MockErc20;
+  let usdt: MockErc20;
 
   beforeEach(async () => {
-    token = await deployErc20(alice);
+    dai = await deployErc20(alice);
+    usdt = await deployErc20(alice);
     treasury = await deployMockContract(alice, TreasuryArtifact.abi);
     fundManager = await deployFundManager(alice);
 
@@ -27,13 +29,34 @@ describe("Fund Manager", () => {
     const amount = oneEther.mul(100);
 
     await treasury.mock.withdraw
-      .withArgs(token.address, alice.address, bob.address, amount)
+      .withArgs(dai.address, alice.address, bob.address, amount)
       .returns();
 
-    await fundManager.withdrawTokensToAccount(
-      token.address,
-      bob.address,
-      amount
+    await fundManager.withdrawTokensToAccount(dai.address, bob.address, amount);
+  });
+
+  it("Should allow swapping funds then withdrawing to an address", async () => {
+    const amount = oneEther.mul(100);
+
+    await treasury.mock.withdrawAs
+      .withArgs(
+        dai.address,
+        usdt.address,
+        amount,
+        amount,
+        [],
+        alice.address,
+        bob.address
+      )
+      .returns();
+
+    await fundManager.swapTokensAndWithdrawToAccount(
+      dai.address,
+      usdt.address,
+      amount,
+      amount,
+      [],
+      bob.address
     );
   });
 });

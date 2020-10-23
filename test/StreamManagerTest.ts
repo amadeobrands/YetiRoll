@@ -14,8 +14,6 @@ import {StreamManager} from "../typechain/StreamManager";
 
 import {oneEther, oneHour} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";
-import {Treasury} from "../typechain/Treasury";
-import {Stream} from "stream";
 
 const {expect} = chai;
 
