@@ -16,31 +16,29 @@ contract ExchangeAdaptor is Ownable {
         oneInchExchange = IOneSplit(_oneInchAddress);
     }
 
-    // todo this is not working
     function exchange(
         address _tokenSell,
         address _tokenBuy,
         uint256 _amountToSell,
         uint256 _minAmountToBuy,
         uint256[] memory _distribution,
-        address _to
-    ) public onlyOwner returns (uint256) {
+        address _recipient
+    ) public {
         SafeERC20.safeIncreaseAllowance(
             IERC20(_tokenSell),
             address(oneInchExchange),
             _amountToSell
         );
 
-        return
-            oneInchExchange.swap(
-                IERC20(_tokenSell),
-                IERC20(_tokenBuy),
-                _amountToSell,
-                _minAmountToBuy,
-                _distribution,
-                0
-            );
+        uint256 amountPurchased = oneInchExchange.swap(
+            IERC20(_tokenSell),
+            IERC20(_tokenBuy),
+            _amountToSell,
+            _minAmountToBuy,
+            _distribution,
+            0
+        );
 
-        //        IERC20(_tokenBuy).transfer(_to, amountPurchased);
+        IERC20(_tokenBuy).transfer(_recipient, amountPurchased);
     }
 }

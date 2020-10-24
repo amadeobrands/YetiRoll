@@ -56,18 +56,14 @@ describe("Exchange Adaptor", () => {
 
       await exchangeAdaptor.setOneInch(oneInch.address);
 
-      await exchangeAdaptor.callStatic
-        .exchange(
-          USDT.address,
-          DAI.address,
-          oneEther.mul(200),
-          oneEther.mul(195),
-          [10],
-          alice.address
-        )
-        .then((totalReceived: BigNumber) => {
-          expect(totalReceived).to.be.eq(oneEther.mul(195));
-        });
+      await exchangeAdaptor.callStatic.exchange(
+        USDT.address,
+        DAI.address,
+        oneEther.mul(200),
+        oneEther.mul(195),
+        [10],
+        alice.address
+      );
     });
   });
   describe("Access control", () => {

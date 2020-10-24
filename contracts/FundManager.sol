@@ -25,7 +25,7 @@ contract FundManager is Ownable {
         uint256[] memory _distribution,
         address _to
     ) public {
-        treasury.withdrawAs(
+        treasury.withdrawAs_protected(
             _tokenSell,
             _tokenBuy,
             _amountToSell,

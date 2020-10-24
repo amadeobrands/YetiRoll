@@ -135,15 +135,14 @@ describe("Treasury", () => {
           [10],
           bob.address
         )
-        .returns(oneEther.mul(90));
+        .returns();
 
-      await treasury.withdrawAs(
+      await treasury.withdrawAs_public(
         USDT.address,
         DAI.address,
         oneEther.mul(100),
         oneEther.mul(90),
         [10],
-        alice.address,
         bob.address
       );
     });

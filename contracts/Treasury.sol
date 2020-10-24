@@ -10,7 +10,7 @@ import "./ExchangeAdaptor.sol";
 // Notes for improvement - allocating funds does not relate to an address nor to a stream, would be beneficial
 // to know where the funds are allocated to. This can be handled by the stream manager but needs strong coordination
 // between the 2 services
-contract Treasury is AccessControl, ReentrancyGuard {
+contract Treasury is AccessControl {
     using SafeMath for uint256;
 
     bytes32 public constant TREASURY_ADMIN = keccak256("TREASURY_ADMIN");
@@ -74,25 +74,68 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _token,
         address _recipient,
         uint256 _amount
-    ) public nonReentrant hasBalanceToWithdraw(_token, msg.sender, _amount) {
+    ) public hasBalanceToWithdraw(_token, msg.sender, _amount) {
         withdrawFunds(_token, msg.sender, _amount);
 
         IERC20(_token).transfer(_recipient, _amount);
     }
 
-    // @dev allows withdrawal from the treasury, can be called by the stream manager
+    // @dev allows withdrawal from the treasury, can only be called by the stream manager
     function withdrawFrom(
         address _token,
         address _sender,
         address _recipient,
         uint256 _amount
-    ) public nonReentrant hasBalanceToWithdraw(_token, _sender, _amount) {
+    )
+        public
+        onlyTreasuryOperator
+        hasBalanceToWithdraw(_token, _sender, _amount)
+    {
         withdrawFunds(_token, _sender, _amount);
 
         IERC20(_token).transfer(_recipient, _amount);
     }
 
+    function withdrawAs_public(
+        address _tokenSell,
+        address _tokenBuy,
+        uint256 _amountToSell,
+        uint256 _minAmountToBuy,
+        uint256[] memory _distribution,
+        address _recipient
+    ) public {
+        withdrawAs(
+            _tokenSell,
+            _tokenBuy,
+            _amountToSell,
+            _minAmountToBuy,
+            _distribution,
+            msg.sender,
+            _recipient
+        );
+    }
+
     // @dev performs a swap allowing users to withdraw a different token to the deposited one
+    function withdrawAs_protected(
+        address _tokenSell,
+        address _tokenBuy,
+        uint256 _amountToSell,
+        uint256 _minAmountToBuy,
+        uint256[] memory _distribution,
+        address _sender,
+        address _recipient
+    ) public onlyTreasuryOperator {
+        withdrawAs(
+            _tokenSell,
+            _tokenBuy,
+            _amountToSell,
+            _minAmountToBuy,
+            _distribution,
+            _sender,
+            _recipient
+        );
+    }
+
     function withdrawAs(
         address _tokenSell,
         address _tokenBuy,
@@ -101,11 +144,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
         uint256[] memory _distribution,
         address _sender,
         address _recipient
-    )
-        public
-        nonReentrant
-        hasBalanceToWithdraw(_tokenSell, _sender, _amountToSell)
-    {
+    ) internal hasBalanceToWithdraw(_tokenSell, _sender, _amountToSell) {
         withdrawFunds(_tokenSell, _sender, _amountToSell);
 
         IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
