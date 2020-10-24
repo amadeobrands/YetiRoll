@@ -101,7 +101,11 @@ describe("Treasury", () => {
     it("Should allow deposits and withdrawals from one account to another", async () => {
       await treasury.deposit(USDT.address, oneEther.mul(200));
 
-      await treasury.withdraw(USDT.address, bob.address, oneEther.mul(100));
+      await treasury.withdraw_public(
+        USDT.address,
+        bob.address,
+        oneEther.mul(100)
+      );
 
       await validateErc20Balance(USDT, alice.address, oneEther.mul(800));
       await validateErc20Balance(USDT, treasury.address, oneEther.mul(100));
@@ -119,7 +123,7 @@ describe("Treasury", () => {
       await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await expect(
-        treasury.withdraw(USDT.address, bob.address, oneEther.mul(300))
+        treasury.withdraw_public(USDT.address, bob.address, oneEther.mul(300))
       ).to.be.revertedWith("Insufficient balance to withdraw");
     });
 
@@ -176,7 +180,7 @@ describe("Treasury", () => {
       );
 
       await expect(
-        treasury.withdraw(USDT.address, alice.address, oneEther.mul(200))
+        treasury.withdraw_public(USDT.address, alice.address, oneEther.mul(200))
       ).to.be.reverted;
     });
   });

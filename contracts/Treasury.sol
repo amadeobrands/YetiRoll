@@ -46,14 +46,15 @@ contract Treasury is AccessControl {
         grantRole(TREASURY_OPERATOR, _who);
     }
 
-    // @dev allow deposits of specific tokens which can then be streamed out
+    // @dev allow deposits of erc20 tokens
     function deposit(address _token, uint256 _amount) public {
         depositFunds(_token, msg.sender, _amount);
 
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
     }
 
-    // @dev during lifetime of a stream a user may wish to transfer funds from the stream into their available balance
+    // @dev funds are able to be reallocated to different accounts (I.E when paying someone or during the lifetime of a
+    // stream, this means they do not have to be withdrawn out of the platform and can later on be streamed out again
     function transferFunds(
         address _token,
         address _sender,
@@ -70,32 +71,37 @@ contract Treasury is AccessControl {
     }
 
     // @dev allows withdrawal from the treasury, can be called by the depositor
-    function withdraw(
+    function withdraw_public(
         address _token,
         address _recipient,
         uint256 _amount
     ) public hasBalanceToWithdraw(_token, msg.sender, _amount) {
-        withdrawFunds(_token, msg.sender, _amount);
-
-        IERC20(_token).transfer(_recipient, _amount);
+        withdraw(_token, msg.sender, _recipient, _amount);
     }
 
-    // @dev allows withdrawal from the treasury, can only be called by the stream manager
-    function withdrawFrom(
+    // @dev allows withdrawal from the treasury, can only be called by the treasury operator
+    function withdraw_protected(
         address _token,
         address _sender,
         address _recipient,
         uint256 _amount
-    )
-        public
-        onlyTreasuryOperator
-        hasBalanceToWithdraw(_token, _sender, _amount)
-    {
+    ) public onlyTreasuryOperator {
+        withdraw(_token, _sender, _recipient, _amount);
+    }
+
+    // @dev allows withdrawal from the treasury, can only be called by the treasury operator
+    function withdraw(
+        address _token,
+        address _sender,
+        address _recipient,
+        uint256 _amount
+    ) internal hasBalanceToWithdraw(_token, _sender, _amount) {
         withdrawFunds(_token, _sender, _amount);
 
         IERC20(_token).transfer(_recipient, _amount);
     }
 
+    // @dev performs a swap allowing users to withdraw a different token to the deposited one
     function withdrawAs_public(
         address _tokenSell,
         address _tokenBuy,
@@ -116,6 +122,7 @@ contract Treasury is AccessControl {
     }
 
     // @dev performs a swap allowing users to withdraw a different token to the deposited one
+    // this is locked so only Treasury Operators can control it
     function withdrawAs_protected(
         address _tokenSell,
         address _tokenBuy,

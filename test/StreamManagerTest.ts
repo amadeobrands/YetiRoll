@@ -150,7 +150,7 @@ describe("Stream Manager", () => {
 
       await stream.mock.withdraw.withArgs(1, amount, bob.address).returns();
 
-      await treasury.mock.withdrawFrom
+      await treasury.mock.withdraw_protected
         .withArgs(DAI.address, alice.address, bob.address, amount)
         .returns();
 
