@@ -23,7 +23,7 @@ This extends on the idea of a payment stream and strives to implement different 
 - In a look up the name for the queried address would be _who. I.E to get balance for token the method would be:
 function getBalance(address _token, address _who){}
 - The address where funds originated will be called "Sender" and the destination address will be "Recipient"
-function sendToken(address _token, address _sender, address _recipient){}
+function sendToken(address _token, address _sender, address _recipient, uint256 _amount){}
 
 
 

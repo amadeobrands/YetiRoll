@@ -22,18 +22,25 @@ contract StreamManager is Ownable {
 
     function startStream(
         address _token,
-        address _to,
+        address _recipient,
         uint256 _amount,
         uint256 _start,
         uint256 _stop
     ) public {
-        uint256 balance = treasury.viewAvailableBalance(msg.sender, _token);
+        uint256 balance = treasury.viewAvailableBalance(_token, msg.sender);
 
         require(balance >= _amount, "Not enough balance to start stream");
 
         treasury.allocateFunds(_token, msg.sender, _amount);
 
-        stream.createStream(msg.sender, _to, _amount, _token, _start, _stop);
+        stream.createStream(
+            msg.sender,
+            _recipient,
+            _amount,
+            _token,
+            _start,
+            _stop
+        );
     }
 
     function withdrawFromStream(

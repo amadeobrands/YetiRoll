@@ -56,29 +56,25 @@ contract Treasury is AccessControl, ReentrancyGuard {
     // @dev during lifetime of a stream a user may wish to transfer funds from the stream into their available balance
     function transferFunds(
         address _token,
-        address _from,
-        address _to,
+        address _sender,
+        address _recipient,
         uint256 _amount
-    ) public hasSufficientAllocatedFunds(_token, _from, _amount) {
-        withdrawFunds(_token, _from, _amount);
-        depositFunds(_token, _to, _amount);
-        deallocateFunds(_token, _from, _amount);
+    ) public hasSufficientAllocatedFunds(_token, _sender, _amount) {
+        withdrawFunds(_token, _sender, _amount);
+        depositFunds(_token, _recipient, _amount);
+        deallocateFunds(_token, _sender, _amount);
     }
 
     // @dev allows withdrawal from the treasury, can be called by the depositor or by the stream manager
     function withdraw(
         address _token,
-        address _from,
-        address _to,
+        address _sender,
+        address _recipient,
         uint256 _amount
-    )
-        public
-        nonReentrant
-        hasSufficientAvailableBalance(_from, _token, _amount)
-    {
-        withdrawFunds(_token, _from, _amount);
+    ) public nonReentrant hasBalanceToWithdraw(_token, _sender, _amount) {
+        withdrawFunds(_token, _sender, _amount);
 
-        IERC20(_token).transfer(_to, _amount);
+        IERC20(_token).transfer(_recipient, _amount);
     }
 
     // @dev performs a swap allowing users to withdraw a different token to the deposited one
@@ -88,14 +84,14 @@ contract Treasury is AccessControl, ReentrancyGuard {
         uint256 _amountToSell,
         uint256 _minAmountToBuy,
         uint256[] memory _distribution,
-        address _from,
-        address _to
+        address _sender,
+        address _recipient
     )
         public
         nonReentrant
-        hasSufficientAvailableBalance(_from, _tokenSell, _amountToSell)
+        hasBalanceToWithdraw(_tokenSell, _sender, _amountToSell)
     {
-        withdrawFunds(_tokenSell, _from, _amountToSell);
+        withdrawFunds(_tokenSell, _sender, _amountToSell);
 
         IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
 
@@ -105,7 +101,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
             _amountToSell,
             _minAmountToBuy,
             _distribution,
-            _to
+            _recipient
         );
     }
 
@@ -168,8 +164,7 @@ contract Treasury is AccessControl, ReentrancyGuard {
     }
 
     // @dev subtract the allocated balance from the deposit to see the available funds
-    // todo this does not align with view user token balance
-    function viewAvailableBalance(address _who, address _token)
+    function viewAvailableBalance(address _token, address _who)
         public
         view
         returns (uint256)
@@ -196,13 +191,13 @@ contract Treasury is AccessControl, ReentrancyGuard {
     }
 
     // @dev ensure there is enough balance to perform withdrawal
-    modifier hasSufficientAvailableBalance(
-        address _from,
+    modifier hasBalanceToWithdraw(
         address _token,
+        address _who,
         uint256 _amount
     ) {
         require(
-            viewAvailableBalance(_from, _token) >= _amount,
+            viewAvailableBalance(_token, _who) >= _amount,
             "Insufficient balance to withdraw"
         );
         _;

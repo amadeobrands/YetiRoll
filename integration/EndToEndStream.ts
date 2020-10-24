@@ -75,7 +75,7 @@ async function main() {
   await bobConnectedStreamManager.withdrawFromStream(1, oneEther, bobAddress);
 
   await treasury
-    .viewAvailableBalance(bobAddress, erc20.address)
+    .viewAvailableBalance(erc20.address, bobAddress)
     .then((balance: BigNumber) => {
       console.log("Bob deposited balance is " + balance.toString());
     });

@@ -52,7 +52,9 @@ describe("Stream Manager", () => {
 
   describe("Stream creation", async () => {
     it("Should revert if there is not enough available balance", async () => {
-      await treasury.mock.viewAvailableBalance.returns(oneEther.mul(200));
+      await treasury.mock.viewAvailableBalance
+        .withArgs(DAI.address, alice.address)
+        .returns(oneEther.mul(200));
 
       await expect(
         streamManager.startStream(
@@ -67,7 +69,9 @@ describe("Stream Manager", () => {
 
     it("Should allocate funds and start a stream", async () => {
       const amount = oneEther.mul(200);
-      await treasury.mock.viewAvailableBalance.returns(amount);
+      await treasury.mock.viewAvailableBalance
+        .withArgs(DAI.address, alice.address)
+        .returns(amount);
 
       await treasury.mock.allocateFunds
         .withArgs(DAI.address, alice.address, amount)
