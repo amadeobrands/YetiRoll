@@ -28,7 +28,7 @@ describe("Fund Manager", () => {
   it("Should allow withdrawal of funds to an address", async () => {
     const amount = oneEther.mul(100);
 
-    await treasury.mock.withdraw
+    await treasury.mock.withdrawFrom
       .withArgs(dai.address, alice.address, bob.address, amount)
       .returns();
 

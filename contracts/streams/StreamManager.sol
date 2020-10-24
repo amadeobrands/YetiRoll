@@ -64,7 +64,7 @@ contract StreamManager is Ownable {
 
         stream.withdraw(_streamId, _amount, msg.sender);
 
-        treasury.withdraw(tokenAddress, sender, _recipient, _amount);
+        treasury.withdrawFrom(tokenAddress, sender, _recipient, _amount);
     }
 
     // @dev allows withdrawal from the stream, if there is not sufficient balance accrued, the Stream contract

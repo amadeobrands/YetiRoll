@@ -14,7 +14,7 @@ contract FundManager is Ownable {
         address _to,
         uint256 _amount
     ) public {
-        treasury.withdraw(_token, msg.sender, _to, _amount);
+        treasury.withdrawFrom(_token, msg.sender, _to, _amount);
     }
 
     function swapTokensAndWithdrawToAccount(

@@ -65,8 +65,19 @@ contract Treasury is AccessControl, ReentrancyGuard {
         deallocateFunds(_token, _sender, _amount);
     }
 
-    // @dev allows withdrawal from the treasury, can be called by the depositor or by the stream manager
+    // @dev allows withdrawal from the treasury, can be called by the depositor
     function withdraw(
+        address _token,
+        address _recipient,
+        uint256 _amount
+    ) public nonReentrant hasBalanceToWithdraw(_token, msg.sender, _amount) {
+        withdrawFunds(_token, msg.sender, _amount);
+
+        IERC20(_token).transfer(_recipient, _amount);
+    }
+
+    // @dev allows withdrawal from the treasury, can be called by the stream manager
+    function withdrawFrom(
         address _token,
         address _sender,
         address _recipient,

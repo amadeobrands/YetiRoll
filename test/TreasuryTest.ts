@@ -101,12 +101,7 @@ describe("Treasury", () => {
     it("Should allow deposits and withdrawals from one account to another", async () => {
       await treasury.deposit(USDT.address, oneEther.mul(200));
 
-      await treasury.withdraw(
-        USDT.address,
-        alice.address,
-        bob.address,
-        oneEther.mul(100)
-      );
+      await treasury.withdraw(USDT.address, bob.address, oneEther.mul(100));
 
       await validateErc20Balance(USDT, alice.address, oneEther.mul(800));
       await validateErc20Balance(USDT, treasury.address, oneEther.mul(100));
@@ -124,12 +119,7 @@ describe("Treasury", () => {
       await treasury.deposit(USDT.address, oneEther.mul(200));
 
       await expect(
-        treasury.withdraw(
-          USDT.address,
-          alice.address,
-          bob.address,
-          oneEther.mul(300)
-        )
+        treasury.withdraw(USDT.address, bob.address, oneEther.mul(300))
       ).to.be.revertedWith("Insufficient balance to withdraw");
     });
 
@@ -156,21 +146,6 @@ describe("Treasury", () => {
         alice.address,
         bob.address
       );
-    });
-
-    it("Should prevent withdrawal of funds which do not belong to the owner", async () => {
-      const bobConnectedStream = await treasury.connect(bob);
-
-      await treasury.deposit(USDT.address, oneEther.mul(200));
-
-      expect(
-        bobConnectedStream.withdraw(
-          USDT.address,
-          alice.address,
-          bob.address,
-          oneEther.mul(200)
-        )
-      ).to.be.revertedWith("Not the fund owner");
     });
   });
 
@@ -202,12 +177,7 @@ describe("Treasury", () => {
       );
 
       await expect(
-        treasury.withdraw(
-          USDT.address,
-          alice.address,
-          alice.address,
-          oneEther.mul(200)
-        )
+        treasury.withdraw(USDT.address, alice.address, oneEther.mul(200))
       ).to.be.reverted;
     });
   });
