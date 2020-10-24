@@ -71,18 +71,20 @@ async function main() {
   await wait(oneHour / 2);
 
   console.log("Bob withdrawing from stream");
-  await bobConnectedStreamManager.claimFromStream(1, oneEther);
   await bobConnectedStreamManager.withdrawFromStream(1, oneEther, bobAddress);
+
+  await erc20.balanceOf(bobAddress).then((balance: BigNumber) => {
+    console.log("Bobs erc20 balance is " + balance.toString());
+  });
+
+  console.log("Bob claiming from stream");
+  await bobConnectedStreamManager.claimFromStream(1, oneEther);
 
   await treasury
     .viewAvailableBalance(erc20.address, bobAddress)
     .then((balance: BigNumber) => {
       console.log("Bob deposited balance is " + balance.toString());
     });
-
-  await erc20.balanceOf(bobAddress).then((balance: BigNumber) => {
-    console.log("Bobs erc20 balance is " + balance.toString());
-  });
 }
 
 async function deployMockErc() {

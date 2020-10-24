@@ -183,6 +183,12 @@ describe("Treasury", () => {
   });
 
   describe("Fund transfer", async () => {
+    let bobConnectedTreasury: Treasury;
+
+    beforeEach(async () => {
+      bobConnectedTreasury = await treasury.connect(bob);
+    });
+
     it("Should allow transferring of allocated funds from one account to another", async () => {
       await treasury.deposit(USDT.address, oneEther.mul(200));
 
@@ -229,6 +235,19 @@ describe("Treasury", () => {
           oneEther.mul(200)
         )
       ).to.be.revertedWith("Insufficient allocated balance");
+    });
+
+    it("Should prevent transferring funds unless by a Treasury Operator", async () => {
+      await treasury.deposit(USDT.address, oneEther.mul(200));
+
+      await expect(
+        bobConnectedTreasury.transferFunds(
+          USDT.address,
+          alice.address,
+          bob.address,
+          oneEther
+        )
+      ).to.be.reverted;
     });
   });
 

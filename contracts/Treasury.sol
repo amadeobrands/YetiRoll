@@ -59,7 +59,11 @@ contract Treasury is AccessControl, ReentrancyGuard {
         address _sender,
         address _recipient,
         uint256 _amount
-    ) public hasSufficientAllocatedFunds(_token, _sender, _amount) {
+    )
+        public
+        onlyTreasuryOperator
+        hasSufficientAllocatedFunds(_token, _sender, _amount)
+    {
         withdrawFunds(_token, _sender, _amount);
         depositFunds(_token, _recipient, _amount);
         deallocateFunds(_token, _sender, _amount);
@@ -116,6 +120,18 @@ contract Treasury is AccessControl, ReentrancyGuard {
         );
     }
 
+    // @dev once a stream is started, funds are allocated and locked from being withdrawn
+    // by the account which started the stream
+    function allocateFunds(
+        address _token,
+        address _who,
+        uint256 _amount
+    ) public onlyTreasuryOperator {
+        userBalances[_who][_token].allocated = userBalances[_who][_token]
+            .allocated
+            .add(_amount);
+    }
+
     // @dev called when funds are withdrawn, decrease the deposited balance
     function withdrawFunds(
         address _token,
@@ -135,18 +151,6 @@ contract Treasury is AccessControl, ReentrancyGuard {
     ) internal {
         userBalances[_who][_token].deposited = userBalances[_who][_token]
             .deposited
-            .add(_amount);
-    }
-
-    // @dev once a stream is started, funds are allocated and locked from being withdrawn
-    // by the account which started the stream
-    function allocateFunds(
-        address _token,
-        address _who,
-        uint256 _amount
-    ) public onlyTreasuryOperator() {
-        userBalances[_who][_token].allocated = userBalances[_who][_token]
-            .allocated
             .add(_amount);
     }
 
@@ -212,17 +216,6 @@ contract Treasury is AccessControl, ReentrancyGuard {
             "Insufficient balance to withdraw"
         );
         _;
-    }
-
-    function getAllocatedFunds(
-        address _token,
-        address _who,
-        uint256 _amount
-    ) public view returns (uint256, bool) {
-        return (
-            userBalances[_who][_token].allocated,
-            userBalances[_who][_token].allocated >= _amount
-        );
     }
 
     // @dev ensure that funds have been allocated
