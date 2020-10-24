@@ -15,6 +15,14 @@ const provider = new providers.JsonRpcProvider("http://127.0.0.1:8545/");
 const alice = provider.getSigner(0);
 const bob = provider.getSigner(1);
 
+/**
+ * Covers:
+ * Stream deployment & necessary permissions
+ * Depositing funds to Treasury
+ * Starting a stream
+ * Claiming from a stream
+ * Withdrawing from a stream
+ */
 async function main() {
   const aliceAddress = await alice.getAddress();
   const bobAddress = await bob.getAddress();
@@ -39,6 +47,7 @@ async function main() {
 
   console.log("Deploying Erc20");
   const erc20 = await deployMockErc();
+
   console.log("Minting 40,000 Erc20");
   await erc20.mint(aliceAddress, oneEther.mul(40000));
 
@@ -65,8 +74,14 @@ async function main() {
   await bobConnectedStreamManager.claimFromStream(1, oneEther);
   await bobConnectedStreamManager.withdrawFromStream(1, oneEther, bobAddress);
 
+  await treasury
+    .viewAvailableBalance(bobAddress, erc20.address)
+    .then((balance: BigNumber) => {
+      console.log("Bob deposited balance is " + balance.toString());
+    });
+
   await erc20.balanceOf(bobAddress).then((balance: BigNumber) => {
-    console.log("Bobs balance is " + balance.toString());
+    console.log("Bobs erc20 balance is " + balance.toString());
   });
 }
 

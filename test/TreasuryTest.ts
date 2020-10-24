@@ -237,7 +237,7 @@ describe("Treasury", () => {
         });
 
       await treasury
-        .viewUserTokenBalance(USDT.address, alice.address)
+        .viewUserTokenBalance(USDT.address, bob.address)
         .then((balances: any) => {
           expect(balances.deposited).to.eq(oneEther.mul(100));
           expect(balances.allocated).to.eq(oneEther.mul(0));

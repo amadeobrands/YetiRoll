@@ -43,7 +43,7 @@ contract StreamManager is Ownable {
     ) public {
         (
             address sender,
-            address recipient,
+            address streamRecipient,
             ,
             address tokenAddress,
             ,
@@ -53,7 +53,7 @@ contract StreamManager is Ownable {
 
         ) = stream.getStream(_streamId);
 
-        require(msg.sender == recipient, "Not your stream");
+        require(msg.sender == streamRecipient, "Not your stream");
 
         stream.withdraw(_streamId, _amount, msg.sender);
 
