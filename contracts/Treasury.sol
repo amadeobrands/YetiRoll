@@ -53,6 +53,50 @@ contract Treasury is AccessControl {
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
     }
 
+    // @dev allows withdrawal from the treasury, can only be called by the treasury operator
+    function withdraw(
+        address _token,
+        address _sender,
+        address _recipient,
+        uint256 _amount
+    )
+        public
+        onlyTreasuryOperator
+        hasBalanceToWithdraw(_token, _sender, _amount)
+    {
+        withdrawFunds(_token, _sender, _amount);
+
+        IERC20(_token).transfer(_recipient, _amount);
+    }
+
+    // @dev performs a swap allowing users to withdraw a different token to the deposited one
+    function exchangeFunds(
+        address _tokenSell,
+        address _tokenBuy,
+        uint256 _amountToSell,
+        uint256 _minAmountToBuy,
+        uint256[] memory _distribution,
+        address _sender,
+        address _recipient
+    )
+        public
+        onlyTreasuryOperator
+        hasBalanceToWithdraw(_tokenSell, _sender, _amountToSell)
+    {
+        withdrawFunds(_tokenSell, _sender, _amountToSell);
+
+        IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
+
+        exchangeAdaptor.exchange(
+            _tokenSell,
+            _tokenBuy,
+            _amountToSell,
+            _minAmountToBuy,
+            _distribution,
+            _recipient
+        );
+    }
+
     // @dev funds are able to be reallocated to different accounts (I.E when paying someone or during the lifetime of a
     // stream, this means they do not have to be withdrawn out of the platform and can later on be streamed out again
     function transferFunds(
@@ -70,104 +114,9 @@ contract Treasury is AccessControl {
         deallocateFunds(_token, _sender, _amount);
     }
 
-    // @dev allows withdrawal from the treasury, can be called by the depositor
-    function withdraw_public(
-        address _token,
-        address _recipient,
-        uint256 _amount
-    ) public hasBalanceToWithdraw(_token, msg.sender, _amount) {
-        withdraw(_token, msg.sender, _recipient, _amount);
-    }
-
-    // @dev allows withdrawal from the treasury, can only be called by the treasury operator
-    function withdraw_protected(
-        address _token,
-        address _sender,
-        address _recipient,
-        uint256 _amount
-    ) public onlyTreasuryOperator {
-        withdraw(_token, _sender, _recipient, _amount);
-    }
-
-    // @dev allows withdrawal from the treasury, can only be called by the treasury operator
-    function withdraw(
-        address _token,
-        address _sender,
-        address _recipient,
-        uint256 _amount
-    ) internal hasBalanceToWithdraw(_token, _sender, _amount) {
-        withdrawFunds(_token, _sender, _amount);
-
-        IERC20(_token).transfer(_recipient, _amount);
-    }
-
-    // @dev performs a swap allowing users to withdraw a different token to the deposited one
-    function withdrawAs_public(
-        address _tokenSell,
-        address _tokenBuy,
-        uint256 _amountToSell,
-        uint256 _minAmountToBuy,
-        uint256[] memory _distribution,
-        address _recipient
-    ) public {
-        withdrawAs(
-            _tokenSell,
-            _tokenBuy,
-            _amountToSell,
-            _minAmountToBuy,
-            _distribution,
-            msg.sender,
-            _recipient
-        );
-    }
-
-    // @dev performs a swap allowing users to withdraw a different token to the deposited one
-    // this is locked so only Treasury Operators can control it
-    function withdrawAs_protected(
-        address _tokenSell,
-        address _tokenBuy,
-        uint256 _amountToSell,
-        uint256 _minAmountToBuy,
-        uint256[] memory _distribution,
-        address _sender,
-        address _recipient
-    ) public onlyTreasuryOperator {
-        withdrawAs(
-            _tokenSell,
-            _tokenBuy,
-            _amountToSell,
-            _minAmountToBuy,
-            _distribution,
-            _sender,
-            _recipient
-        );
-    }
-
-    function withdrawAs(
-        address _tokenSell,
-        address _tokenBuy,
-        uint256 _amountToSell,
-        uint256 _minAmountToBuy,
-        uint256[] memory _distribution,
-        address _sender,
-        address _recipient
-    ) internal hasBalanceToWithdraw(_tokenSell, _sender, _amountToSell) {
-        withdrawFunds(_tokenSell, _sender, _amountToSell);
-
-        IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
-
-        exchangeAdaptor.exchange(
-            _tokenSell,
-            _tokenBuy,
-            _amountToSell,
-            _minAmountToBuy,
-            _distribution,
-            _recipient
-        );
-    }
-
     // @dev once a stream is started, funds are allocated and locked from being withdrawn
     // by the account which started the stream
+    // todo check they have enough funds to allocate
     function allocateFunds(
         address _token,
         address _who,
