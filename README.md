@@ -23,7 +23,7 @@ This extends on the idea of a payment stream and strives to implement different 
 - Add more tests around streams specifically withdrawal of funds
 - Stream to stream payments
 - More events emitted
-
+- https://github.com/crytic/building-secure-contracts/tree/master/program-analysis/echidna#echidna-tutorial
 
 Testing in a mock live environment can be achieved by following this guide
 https://medium.com/ethereum-grid/forking-ethereum-mainnet-mint-your-own-dai-d8b62a82b3f7
