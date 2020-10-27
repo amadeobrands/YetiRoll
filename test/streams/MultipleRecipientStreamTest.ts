@@ -1,15 +1,15 @@
 import chai from "chai";
 
-import {MultipleRecipientStream} from "../typechain/MultipleRecipientStream";
-import {MockErc20} from "../typechain/MockErc20";
+import {MultipleRecipientStream} from "../../typechain/MultipleRecipientStream";
+import {MockErc20} from "../../typechain/MockErc20";
 
-import {oneEther, oneHour} from "./helpers/numbers";
+import {oneEther, oneHour} from "../helpers/numbers";
 import {
   deployErc20,
   deployMultipleRecipientStream,
   getBlockTime,
   getProvider,
-} from "./helpers/contract";
+} from "../helpers/contract";
 import {BigNumber} from "ethers";
 
 const {expect} = chai;

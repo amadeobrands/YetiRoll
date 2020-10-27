@@ -17,6 +17,23 @@ contract Stream is IStream, AccessControl {
     mapping(uint256 => Types.Stream) internal streams;
     uint256 public nextStreamId;
 
+    event StreamCreated(
+        uint256 _streamId,
+        address _sender,
+        address _recipient,
+        uint256 _amount,
+        uint256 _startTime,
+        uint256 _stopTime
+    );
+
+    event StreamWithdrawnFrom(
+        uint256 _streamId,
+        address _recipient,
+        uint256 _amount,
+        uint256 _amountRemaining,
+        uint256 _timeOfWithdrawal
+    );
+
     // @dev construct Stream and set Admin to creator
     constructor() public {
         _setupRole(STREAM_ADMIN, msg.sender);

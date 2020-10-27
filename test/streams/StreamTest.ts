@@ -1,6 +1,6 @@
 import chai from "chai";
-import {Stream} from "../typechain/Stream";
-import {MockErc20} from "../typechain/MockErc20";
+import {Stream} from "../../typechain/Stream";
+import {MockErc20} from "../../typechain/MockErc20";
 import {BigNumber, Contract} from "ethers";
 import {
   deployErc20,
@@ -8,7 +8,7 @@ import {
   getBlockTime,
   getProvider,
   wait,
-} from "./helpers/contract";
+} from "../helpers/contract";
 import {id, keccak256} from "ethers/lib/utils";
 
 const {expect} = chai;
