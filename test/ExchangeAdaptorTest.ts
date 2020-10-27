@@ -13,6 +13,7 @@ import {oneEther} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";
 
 import ONE_INCH_ABI from "../integration/ABI/1Inch.json";
+import {Contract} from "ethers";
 
 const {expect} = chai;
 
