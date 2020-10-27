@@ -1,7 +1,7 @@
 import chai from "chai";
 import {Stream} from "../../typechain/Stream";
 import {MockErc20} from "../../typechain/MockErc20";
-import {BigNumber, Contract} from "ethers";
+import {BigNumber} from "ethers";
 import {
   deployErc20,
   deployStream,
@@ -9,7 +9,7 @@ import {
   getProvider,
   wait,
 } from "../helpers/contract";
-import {id, keccak256} from "ethers/lib/utils";
+import {id} from "ethers/lib/utils";
 
 const {expect} = chai;
 
@@ -39,14 +39,26 @@ describe("Payment Stream", () => {
     });
 
     it("Should allow creation of a stream", async () => {
-      await paymentStream.createStream(
-        alice.address,
-        bob.address,
-        oneEther,
-        token.address,
-        timestamp,
-        timestamp + 100
-      );
+      await expect(
+        paymentStream.createStream(
+          alice.address,
+          bob.address,
+          oneEther,
+          token.address,
+          timestamp,
+          timestamp + 100
+        )
+      )
+        .to.emit(paymentStream, "StreamCreated")
+        .withArgs(
+          1,
+          token.address,
+          alice.address,
+          bob.address,
+          oneEther,
+          timestamp,
+          timestamp + 100
+        );
 
       const stream = await paymentStream.getStream(1);
 

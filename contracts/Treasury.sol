@@ -5,7 +5,7 @@ pragma solidity ^0.6.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "./ExchangeAdaptor.sol";
+import "./external/ExchangeAdaptor.sol";
 
 // Notes for improvement - allocating funds does not relate to an address nor to a stream, would be beneficial
 // to know where the funds are allocated to. This can be handled by the stream manager but needs strong coordination

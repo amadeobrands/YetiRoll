@@ -19,14 +19,23 @@ contract Stream is IStream, AccessControl {
 
     event StreamCreated(
         uint256 _streamId,
+        address _token,
         address _sender,
         address _recipient,
-        uint256 _amount,
+        uint256 _deposit,
         uint256 _startTime,
         uint256 _stopTime
     );
 
     event StreamWithdrawnFrom(
+        uint256 _streamId,
+        address _recipient,
+        uint256 _amount,
+        uint256 _amountRemaining,
+        uint256 _timeOfWithdrawal
+    );
+
+    event StreamClosed(
         uint256 _streamId,
         address _recipient,
         uint256 _amount,
@@ -50,7 +59,7 @@ contract Stream is IStream, AccessControl {
         address _sender,
         address _recipient,
         uint256 _deposit,
-        address _tokenAddress,
+        address _token,
         uint256 _startTime,
         uint256 _stopTime
     )
@@ -80,10 +89,20 @@ contract Stream is IStream, AccessControl {
             sender: _sender,
             startTime: _startTime,
             stopTime: _stopTime,
-            tokenAddress: _tokenAddress,
+            tokenAddress: _token,
             isEntity: true,
             streamType: Types.StreamType.FixedTimeStream
         });
+
+        emit StreamCreated(
+            streamId,
+            _token,
+            _sender,
+            _recipient,
+            _deposit,
+            _startTime,
+            _stopTime
+        );
 
         return streamId;
     }
