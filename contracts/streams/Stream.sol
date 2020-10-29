@@ -29,6 +29,7 @@ contract Stream is IStream, AccessControl {
 
     event StreamWithdrawnFrom(
         uint256 _streamId,
+        address _token,
         address _recipient,
         uint256 _amount,
         uint256 _amountRemaining,
@@ -110,11 +111,20 @@ contract Stream is IStream, AccessControl {
     function withdraw(
         uint256 _streamId,
         uint256 _amount,
-        address _who
-    ) public onlyStreamOperator _canWithdrawFunds(_streamId, _amount, _who) {
+        address _recipient
+    ) public onlyStreamOperator _canWithdrawFunds(_streamId, _amount, _recipient) {
         streams[_streamId].remainingBalance = streams[_streamId]
             .remainingBalance
             .sub(_amount);
+
+        emit StreamWithdrawnFrom(
+            _streamId,
+            streams[_streamId].tokenAddress,
+            _recipient,
+            _amount,
+            streams[_streamId].remainingBalance,
+            block.timestamp
+        );
     }
 
     function getStream(uint256 _streamId)

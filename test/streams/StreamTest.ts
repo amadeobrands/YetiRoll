@@ -31,12 +31,10 @@ describe("Payment Stream", () => {
     await token.approve(paymentStream.address, 10000000);
 
     timestamp = (await getBlockTime()) + 10;
+    await paymentStream.setStreamOperator(alice.address);
   });
 
   describe("Stream creation", async () => {
-    beforeEach(async () => {
-      await paymentStream.setStreamOperator(alice.address);
-    });
 
     it("Should allow creation of a stream", async () => {
       await expect(
@@ -123,9 +121,6 @@ describe("Payment Stream", () => {
   });
 
   describe("Balance accruing", async () => {
-    beforeEach(async () => {
-      await paymentStream.setStreamOperator(alice.address);
-    });
 
     it("Should accrue a funds over time", async () => {
       await paymentStream.createStream(
@@ -145,6 +140,31 @@ describe("Payment Stream", () => {
           stream.balanceAccrued.div(oneEther).toNumber()
         ).to.be.approximately(18, 1);
       });
+    });
+
+    it("Should allow withdrawal of accrued funds", async () => {
+      await paymentStream.createStream(
+        alice.address,
+        bob.address,
+        oneEther.mul(36),
+        token.address,
+        timestamp,
+        timestamp + 3600
+      );
+
+      await wait(1800);
+
+
+      await expect(paymentStream.withdraw(1, oneEther.mul(18), bob.address))
+          .to.emit(paymentStream, "StreamWithdrawnFrom")
+          .withArgs(
+              1,
+              token.address,
+              bob.address,
+              oneEther.mul(18),
+              oneEther.mul(18),
+              await getBlockTime()
+          );
     });
   });
 
