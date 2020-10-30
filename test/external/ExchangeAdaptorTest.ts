@@ -1,5 +1,5 @@
 import chai from "chai";
-import {deployErc20, getProvider} from "./helpers/contract";
+import {deployErc20, getProvider} from "../helpers/contract";
 
 import {
   deployContract,
@@ -7,13 +7,12 @@ import {
   MockContract,
 } from "ethereum-waffle";
 
-import ExchangeAdaptorArtifact from "../artifacts/ExchangeAdaptor.json";
-import {ExchangeAdaptor} from "../typechain/ExchangeAdaptor";
-import {oneEther} from "./helpers/numbers";
-import {MockErc20} from "../typechain/MockErc20";
+import ExchangeAdaptorArtifact from "../../artifacts/ExchangeAdaptor.json";
+import {ExchangeAdaptor} from "../../typechain/ExchangeAdaptor";
+import {oneEther} from "../helpers/numbers";
+import {MockErc20} from "../../typechain/MockErc20";
 
-import ONE_INCH_ABI from "../integration/ABI/1Inch.json";
-import {Contract} from "ethers";
+import ONE_INCH_ABI from "../../integration/ABI/1Inch.json";
 
 const {expect} = chai;
 
