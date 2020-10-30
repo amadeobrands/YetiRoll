@@ -63,17 +63,8 @@ contract Stream is IStream, AccessControl {
         address _token,
         uint256 _startTime,
         uint256 _stopTime
-    )
-        public
-        virtual
-        onlyStreamOperator
-        _baseStreamRequirements(_recipient, _deposit, _startTime)
-        returns (uint256)
-    {
-        require(
-            _isNonZeroLengthStream(_startTime, _stopTime),
-            "Stream must last a least a second"
-        );
+    ) public virtual onlyStreamOperator _baseStreamRequirements(_recipient, _deposit, _startTime) returns (uint256) {
+        require(_isNonZeroLengthStream(_startTime, _stopTime), "Stream must last a least a second");
 
         uint256 duration = _stopTime.sub(_startTime);
         uint256 ratePerSecond = _calculateRatePerSecond(_deposit, duration);
@@ -95,15 +86,7 @@ contract Stream is IStream, AccessControl {
             streamType: Types.StreamType.FixedTimeStream
         });
 
-        emit StreamCreated(
-            streamId,
-            _token,
-            _sender,
-            _recipient,
-            _deposit,
-            _startTime,
-            _stopTime
-        );
+        emit StreamCreated(streamId, _token, _sender, _recipient, _deposit, _startTime, _stopTime);
 
         return streamId;
     }
@@ -113,9 +96,7 @@ contract Stream is IStream, AccessControl {
         uint256 _amount,
         address _recipient
     ) public onlyStreamOperator _canWithdrawFunds(_streamId, _amount, _recipient) {
-        streams[_streamId].remainingBalance = streams[_streamId]
-            .remainingBalance
-            .sub(_amount);
+        streams[_streamId].remainingBalance = streams[_streamId].remainingBalance.sub(_amount);
 
         emit StreamWithdrawnFrom(
             _streamId,
@@ -154,95 +135,49 @@ contract Stream is IStream, AccessControl {
         balanceAccrued = _calculateBalanceAccrued(_streamId);
     }
 
-    function getStreamTokenAddress(uint256 _streamId)
-        public
-        view
-        returns (address token)
-    {
+    function getStreamTokenAddress(uint256 _streamId) public view returns (address token) {
         return streams[_streamId].tokenAddress;
     }
 
-    function _calculateBalanceAccrued(uint256 _streamId)
-        internal
-        view
-        returns (uint256 balanceAccrued)
-    {
-        return
-            _calculateDurationElapsed(_streamId).mul(
-                streams[_streamId].ratePerSecond
-            );
+    function _calculateBalanceAccrued(uint256 _streamId) internal view returns (uint256 balanceAccrued) {
+        return _calculateDurationElapsed(_streamId).mul(streams[_streamId].ratePerSecond);
     }
 
-    function _calculateBalanceRemaining(uint256 _streamId)
-        internal
-        view
-        returns (uint256 BalanceRemaining)
-    {
-        return
-            streams[_streamId].deposit.sub(_calculateBalanceAccrued(_streamId));
+    function _calculateBalanceRemaining(uint256 _streamId) internal view returns (uint256 BalanceRemaining) {
+        return streams[_streamId].deposit.sub(_calculateBalanceAccrued(_streamId));
     }
 
     function _isStreamRunning(uint256 _streamId) internal view returns (bool) {
         return _hasStreamStarted(_streamId) && !_hasStreamFinished(_streamId);
     }
 
-    function _hasStreamStarted(uint256 _streamId)
-        internal
-        virtual
-        view
-        returns (bool)
-    {
+    function _hasStreamStarted(uint256 _streamId) internal virtual view returns (bool) {
         return block.timestamp >= streams[_streamId].startTime;
     }
 
-    function _hasStreamFinished(uint256 _streamId)
-        internal
-        virtual
-        view
-        returns (bool)
-    {
+    function _hasStreamFinished(uint256 _streamId) internal virtual view returns (bool) {
         return block.timestamp >= streams[_streamId].stopTime;
     }
 
-    function _calculateRatePerSecond(uint256 _deposit, uint256 _duration)
-        internal
-        virtual
-        view
-        returns (uint256)
-    {
+    function _calculateRatePerSecond(uint256 _deposit, uint256 _duration) internal virtual view returns (uint256) {
         return _deposit.div(_duration);
     }
 
-    function _isNonZeroLengthStream(uint256 _startTime, uint256 _stopTime)
-        internal
-        view
-        returns (bool)
-    {
+    function _isNonZeroLengthStream(uint256 _startTime, uint256 _stopTime) internal view returns (bool) {
         return _stopTime.sub(_startTime) > 0;
     }
 
-    function _calculateDurationElapsed(uint256 _streamId)
-        internal
-        virtual
-        view
-        returns (uint256 durationElapsed)
-    {
+    function _calculateDurationElapsed(uint256 _streamId) internal virtual view returns (uint256 durationElapsed) {
         if (_isStreamRunning(_streamId)) {
             return block.timestamp.sub(streams[_streamId].startTime);
         } else if (_hasStreamFinished(_streamId)) {
-            return
-                streams[_streamId].stopTime.sub(streams[_streamId].startTime);
+            return streams[_streamId].stopTime.sub(streams[_streamId].startTime);
         }
 
         return 0;
     }
 
-    function _calculateDurationRemaining(uint256 _streamId)
-        internal
-        virtual
-        view
-        returns (uint256 durationElapsed)
-    {
+    function _calculateDurationRemaining(uint256 _streamId) internal virtual view returns (uint256 durationElapsed) {
         if (_calculateDurationElapsed(_streamId) > 0) {
             return streams[_streamId].stopTime.sub(block.timestamp);
         }
@@ -260,10 +195,7 @@ contract Stream is IStream, AccessControl {
         address _who
     ) virtual {
         require(streams[_streamId].recipient == _who, "Not the stream owner");
-        require(
-            streams[_streamId].remainingBalance >= _amount,
-            "Not enough balance to withdraw"
-        );
+        require(streams[_streamId].remainingBalance >= _amount, "Not enough balance to withdraw");
         _;
     }
 

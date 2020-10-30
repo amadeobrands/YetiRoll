@@ -1,15 +1,18 @@
-import {HardhatUserConfig} from "hardhat/config";
-import environment from "./config";
+import { HardhatUserConfig } from 'hardhat/config';
+import environment from './config';
 
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-etherscan";
-import "hardhat-typechain";
-import "hardhat-deploy";
+import '@nomiclabs/hardhat-ethers';
+import '@nomiclabs/hardhat-waffle';
+import '@nomiclabs/hardhat-etherscan';
+
+import 'hardhat-typechain';
+
+import 'hardhat-deploy';
+import 'hardhat-deploy-ethers';
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.6.8",
+    version: '0.6.8',
     settings: {
       optimizer: {
         enabled: true,
@@ -17,13 +20,13 @@ const config: HardhatUserConfig = {
     },
   },
   paths: {
-    root: "./",
-    sources: "./contracts",
-    tests: "./test",
-    cache: "./cache",
-    artifacts: "./artifacts",
+    root: './',
+    sources: './contracts',
+    tests: './test',
+    cache: './cache',
+    artifacts: './artifacts',
   },
-  defaultNetwork: "hardhat",
+  defaultNetwork: 'hardhat',
   networks: {
     // ropsten: {
     //   url: "https://ropsten.infura.io/v3/" + environment.infuraKey,
@@ -33,11 +36,11 @@ const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: {
       default: 0,
-      ropsten: "0x40aB75676527ec9830fEAc40e525764405453914",
+      ropsten: '0x40aB75676527ec9830fEAc40e525764405453914',
     },
     admin: {
       default: 0,
-      ropsten: "0x40aB75676527ec9830fEAc40e525764405453914",
+      ropsten: '0x40aB75676527ec9830fEAc40e525764405453914',
     },
     proxyOwner: 1,
   },

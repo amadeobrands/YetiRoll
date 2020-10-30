@@ -1,16 +1,17 @@
-import {BuidlerRuntimeEnvironment, DeployFunction,} from "@nomiclabs/buidler/types";
-import {STREAM_MANAGER} from "./constants";
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+import { STREAM_MANAGER } from './constants';
 
-const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
-    const {deployments, getNamedAccounts} = bre;
-    const {deploy} = deployments;
+const func: DeployFunction = async function (bre: HardhatRuntimeEnvironment) {
+  const { deployments, getNamedAccounts } = bre;
+  const { deploy } = deployments;
 
-    const {deployer} = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
 
-    await deploy(STREAM_MANAGER, {
-        from: deployer,
-        log: true,
-    });
+  await deploy(STREAM_MANAGER, {
+    from: deployer,
+    log: true,
+  });
 };
 
 export default func;

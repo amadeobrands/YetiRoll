@@ -1,27 +1,28 @@
-import {BuidlerRuntimeEnvironment, DeployFunction,} from "@nomiclabs/buidler/types";
-import {EXCHANGE_ADAPTOR, STREAM, STREAM_MANAGER, TREASURY} from "./constants";
-import {id} from "ethers/lib/utils";
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+import { EXCHANGE_ADAPTOR, STREAM, STREAM_MANAGER, TREASURY } from './constants';
 
-const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
-    const {getNamedAccounts, ethers} = bre;
-    const {getSigner, getContract} = ethers;
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  const { getNamedAccounts, ethers, deployments } = hre;
+  const { provider } = ethers;
 
-    const {deployer} = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
+  const deployerSigner = provider.getSigner(deployer);
 
-    const stream = await getContract(STREAM);
-    const treasury = await getContract(TREASURY);
+  const stream = await deployments.get(STREAM);
+  const treasury = await deployments.get(TREASURY);
 
-    await getSigner(deployer).then(async signer => {
-        await getContract(STREAM_MANAGER, signer).then(
-            async (streamManager) => {
-                console.log("Setting Stream: " + stream.address);
-                await streamManager.setStream(stream.address);
-
-                console.log("Setting Treasury: " + treasury.address);
-                await streamManager.setTreasury(treasury.address);
-            }
-        )
+  const streamManager = await deployments.get(STREAM_MANAGER).then((deployment) => {
+    return ethers.getContractAt(deployment.abi, deployer).then((streamManager) => {
+      return streamManager.connect(deployerSigner);
     });
+  });
+
+  console.log('Setting Stream: ' + stream.address);
+  await streamManager.setStream(stream.address);
+
+  console.log('Setting Treasury: ' + treasury.address);
+  await streamManager.setTreasury(treasury.address);
 };
 
 export default func;

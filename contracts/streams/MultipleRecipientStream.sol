@@ -66,11 +66,7 @@ contract MultipleRecipientStream {
         return streamContract.getStream(streams[_streamId][_address]);
     }
 
-    function getStreamId(uint256 _streamId, address _address)
-        public
-        view
-        returns (uint256 streamId)
-    {
+    function getStreamId(uint256 _streamId, address _address) public view returns (uint256 streamId) {
         return streams[_streamId][_address];
     }
 }
