@@ -7,9 +7,9 @@ import {
   MockContract,
 } from "ethereum-waffle";
 
-import TreasuryArtifact from "../artifacts/Treasury.json";
+import TreasuryArtifact from "../artifacts/contracts/Treasury.sol/Treasury.json";
 import {Treasury} from "../typechain/Treasury";
-import ExchangeAdaptorArtifact from "../artifacts/ExchangeAdaptor.json";
+import ExchangeAdaptorArtifact from "../artifacts/contracts/external/ExchangeAdaptor.sol/ExchangeAdaptor.json";
 
 import {oneEther} from "./helpers/numbers";
 import {MockErc20} from "../typechain/MockErc20";

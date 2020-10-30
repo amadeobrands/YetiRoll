@@ -1,15 +1,18 @@
-import MockERC20Artifact from "../../artifacts/MockERC20.json";
-import {Signer} from "ethers";
+import MockERC20Artifact from "../../artifacts/contracts/mock/Erc20Mock.sol/MockERC20.json";
 import {deployContract, MockProvider} from "ethereum-waffle";
-import {MockErc20} from "../../typechain/MockErc20";
-import StreamArtifact from "../../artifacts/Stream.json";
-import {Stream} from "../../typechain/Stream";
-import PausableStreamArtifact from "../../artifacts/PausableStream.json";
-import {PausableStream} from "../../typechain/PausableStream";
-import MultipleRecipientStreamArtifact from "../../artifacts/MultipleRecipientStream.json";
-import {MultipleRecipientStream} from "../../typechain/MultipleRecipientStream";
-import FundManagerArtifact from "../../artifacts/FundManager.json";
-import {FundManager} from "../../typechain/FundManager";
+import StreamArtifact from "../../artifacts/contracts/streams/Stream.sol/Stream.json";
+import PausableStreamArtifact from "../../artifacts/contracts/streams/PausableStream.sol/PausableStream.json";
+import MultipleRecipientStreamArtifact from "../../artifacts/contracts/streams/MultipleRecipientStream.sol/MultipleRecipientStream.json";
+import {
+  FundManager,
+  MockErc20,
+  MultipleRecipientStream,
+  PausableStream,
+  Stream,
+} from "../../typechain";
+import FundManagerArtifact from "../../artifacts/contracts/FundManager.sol/FundManager.json";
+import {Signer} from "ethers";
+import {ethers} from "hardhat";
 
 let provider: MockProvider;
 
@@ -18,6 +21,10 @@ export function getProvider() {
     provider = new MockProvider();
   }
   return provider;
+}
+
+export async function getAccounts() {
+  return await ethers.getSigners();
 }
 
 export async function deployErc20(signer: Signer) {

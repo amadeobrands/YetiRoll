@@ -7,10 +7,9 @@ import {
   MockContract,
 } from "ethereum-waffle";
 
-import ExchangeAdaptorArtifact from "../../artifacts/ExchangeAdaptor.json";
-import {ExchangeAdaptor} from "../../typechain/ExchangeAdaptor";
+import ExchangeAdaptorArtifact from "../../artifacts/contracts/external/ExchangeAdaptor.sol/ExchangeAdaptor.json";
 import {oneEther} from "../helpers/numbers";
-import {MockErc20} from "../../typechain/MockErc20";
+import {MockErc20, ExchangeAdaptor} from "../../typechain";
 
 import ONE_INCH_ABI from "../../integration/ABI/1Inch.json";
 

@@ -3,7 +3,6 @@
 pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@nomiclabs/buidler/console.sol";
 import "./lib/Types.sol";
 import "./Stream.sol";
 
@@ -28,7 +27,6 @@ contract MultipleRecipientStream {
         uint256 _startTime,
         uint256 _stopTime
     ) public returns (uint256) {
-        console.logString("OK");
         uint256 currentStreamId = nextStreamId;
         nextStreamId = nextStreamId.add(1);
 
@@ -43,8 +41,6 @@ contract MultipleRecipientStream {
                 _startTime,
                 _stopTime
             );
-
-            console.log("creating stream for ", _recipients[i]);
 
             streams[currentStreamId][_recipients[i]] = streamId;
         }

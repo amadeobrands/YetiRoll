@@ -4,7 +4,7 @@ import {StreamLender} from "../typechain/StreamLender";
 import {getProvider} from "./helpers/contract";
 import {Signer} from "ethers";
 import {deployContract} from "ethereum-waffle";
-import StreamLenderArtifact from "../artifacts/StreamLender.json";
+import StreamLenderArtifact from "../artifacts/contracts/StreamLender.sol/StreamLender.json";
 import {oneEther} from "./helpers/numbers";
 
 const {expect} = chai;

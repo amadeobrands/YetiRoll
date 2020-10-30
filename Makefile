@@ -4,12 +4,12 @@ typechain:
 	./node_modules/.bin/typechain --target ethers-v5 --outDir typechain './artifacts/*.json'
 
 compile:
-	npx buidler compile
+	npx hardhat compile
 	cp -R artifacts/** app/src/build
 	make typechain
 
 compile-clean:
-	npx buidler clean
+	npx hardhat clean
 	rm -r ./typechain/*
 	make compile
 
@@ -17,13 +17,13 @@ test:
 	npm run-script test
 
 run-node:
-	@npx buidler node
+	@npx hardhat node
 
 e2e:
-	npx buidler run integration/EndToEndStream.ts
+	npx hardhat run integration/EndToEndStream.ts
 
 integration:
-	npx buidler run integration/MultipleRecipientIntegration.ts
+	npx hardhat run integration/MultipleRecipientIntegration.ts
 
 prettier:
 	npm run prettier

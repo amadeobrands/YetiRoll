@@ -7,13 +7,12 @@ import {
   MockContract,
 } from "ethereum-waffle";
 
-import TreasuryArtifact from "../artifacts/Treasury.json";
-import StreamArtifact from "../artifacts/Stream.json";
-import StreamManagerArtifact from "../artifacts/StreamManager.json";
-import {StreamManager} from "../typechain/StreamManager";
+import TreasuryArtifact from "../artifacts/contracts/Treasury.sol/Treasury.json";
+import StreamArtifact from "../artifacts/contracts/streams/Stream.sol/Stream.json";
+import StreamManagerArtifact from "../artifacts/contracts/streams/StreamManager.sol/StreamManager.json";
 
 import {oneEther, oneHour} from "./helpers/numbers";
-import {MockErc20} from "../typechain/MockErc20";
+import {MockErc20, StreamManager} from "../typechain";
 
 const {expect} = chai;
 

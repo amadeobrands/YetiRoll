@@ -2,7 +2,7 @@ import {FundManager} from "../typechain/FundManager";
 import {Treasury} from "../typechain/Treasury";
 import {MockErc20} from "../typechain/MockErc20";
 
-import TreasuryArtifact from "../artifacts/Treasury.json";
+import TreasuryArtifact from "../artifacts/contracts/Treasury.sol/Treasury.json";
 
 import {oneEther} from "./helpers/numbers";
 import {deployErc20, deployFundManager, getProvider} from "./helpers/contract";
