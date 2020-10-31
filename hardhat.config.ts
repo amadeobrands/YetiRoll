@@ -28,6 +28,12 @@ const config: HardhatUserConfig = {
   },
   defaultNetwork: 'hardhat',
   networks: {
+    hardhat: {
+      forking: {
+        enabled: true,
+        url: 'https://eth-mainnet.alchemyapi.io/v2/' + environment.alchemyKey,
+      },
+    },
     // ropsten: {
     //   url: "https://ropsten.infura.io/v3/" + environment.infuraKey,
     //   accounts: [environment.privateKey],
