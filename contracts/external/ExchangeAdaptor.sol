@@ -11,8 +11,16 @@ contract ExchangeAdaptor is Ownable {
 
     IOneSplit oneInchExchange;
 
+    constructor(address _oneInchAddress) public {
+        setOneInch(_oneInchAddress);
+    }
+
     function setOneInch(address _oneInchAddress) public onlyOwner {
         oneInchExchange = IOneSplit(_oneInchAddress);
+    }
+
+    function getOneInchAddress() public view returns (address) {
+        return address(oneInchExchange);
     }
 
     function exchange(
@@ -23,21 +31,17 @@ contract ExchangeAdaptor is Ownable {
         uint256[] memory _distribution,
         address _recipient
     ) public {
-        SafeERC20.safeIncreaseAllowance(
-            IERC20(_tokenSell),
-            address(oneInchExchange),
-            _amountToSell
-        );
+        SafeERC20.safeIncreaseAllowance(IERC20(_tokenSell), address(oneInchExchange), _amountToSell);
 
-        uint256 amountPurchased = oneInchExchange.swap(
-            IERC20(_tokenSell),
-            IERC20(_tokenBuy),
-            _amountToSell,
-            _minAmountToBuy,
-            _distribution,
-            0
-        );
-
-        IERC20(_tokenBuy).transfer(_recipient, amountPurchased);
+        //        uint256 amountPurchased = oneInchExchange.swap(
+        //            IERC20(_tokenSell),
+        //            IERC20(_tokenBuy),
+        //            _amountToSell,
+        //            _minAmountToBuy,
+        //            _distribution,
+        //            0
+        //        );
+        //
+        //        IERC20(_tokenBuy).transfer(_recipient, amountPurchased);
     }
 }

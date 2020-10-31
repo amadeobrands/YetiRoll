@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { EXCHANGE_ADAPTOR, STREAM, STREAM_MANAGER, TREASURY } from './constants';
+import { STREAM, STREAM_MANAGER, TREASURY } from './constants';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, ethers, deployments } = hre;

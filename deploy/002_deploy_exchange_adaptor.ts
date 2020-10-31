@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { EXCHANGE_ADAPTOR } from './constants';
+import { EXCHANGE_ADAPTOR, ONE_INCH_ADDRESS } from './constants';
 
 const func: DeployFunction = async function (bre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = bre;
@@ -11,6 +11,7 @@ const func: DeployFunction = async function (bre: HardhatRuntimeEnvironment) {
   await deploy(EXCHANGE_ADAPTOR, {
     from: deployer,
     log: true,
+    args: [ONE_INCH_ADDRESS],
   });
 };
 

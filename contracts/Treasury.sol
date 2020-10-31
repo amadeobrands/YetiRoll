@@ -34,10 +34,7 @@ contract Treasury is AccessControl {
     }
 
     // @dev allows changing of the exchange adaptor - can be expanded past 1inch in future if needed
-    function setExchangeAdaptor(address _exchangeAdaptor)
-        public
-        onlyTreasuryAdmin
-    {
+    function setExchangeAdaptor(address _exchangeAdaptor) public onlyTreasuryAdmin {
         exchangeAdaptor = ExchangeAdaptor(_exchangeAdaptor);
     }
 
@@ -59,11 +56,7 @@ contract Treasury is AccessControl {
         address _sender,
         address _recipient,
         uint256 _amount
-    )
-        public
-        onlyTreasuryOperator
-        hasBalanceToWithdraw(_token, _sender, _amount)
-    {
+    ) public onlyTreasuryOperator hasBalanceToWithdraw(_token, _sender, _amount) {
         withdrawFunds(_token, _sender, _amount);
 
         IERC20(_token).transfer(_recipient, _amount);
@@ -78,23 +71,12 @@ contract Treasury is AccessControl {
         uint256[] memory _distribution,
         address _sender,
         address _recipient
-    )
-        public
-        onlyTreasuryOperator
-        hasBalanceToWithdraw(_tokenSell, _sender, _amountToSell)
-    {
+    ) public onlyTreasuryOperator hasBalanceToWithdraw(_tokenSell, _sender, _amountToSell) {
         withdrawFunds(_tokenSell, _sender, _amountToSell);
 
         IERC20(_tokenSell).transfer(address(exchangeAdaptor), _amountToSell);
 
-        exchangeAdaptor.exchange(
-            _tokenSell,
-            _tokenBuy,
-            _amountToSell,
-            _minAmountToBuy,
-            _distribution,
-            _recipient
-        );
+        exchangeAdaptor.exchange(_tokenSell, _tokenBuy, _amountToSell, _minAmountToBuy, _distribution, _recipient);
     }
 
     // @dev funds are able to be reallocated to different accounts (I.E when paying someone or during the lifetime of a
@@ -104,11 +86,7 @@ contract Treasury is AccessControl {
         address _sender,
         address _recipient,
         uint256 _amount
-    )
-        public
-        onlyTreasuryOperator
-        hasSufficientAllocatedFunds(_token, _sender, _amount)
-    {
+    ) public onlyTreasuryOperator hasSufficientAllocatedFunds(_token, _sender, _amount) {
         withdrawFunds(_token, _sender, _amount);
         depositFunds(_token, _recipient, _amount);
         deallocateFunds(_token, _sender, _amount);
@@ -122,9 +100,7 @@ contract Treasury is AccessControl {
         address _who,
         uint256 _amount
     ) public onlyTreasuryOperator {
-        userBalances[_who][_token].allocated = userBalances[_who][_token]
-            .allocated
-            .add(_amount);
+        userBalances[_who][_token].allocated = userBalances[_who][_token].allocated.add(_amount);
     }
 
     // @dev called when funds are withdrawn, decrease the deposited balance
@@ -133,9 +109,7 @@ contract Treasury is AccessControl {
         address _who,
         uint256 _amount
     ) internal {
-        userBalances[_who][_token].deposited = userBalances[_who][_token]
-            .deposited
-            .sub(_amount);
+        userBalances[_who][_token].deposited = userBalances[_who][_token].deposited.sub(_amount);
     }
 
     // @dev called when funds are deposited, increase the deposited balance
@@ -144,9 +118,7 @@ contract Treasury is AccessControl {
         address _who,
         uint256 _amount
     ) internal {
-        userBalances[_who][_token].deposited = userBalances[_who][_token]
-            .deposited
-            .add(_amount);
+        userBalances[_who][_token].deposited = userBalances[_who][_token].deposited.add(_amount);
     }
 
     // @dev once a stream is started, funds are allocated and locked from being withdrawn
@@ -156,9 +128,7 @@ contract Treasury is AccessControl {
         address _who,
         uint256 _amount
     ) internal onlyTreasuryOperator {
-        userBalances[_who][_token].allocated = userBalances[_who][_token]
-            .allocated
-            .sub(_amount);
+        userBalances[_who][_token].allocated = userBalances[_who][_token].allocated.sub(_amount);
     }
 
     // @dev See the total available tokens for client
@@ -167,22 +137,12 @@ contract Treasury is AccessControl {
         view
         returns (uint256 deposited, uint256 allocated)
     {
-        return (
-            userBalances[_who][_token].deposited,
-            userBalances[_who][_token].allocated
-        );
+        return (userBalances[_who][_token].deposited, userBalances[_who][_token].allocated);
     }
 
     // @dev subtract the allocated balance from the deposit to see the available funds
-    function viewAvailableBalance(address _token, address _who)
-        public
-        view
-        returns (uint256)
-    {
-        return
-            userBalances[_who][_token].deposited.sub(
-                userBalances[_who][_token].allocated
-            );
+    function viewAvailableBalance(address _token, address _who) public view returns (uint256) {
+        return userBalances[_who][_token].deposited.sub(userBalances[_who][_token].allocated);
     }
 
     // @dev check if the address has the role Treasury Admin
@@ -193,10 +153,7 @@ contract Treasury is AccessControl {
 
     // @dev check if the address has the role Treasury Operator
     modifier onlyTreasuryOperator() {
-        require(
-            hasRole(TREASURY_OPERATOR, msg.sender),
-            "Not Treasury Operator"
-        );
+        require(hasRole(TREASURY_OPERATOR, msg.sender), "Not Treasury Operator");
         _;
     }
 
@@ -206,10 +163,7 @@ contract Treasury is AccessControl {
         address _who,
         uint256 _amount
     ) {
-        require(
-            viewAvailableBalance(_token, _who) >= _amount,
-            "Insufficient balance to withdraw"
-        );
+        require(viewAvailableBalance(_token, _who) >= _amount, "Insufficient balance to withdraw");
         _;
     }
 
@@ -219,10 +173,7 @@ contract Treasury is AccessControl {
         address _from,
         uint256 _amount
     ) {
-        require(
-            userBalances[_from][_token].allocated >= _amount,
-            "Insufficient allocated balance"
-        );
+        require(userBalances[_from][_token].allocated >= _amount, "Insufficient allocated balance");
         _;
     }
 }

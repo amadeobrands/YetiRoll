@@ -1,4 +1,4 @@
-.PHONY : typechain compile test compile-clean console run deploy prettier integration
+.PHONY : typechain compile test compile-clean console run prettier integration
 
 typechain:
 	./node_modules/.bin/typechain --target ethers-v5 --outDir typechain './artifacts/*.json'
@@ -24,6 +24,9 @@ e2e:
 
 integration:
 	npx hardhat run integration/MultipleRecipientIntegration.ts
+
+1inch:
+	npx hardhat run integration/1inchIntegration.ts --network localhost
 
 prettier:
 	npm run prettier
