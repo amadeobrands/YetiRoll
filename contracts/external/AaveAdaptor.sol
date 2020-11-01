@@ -9,6 +9,7 @@ import "hardhat/console.sol";
 // https://docs.aave.com/developers/deployed-contracts/deployed-contract-instances
 contract AaveAdaptor is Ownable {
     LendingPool public aave;
+    address public aaveTaker;
 
     mapping(address => address) public aTokenPair;
 
@@ -16,18 +17,23 @@ contract AaveAdaptor is Ownable {
 
     event AssetWithdrawn(address _token, address _who, uint256 _amount, uint256 _timestamp);
 
-    constructor(address _aave) public {
+    constructor(address _aave, address _aaveTaker) public {
         setAave(_aave);
+        setAaveTaker(_aaveTaker);
     }
 
     function setAave(address _aave) public onlyOwner {
         aave = LendingPool(_aave);
     }
 
+    function setAaveTaker(address _aaveTaker) public onlyOwner {
+        aaveTaker = _aaveTaker;
+    }
+
     function deposit(address _token, uint256 _amount) external {
         emit AssetDeposited(_token, msg.sender, _amount, block.timestamp);
 
-        IERC20(_token).approve(address(aave), _amount);
+        IERC20(_token).approve(aaveTaker, _amount);
 
         aave.deposit(_token, _amount, 0);
 
