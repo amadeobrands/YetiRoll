@@ -26,7 +26,10 @@ integration:
 	npx hardhat run integration/MultipleRecipientIntegration.ts
 
 1inch:
-	npx hardhat run integration/1inchIntegration.ts --network localhost
+	npx hardhat --network localhost run integration/1inchIntegration.ts
+
+aave:
+	npx hardhat --network localhost run integration/aaveIntegration.ts
 
 prettier:
 	npm run prettier

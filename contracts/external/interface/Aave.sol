@@ -17,5 +17,5 @@ interface LendingPool {
         address _reserve,
         uint256 _amount,
         uint16 _referralCode
-    ) external payable;
+    ) external;
 }
