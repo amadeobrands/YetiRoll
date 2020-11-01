@@ -3,26 +3,19 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import { STREAM, STREAM_MANAGER, TREASURY } from './constants';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, ethers, deployments } = hre;
-  const { provider } = ethers;
+  const { getNamedAccounts, deployments } = hre;
+  const { execute } = deployments;
 
   const { deployer } = await getNamedAccounts();
-  const deployerSigner = provider.getSigner(deployer);
 
   const stream = await deployments.get(STREAM);
   const treasury = await deployments.get(TREASURY);
 
-  const streamManager = await deployments.get(STREAM_MANAGER).then((deployment) => {
-    return ethers.getContractAt(deployment.abi, deployer).then((streamManager) => {
-      return streamManager.connect(deployerSigner);
-    });
-  });
-
   console.log('Setting Stream: ' + stream.address);
-  await streamManager.setStream(stream.address);
+  await execute(STREAM_MANAGER, { from: deployer, log: true }, 'setStream', stream.address);
 
   console.log('Setting Treasury: ' + treasury.address);
-  await streamManager.setTreasury(treasury.address);
+  await execute(STREAM_MANAGER, { from: deployer, log: true }, 'setTreasury', treasury.address);
 };
 
 export default func;
