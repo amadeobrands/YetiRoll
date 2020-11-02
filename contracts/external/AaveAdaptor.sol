@@ -2,14 +2,21 @@ pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interface/Aave.sol";
+
+// Aave
+import "./interface/ILendingPoolAddressesProvider.sol";
+import "./interface/LendingPool.sol";
 import "./interface/AToken.sol";
+
 import "hardhat/console.sol";
 
 // https://docs.aave.com/developers/deployed-contracts/deployed-contract-instances
 contract AaveAdaptor is Ownable {
-    LendingPool public aave;
-    address public aaveTaker;
+    ILendingPoolAddressesProvider public lendingPoolAddressesProvider;
+
+    LendingPool public lendingPool;
+
+    address public lendingPoolCore;
 
     mapping(address => address) public aTokenPair;
 
@@ -17,25 +24,30 @@ contract AaveAdaptor is Ownable {
 
     event AssetWithdrawn(address _token, address _who, uint256 _amount, uint256 _timestamp);
 
-    constructor(address _aave, address _aaveTaker) public {
-        setAave(_aave);
-        setAaveTaker(_aaveTaker);
+    constructor(address _lendingPoolAddressesProvider) public {
+        setLendingPoolAddressesProvider(_lendingPoolAddressesProvider);
+        updateLendingPoolAddress();
+        updateLendingPoolCoreAddress();
     }
 
-    function setAave(address _aave) public onlyOwner {
-        aave = LendingPool(_aave);
+    function setLendingPoolAddressesProvider(address _lendingPoolAddressProvider) public onlyOwner {
+        lendingPoolAddressesProvider = ILendingPoolAddressesProvider(_lendingPoolAddressProvider);
     }
 
-    function setAaveTaker(address _aaveTaker) public onlyOwner {
-        aaveTaker = _aaveTaker;
+    function updateLendingPoolAddress() public {
+        lendingPool = LendingPool(lendingPoolAddressesProvider.getLendingPool());
+    }
+
+    function updateLendingPoolCoreAddress() public {
+        lendingPoolCore = lendingPoolAddressesProvider.getLendingPoolCore();
     }
 
     function deposit(address _token, uint256 _amount) external {
         emit AssetDeposited(_token, msg.sender, _amount, block.timestamp);
 
-        IERC20(_token).approve(aaveTaker, _amount);
+        IERC20(_token).approve(lendingPoolCore, _amount);
 
-        aave.deposit(_token, _amount, 0);
+        lendingPool.deposit(_token, _amount, 0);
 
         AToken aToken = AToken(aTokenPair[_token]);
 

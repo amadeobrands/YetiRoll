@@ -7,8 +7,7 @@ export const STREAM = 'Stream';
 export const TREASURY = 'Treasury';
 export const AAVE_ADAPTOR = 'AaveAdaptor';
 
-export const AAVE_ADDRESS = '0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3';
-export const AAVE_TAKER_ADDRESS = '0x398eC7346DcD622eDc5ae82352F02bE94C62d119';
+export const AAVE_ADDRESS_PROVIDER = '0x24a42fD28C976A61Df5D00D0599C34c4f90748c8';
 
 export const ONE_INCH_ADDRESS = '0xC586BeF4a0992C495Cf22e1aeEE4E446CECDee0E';
 
