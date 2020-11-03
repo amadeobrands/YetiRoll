@@ -1,5 +1,5 @@
 import chai from "chai";
-import {StreamLender} from "../typechain/StreamLender";
+import {StreamLender} from "../typechain";
 
 import {getProvider} from "./helpers/contract";
 import {Signer} from "ethers";

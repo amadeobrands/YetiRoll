@@ -1,7 +1,5 @@
 import chai from "chai";
-import {PausableStream} from "../../typechain/PausableStream";
-
-import {MockErc20} from "../../typechain/MockErc20";
+import {MockErc20, PausableStream} from "../../typechain";
 import {BigNumber} from "ethers";
 import {oneEther, oneHour} from "../helpers/numbers";
 import {

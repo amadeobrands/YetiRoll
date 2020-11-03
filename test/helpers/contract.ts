@@ -3,6 +3,8 @@ import {deployContract, MockProvider} from "ethereum-waffle";
 import StreamArtifact from "../../artifacts/contracts/streams/Stream.sol/Stream.json";
 import PausableStreamArtifact from "../../artifacts/contracts/streams/PausableStream.sol/PausableStream.json";
 import MultipleRecipientStreamArtifact from "../../artifacts/contracts/streams/MultipleRecipientStream.sol/MultipleRecipientStream.json";
+import FundManagerArtifact from "../../artifacts/contracts/FundManager.sol/FundManager.json";
+
 import {
   FundManager,
   MockErc20,
@@ -10,9 +12,11 @@ import {
   PausableStream,
   Stream,
 } from "../../typechain";
-import FundManagerArtifact from "../../artifacts/contracts/FundManager.sol/FundManager.json";
+
 import {Signer} from "ethers";
 import {ethers} from "hardhat";
+const { waffle } = require("hardhat");
+
 
 let provider: MockProvider;
 

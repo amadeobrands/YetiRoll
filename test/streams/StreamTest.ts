@@ -1,6 +1,5 @@
 import chai from "chai";
-import {Stream} from "../../typechain/Stream";
-import {MockErc20} from "../../typechain/MockErc20";
+import {MockErc20, Stream} from "../../typechain";
 import {BigNumber} from "ethers";
 import {
   deployErc20,

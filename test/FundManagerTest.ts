@@ -1,6 +1,4 @@
-import {FundManager} from "../typechain/FundManager";
-import {Treasury} from "../typechain/Treasury";
-import {MockErc20} from "../typechain/MockErc20";
+import {FundManager, Treasury, MockErc20} from "../typechain";
 
 import TreasuryArtifact from "../artifacts/contracts/Treasury.sol/Treasury.json";
 

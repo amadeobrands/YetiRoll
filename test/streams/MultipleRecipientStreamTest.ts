@@ -1,7 +1,6 @@
 import chai from "chai";
 
-import {MultipleRecipientStream} from "../../typechain/MultipleRecipientStream";
-import {MockErc20} from "../../typechain/MockErc20";
+import {MultipleRecipientStream, MockErc20} from "../../typechain";
 
 import {oneEther, oneHour} from "../helpers/numbers";
 import {

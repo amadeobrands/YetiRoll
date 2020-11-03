@@ -8,11 +8,10 @@ import {
 } from "ethereum-waffle";
 
 import TreasuryArtifact from "../artifacts/contracts/Treasury.sol/Treasury.json";
-import {Treasury} from "../typechain/Treasury";
+import {Treasury, MockErc20} from "../typechain";
 import ExchangeAdaptorArtifact from "../artifacts/contracts/external/ExchangeAdaptor.sol/ExchangeAdaptor.json";
 
 import {oneEther} from "./helpers/numbers";
-import {MockErc20} from "../typechain/MockErc20";
 import {BigNumber} from "ethers";
 
 const {expect} = chai;
