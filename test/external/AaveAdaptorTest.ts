@@ -11,6 +11,7 @@ import {getAccounts} from "../helpers/contract";
 import {ethers} from "hardhat";
 import {oneEther} from "../helpers/numbers";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
+import {AAVE_ADDRESS_PROVIDER} from "../../deploy/constants";
 
 chai.use(solidity);
 const {expect} = chai;
@@ -37,9 +38,7 @@ describe("Aave Adaptor", async () => {
       alice
     );
 
-    aaveAdaptor = (await AaveAdaptorFactory.deploy()) as AaveAdaptor;
-
-    await aaveAdaptor.setAave(aave.address);
+    aaveAdaptor = (await AaveAdaptorFactory.deploy(AAVE_ADDRESS_PROVIDER)) as AaveAdaptor;
   });
 
   describe("Depositing and withdrawing", async () => {
