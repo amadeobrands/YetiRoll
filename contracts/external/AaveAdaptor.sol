@@ -44,26 +44,18 @@ contract AaveAdaptor is Ownable {
 
     function deposit(address _token, uint256 _amount) external {
         emit AssetDeposited(_token, msg.sender, _amount, block.timestamp);
-
+        console.log("Approving the LP Core contract to spend %s", _amount);
         IERC20(_token).approve(lendingPoolCore, _amount);
-        console.log(lendingPool);
+
+        console.log("Depositing %s", _amount);
         LendingPool(lendingPool).deposit(_token, _amount, 0);
 
         AToken aToken = AToken(aTokenPair[_token]);
 
-        console.log("Token %s", _token);
-        console.log("A token %s", aTokenPair[_token]);
+        uint256 aTokenBalance = AToken(aTokenPair[_token]).balanceOf(address(this));
 
-        console.log("amount %s", _amount);
-        console.log("ERC20 balance %s", IERC20(_token).balanceOf(address(this)));
-        console.log("A token amount %s", aToken.balanceOf(address(this)));
-
-        console.log("msgsender %s", msg.sender);
-
-        AToken(aTokenPair[_token]).transfer(msg.sender, _amount);
-
-
-        console.log("a token balance %s", aToken.balanceOf(msg.sender));
+        console.log("Transferring %s to %s", aTokenBalance, msg.sender);
+        AToken(aTokenPair[_token]).transfer(msg.sender, aTokenBalance);
     }
 
     function withdraw(address _token, uint256 _amount) external {

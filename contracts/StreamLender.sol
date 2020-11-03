@@ -11,9 +11,7 @@ contract StreamLender {
     // funds will be taken from the treasury and deposited into Aave, from there the client can use the available
     // lending power to borrow any asset listed by Aave. They will be subject to liquidation of their position is under
     // collateralised
-    function borrowAgainstStream(uint256 _streamId, uint256 _amountToBorrow)
-        public
-    {
+    function borrowAgainstStream(uint256 _streamId, uint256 _amountToBorrow) public {
         // check stream has started
         // calculate the value of the stream, total stream value - any value taken out
         // lock the stream, prevent the user from withdrawing from the stream

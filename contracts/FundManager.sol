@@ -25,14 +25,6 @@ contract FundManager is Ownable {
         uint256[] memory _distribution,
         address _to
     ) public {
-        treasury.exchangeFunds(
-            _tokenSell,
-            _tokenBuy,
-            _amountToSell,
-            _minAmountToBuy,
-            _distribution,
-            msg.sender,
-            _to
-        );
+        treasury.exchangeFunds(_tokenSell, _tokenBuy, _amountToSell, _minAmountToBuy, _distribution, msg.sender, _to);
     }
 }

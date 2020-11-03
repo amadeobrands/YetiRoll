@@ -41,11 +41,18 @@ async function main() {
   await aaveAdaptor.deposit(DAI_ADDRESS, oneEther.mul(400));
 
   console.log("Checking balances");
-  await dai.balanceOf(aaveAdaptor.address).then(console.log)
-  await aDai.balanceOf(aaveAdaptor.address).then(console.log)
+  await dai.balanceOf(aaveAdaptor.address).then((balance: BigNumber) => {
+    console.log("DAI balance of Aave Adaptor is " + balance.toString());
+  });
+
+  await aDai.balanceOf(aaveAdaptor.address).then((balance: BigNumber) => {
+    console.log("A Token DAI balance of Aave Adaptor is " + balance.toString());
+  });
 
 
-  await aDai.balanceOf(DAI_OWNER).then(console.log)
+  await aDai.balanceOf(DAI_OWNER).then((balance: BigNumber) => {
+    console.log("A Token DAI balance of DAI Owner is " + balance.toString())
+  });
 }
 
 main()
