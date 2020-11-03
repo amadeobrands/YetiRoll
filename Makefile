@@ -14,7 +14,7 @@ compile-clean:
 	make compile
 
 test:
-	npm run-script test
+	npm run-script test test/external/AaveAdaptorTest.ts
 
 run-node:
 	@npx hardhat node

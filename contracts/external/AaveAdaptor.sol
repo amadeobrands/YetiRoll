@@ -44,6 +44,7 @@ contract AaveAdaptor is Ownable {
 
     function deposit(address _token, uint256 _amount) external {
         emit AssetDeposited(_token, msg.sender, _amount, block.timestamp);
+
         console.log("Approving the LP Core contract to spend %s", _amount);
         IERC20(_token).approve(lendingPoolCore, _amount);
 
