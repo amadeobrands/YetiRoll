@@ -3,11 +3,11 @@ import chai from "chai";
 import {deployMockContract, MockContract, solidity} from "ethereum-waffle";
 import {AaveAdaptor} from "../../typechain";
 
-import LENDING_POOL_ABI from "../../integration/ABI/Aave.json";
-import LENDING_POOL_CORE_ABI from "../../integration/ABI/LendingPoolCore.json";
-import LENDING_POOL_ADDRESSES_PROVIDER_ABI from "../../integration/ABI/LendingPoolAddressesProvider.json";
-import A_TOKEN_ABI from "../../integration/ABI/AToken.json";
-import USDC_ABI from "../../integration/ABI/AUSDC.json";
+import LENDING_POOL_ABI from "../../integration/ABI/Aave/LendingPool.json";
+import LENDING_POOL_CORE_ABI from "../../integration/ABI/Aave/LendingPoolCore.json";
+import LENDING_POOL_ADDRESSES_PROVIDER_ABI from "../../integration/ABI/Aave/LendingPoolAddressesProvider.json";
+import A_TOKEN_ABI from "../../integration/ABI/Aave/AToken.json";
+import USDC_ABI from "../../integration/ABI/Erc20/AUSDC.json";
 
 import {getAccounts} from "../helpers/contract";
 import {ethers} from "hardhat";
@@ -52,7 +52,6 @@ describe("Aave Adaptor", async () => {
 
   describe("Depositing and withdrawing", async () => {
     it("Should allow funds to be deposited into Aave lending platform and send the A token to the return address", async () => {
-      expect(1).to.eq(1);
       const amount = oneEther.mul(200);
 
       await USDC.mock.approve.withArgs(lendingPoolCore.address, amount).returns(true);

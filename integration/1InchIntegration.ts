@@ -1,5 +1,5 @@
 import { BigNumber, Contract } from 'ethers';
-import DAI from './ABI/DAI.json';
+import DAI from './ABI/Erc20/DAI.json';
 import ONE_INCH from './ABI/1Inch.json';
 import { EXCHANGE_ADAPTOR } from '../deploy/constants';
 import { Deployment } from 'hardhat-deploy/dist/types';

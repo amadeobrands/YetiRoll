@@ -5,8 +5,8 @@ import {
   StreamManagerFactory,
   TreasuryFactory,
 } from "../typechain";
-import DAI from "./ABI/DAI.json";
-import AUSDC from "./ABI/AUSDC.json";
+import DAI from "./ABI/Erc20/DAI.json";
+import AUSDC from "./ABI/Erc20/AUSDC.json";
 import ONE_INCH from "./ABI/1Inch.json";
 
 const provider = new providers.JsonRpcProvider("http://127.0.0.1:8546");

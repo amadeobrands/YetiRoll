@@ -1,8 +1,8 @@
 import {BigNumber, Contract} from 'ethers';
 import {A_DAI_ADDRESS, AAVE_ADAPTOR, DAI_ADDRESS} from '../deploy/constants';
 import {Deployment} from 'hardhat-deploy/dist/types';
-import DAI_ABI from './ABI/DAI.json';
-import A_TOKEN_ABI from './ABI/AToken.json';
+import DAI_ABI from './ABI/Erc20/DAI.json';
+import A_TOKEN_ABI from './ABI/Aave/AToken.json';
 
 const oneEther = BigNumber.from(1).mul(BigNumber.from(10).pow(18));
 
