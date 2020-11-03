@@ -1,14 +1,12 @@
-import { BigNumber, Contract } from 'ethers';
-import { AAVE_ADAPTOR } from '../deploy/constants';
-import { Deployment } from 'hardhat-deploy/dist/types';
-import AAVE from './ABI/AAVE.json';
-import DAI from './ABI/DAI.json';
+import {BigNumber, Contract} from 'ethers';
+import {A_DAI_ADDRESS, AAVE_ADAPTOR, DAI_ADDRESS} from '../deploy/constants';
+import {Deployment} from 'hardhat-deploy/dist/types';
+import DAI_ABI from './ABI/DAI.json';
+import A_TOKEN_ABI from './ABI/AToken.json';
 
 const oneEther = BigNumber.from(1).mul(BigNumber.from(10).pow(18));
 
 const DAI_OWNER = '0xf977814e90da44bfa03b6295a0616a897441acec';
-
-const DAI_ADDRESS = '0x6b175474e89094c44da98b954eedeac495271d0f';
 
 const hre = require('hardhat');
 
@@ -22,6 +20,7 @@ async function main() {
     params: [DAI_OWNER],
   });
 
+  console.log('Getting signer');
   let daiOwner = await hre.ethers.provider.getSigner(DAI_OWNER);
 
   console.log('Connecting to Aave adaptor');
@@ -31,13 +30,22 @@ async function main() {
     });
   });
 
-  const dai = await hre.ethers.getContractAt(DAI, DAI_ADDRESS, daiOwner);
+  console.log("Connecting to DAI");
+  const dai = await hre.ethers.getContractAt(DAI_ABI, DAI_ADDRESS, daiOwner);
+  const aDai = await hre.ethers.getContractAt(A_TOKEN_ABI, A_DAI_ADDRESS, daiOwner);
 
   console.log("Transferring 10,000 dai to exchange adaptor's address");
   await dai.transfer(aaveAdaptor.address, oneEther.mul(10000));
 
   console.log('Depositing 400 DAI');
   await aaveAdaptor.deposit(DAI_ADDRESS, oneEther.mul(400));
+
+  console.log("Checking balances");
+  await dai.balanceOf(aaveAdaptor.address).then(console.log)
+  await aDai.balanceOf(aaveAdaptor.address).then(console.log)
+
+
+  await aDai.balanceOf(DAI_OWNER).then(console.log)
 }
 
 main()

@@ -32,6 +32,7 @@ const config: HardhatUserConfig = {
       forking: {
         enabled: true,
         url: 'https://eth-mainnet.alchemyapi.io/v2/' + environment.alchemyKey,
+        blockNumber: 11181670,
       },
     },
     // ropsten: {

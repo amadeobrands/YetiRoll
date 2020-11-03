@@ -14,7 +14,7 @@ import "hardhat/console.sol";
 contract AaveAdaptor is Ownable {
     ILendingPoolAddressesProvider public lendingPoolAddressesProvider;
 
-    LendingPool public lendingPool;
+    address public lendingPool;
 
     address public lendingPoolCore;
 
@@ -35,7 +35,7 @@ contract AaveAdaptor is Ownable {
     }
 
     function updateLendingPoolAddress() public {
-        lendingPool = LendingPool(lendingPoolAddressesProvider.getLendingPool());
+        lendingPool = lendingPoolAddressesProvider.getLendingPool();
     }
 
     function updateLendingPoolCoreAddress() public {
@@ -46,8 +46,8 @@ contract AaveAdaptor is Ownable {
         emit AssetDeposited(_token, msg.sender, _amount, block.timestamp);
 
         IERC20(_token).approve(lendingPoolCore, _amount);
-
-        lendingPool.deposit(_token, _amount, 0);
+        console.log(lendingPool);
+        LendingPool(lendingPool).deposit(_token, _amount, 0);
 
         AToken aToken = AToken(aTokenPair[_token]);
 
@@ -57,7 +57,13 @@ contract AaveAdaptor is Ownable {
         console.log("amount %s", _amount);
         console.log("ERC20 balance %s", IERC20(_token).balanceOf(address(this)));
         console.log("A token amount %s", aToken.balanceOf(address(this)));
-        //        aToken.transfer(msg.sender, aToken.balanceOf(address(this)));
+
+        console.log("msgsender %s", msg.sender);
+
+        AToken(aTokenPair[_token]).transfer(msg.sender, _amount);
+
+
+        console.log("a token balance %s", aToken.balanceOf(msg.sender));
     }
 
     function withdraw(address _token, uint256 _amount) external {
