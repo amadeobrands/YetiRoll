@@ -3,6 +3,7 @@ import {A_DAI_ADDRESS, AAVE_ADAPTOR, DAI_ADDRESS} from '../deploy/constants';
 import {Deployment} from 'hardhat-deploy/dist/types';
 import DAI_ABI from './ABI/Erc20/DAI.json';
 import A_TOKEN_ABI from './ABI/Aave/AToken.json';
+import { expect } from 'chai';
 
 const oneEther = BigNumber.from(1).mul(BigNumber.from(10).pow(18));
 
@@ -34,11 +35,13 @@ async function main() {
   const dai = await hre.ethers.getContractAt(DAI_ABI, DAI_ADDRESS, daiOwner);
   const aDai = await hre.ethers.getContractAt(A_TOKEN_ABI, A_DAI_ADDRESS, daiOwner);
 
+  const amount = oneEther.mul(400);
+
   console.log("Transferring 10,000 dai to exchange adaptor's address");
-  await dai.transfer(aaveAdaptor.address, oneEther.mul(10000));
+  await dai.transfer(aaveAdaptor.address, amount);
 
   console.log('Depositing 400 DAI');
-  await aaveAdaptor.deposit(DAI_ADDRESS, oneEther.mul(400));
+  await aaveAdaptor.deposit(DAI_ADDRESS, amount);
 
   console.log("Checking balances");
   await dai.balanceOf(aaveAdaptor.address).then((balance: BigNumber) => {
@@ -49,8 +52,8 @@ async function main() {
     console.log("A Token DAI balance of Aave Adaptor is " + balance.toString());
   });
 
-
   await aDai.balanceOf(DAI_OWNER).then((balance: BigNumber) => {
+    expect(balance).to.eq(amount);
     console.log("A Token DAI balance of DAI Owner is " + balance.toString())
   });
 }

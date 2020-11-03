@@ -33,9 +33,10 @@ function sendToken(address _token, address _sender, address _recipient, uint256 
 - Stream to stream payments
 - More events emitted
 - https://github.com/crytic/building-secure-contracts/tree/master/program-analysis/echidna#echidna-tutorial
+- Aave integration
+- 1Inch integration
 
-Testing in a mock live environment can be achieved by following this guide
-https://medium.com/ethereum-grid/forking-ethereum-mainnet-mint-your-own-dai-d8b62a82b3f7
+- audit
 
 Configuring code formatting
 https://www.jetbrains.com/help/idea/prettier.html#ws_prettier_reformat_code
